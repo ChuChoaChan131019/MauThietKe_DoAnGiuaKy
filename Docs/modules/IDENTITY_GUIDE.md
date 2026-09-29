@@ -1,61 +1,43 @@
 # Hướng dẫn module Identity
 
-[← Playbook chung](../DEVELOPMENT_PLAYBOOK.md)
+[← Playbook](../DEVELOPMENT_PLAYBOOK.md) · [Phân công](../PHAN_CONG_CONG_VIEC.md)
 
 ## Phạm vi
 
-- **Chủ sở hữu:** Thành viên 1.
-- **Requirement:** [AUTH 01–08](../SRS.md#sec_1013).
+- **Chủ sở hữu:** Doàn Trương Duy Khang (2111844).
+- **Requirement:** AUTH 01–08.
 - **Bảng:** `users`.
-- **Package:** `com.senvia.doangiuaky.identity` và phần kỹ thuật `common`.
-- **Template:** `templates/identity`.
+- **Code/view:** `com.senvia.doangiuaky.identity`, `com.senvia.doangiuaky.common`, `templates/identity`.
 
-Module quản lý đăng ký, đăng nhập, đăng xuất, hồ sơ, đổi mật khẩu, trạng thái tài khoản và Spring Security.
+Identity sở hữu account, authentication, profile, role/status và Spring Security; Khang review tài nguyên common/config.
 
 ## Public contract
 
-Identity cung cấp qua `identity.api`:
+`identity.api` cung cấp user ID, tên công khai, role, account status, kiểm tra user ACTIVE và danh sách Admin ACTIVE. Không công bố password hash, User Entity/Repository hoặc principal nội bộ.
 
-- Định danh người dùng hiện tại.
-- Thông tin công khai tối thiểu: id, họ tên, role và trạng thái.
-- Kiểm tra tài khoản tồn tại/đang hoạt động theo id.
+## Thứ tự feature
 
-Không công bố password hash, repository hoặc security principal nội bộ.
+1. Migration User, Role và AccountStatus.
+2. Chuẩn hóa email và unique index `LOWER(email)`.
+3. Registration và BCrypt.
+4. Login/logout, LOCKED account và session invalidation.
+5. Profile/avatar và đổi password.
+6. Admin list/search/filter/detail/lock/unlock account.
+7. Identity API.
+8. Security/common error pages và shared navigation.
 
-## Thứ tự triển khai
+## Quy tắc đặc thù
 
-1. Tạo migration `users`, enum role và account status.
-2. Tạo Entity/Repository, chuẩn hóa email bằng trim/lowercase và unique index trên `LOWER(email)`.
-3. Triển khai đăng ký với validation và BCrypt.
-4. Cấu hình đăng nhập, đăng xuất, access denied và tài khoản bị khóa.
-5. Triển khai xem/sửa hồ sơ và đổi mật khẩu.
-6. Làm màn hình Admin xem, tìm kiếm, khóa và mở khóa tài khoản; không cho tự khóa hoặc khóa Admin ACTIVE cuối cùng.
-7. Công bố contract người dùng cho các module khác.
-8. Hoàn thiện template đăng ký, đăng nhập, hồ sơ và quản lý tài khoản.
+- Email trim/lowercase trước kiểm tra và lưu.
+- Password chỉ lưu BCrypt và không xuất hiện trong DTO/log.
+- User chỉ sửa profile/password của mình.
+- Đổi password yêu cầu password hiện tại đúng.
+- Admin không mua hàng, không tự khóa và không khóa tài khoản ADMIN.
+- Khóa user bắt buộc lý do, người khóa và thời điểm.
+- Owner LOCKED làm catalog ẩn và shop ngừng nhận order mới.
 
-## Thành phần dự kiến
+## Kiểm thử/bàn giao
 
-- Entity: User; enum Role, AccountStatus.
-- DTO/form: đăng ký, đăng nhập, cập nhật hồ sơ, đổi mật khẩu.
-- Service: đăng ký, hồ sơ và truy vấn người dùng công khai.
-- Security: user details, password encoder, security configuration và access handler.
-- Controller/view: đăng ký, đăng nhập, hồ sơ và đổi mật khẩu.
+Test email, BCrypt, authentication, LOCKED/session, profile/password ownership, USER/ADMIN authorization và lock/unlock. Trần Thị Phương Trang review contract phục vụ Merchant; Huỳnh Thiên Phúc review Admin ACTIVE/notification; thay đổi common/config cần PR riêng.
 
-## Kiểm tra bắt buộc
-
-- Email sai định dạng hoặc trùng bị từ chối.
-- Email có khoảng trắng hoặc khác hoa thường được chuẩn hóa trước khi kiểm tra và lưu.
-- Password chỉ được lưu dưới dạng BCrypt.
-- Sai mật khẩu và tài khoản LOCKED không đăng nhập được.
-- Người dùng chỉ sửa hồ sơ và mật khẩu của chính mình.
-- Đổi mật khẩu yêu cầu mật khẩu hiện tại đúng.
-- DTO/API công khai không chứa password hash.
-- Account owner LOCKED được contract phản ánh ngay để Merchant ngừng cho shop nhận đơn mới và ẩn catalog công khai.
-- Admin không có quyền mua hàng; khóa/mở khóa phải kiểm tra ở backend.
-
-## Bàn giao
-
-- AUTH 01–08 có test tương ứng.
-- Các module khác có thể lấy user id/role/status qua `identity.api`.
-- Không có module nào cần truy cập `UserRepository` trực tiếp.
-- Thành viên 2 review phần contract; thay đổi `common` cần pull request riêng.
+Checklist chất lượng chung xem [CONTRIBUTING.md](../CONTRIBUTING.md).

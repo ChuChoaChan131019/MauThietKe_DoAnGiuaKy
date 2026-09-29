@@ -1,27 +1,33 @@
 # Thiết kế cơ sở dữ liệu
 
+Tài liệu này tập trung vào thiết kế vật lý, constraint, index, migration và toàn vẹn giao dịch trên PostgreSQL. Yêu cầu dữ liệu nghiệp vụ lấy theo [SRS.md](SRS.md); chủ sở hữu bảng lấy theo [MODULE_OWNERSHIP.md](MODULE_OWNERSHIP.md).
+
 ## 1. Tổng quan
 
-Hệ thống sử dụng PostgreSQL, dự kiến triển khai trên Supabase. Schema ban đầu gồm 14 bảng, tên bảng dùng dạng số nhiều và dữ liệu tiền tệ dùng `NUMERIC` thay vì `float` hoặc `double`.
+- PostgreSQL/Supabase.
+- 14 bảng, tên dạng số nhiều.
+- Tiền tệ dùng `NUMERIC`; Java dùng `BigDecimal`.
+- Thời gian ưu tiên `TIMESTAMPTZ`.
+- Không lưu file ảnh trong database; chỉ lưu URL và Cloudinary `public_id`.
 
-## 2. Danh sách bảng
+## 2. Bảng và ownership
 
-| Bảng | Module sở hữu | Mục đích |
+| Bảng | Module | Mục đích |
 | --- | --- | --- |
-| `users` | `identity` | Tài khoản người mua, chủ gian hàng và quản trị viên |
-| `shops` | `merchant` | Gian hàng và quy trình xét duyệt |
-| `categories` | `merchant` | Danh mục sản phẩm |
-| `products` | `merchant` | Thông tin sản phẩm thuộc gian hàng |
-| `product_images` | `merchant` | Tham chiếu ảnh sản phẩm trên Cloudinary |
-| `carts` | `shopping` | Giỏ hàng hiện tại của người dùng |
-| `cart_items` | `shopping` | Sản phẩm và số lượng trong giỏ |
-| `favorites` | `shopping` | Danh sách sản phẩm yêu thích |
-| `orders` | `ordering` | Đơn hàng được tách theo gian hàng |
-| `order_items` | `ordering` | Chi tiết và giá chụp tại thời điểm đặt hàng |
-| `payments` | `ordering` | Kết quả thanh toán COD hoặc chuyển khoản mô phỏng |
-| `order_status_histories` | `ordering` | Lịch sử thay đổi trạng thái đơn |
-| `notifications` | `engagement` | Thông báo trong hệ thống |
-| `reviews` | `engagement` | Điểm và nhận xét sản phẩm sau khi mua |
+| `users` | `identity` | Account, role và trạng thái |
+| `shops` | `merchant` | Shop và quy trình xét duyệt |
+| `categories` | `merchant` | Category |
+| `products` | `merchant` | Product, giá và tồn kho |
+| `product_images` | `merchant` | Ảnh Cloudinary |
+| `carts` | `shopping` | Cart hiện tại |
+| `cart_items` | `shopping` | Product và quantity trong cart |
+| `favorites` | `shopping` | Product yêu thích |
+| `orders` | `ordering` | Order tách theo shop |
+| `order_items` | `ordering` | Snapshot product/giá |
+| `payments` | `ordering` | Payment mô phỏng |
+| `order_status_histories` | `ordering` | Lịch sử trạng thái |
+| `notifications` | `engagement` | Notification nội bộ |
+| `reviews` | `engagement` | Rating và comment |
 
 ## 3. Quan hệ chính
 
@@ -38,100 +44,80 @@ orders 1 ─── * order_items
 orders 1 ─── 1 payments
 orders 1 ─── * order_status_histories
 users 1 ─── * notifications
-users * ─── * products  (qua favorites)
-users * ─── * products  (qua reviews và order_items)
+users * ─── * products qua favorites
+users * ─── * products qua reviews/order_items
 ```
 
-## 4. Ràng buộc quan trọng
+## 4. Constraint bắt buộc
 
-- `users.email` được trim, chuyển chữ thường và có unique index trên `LOWER(email)`.
-- `shops.owner_id` là duy nhất; mỗi người dùng có tối đa một gian hàng.
-- `carts.user_id` là duy nhất; mỗi người dùng có một giỏ hàng hiện tại.
-- Cặp `cart_items(cart_id, product_id)` là duy nhất.
-- Cặp `favorites(user_id, product_id)` là duy nhất.
-- `reviews.order_item_id` là duy nhất; mỗi mục hàng chỉ được đánh giá một lần.
-- `payments.order_id` là duy nhất; mỗi đơn có một kết quả thanh toán.
-- Cặp `notifications(event_id, receiver_id)` là duy nhất để event xử lý lặp không tạo thông báo trùng cho từng người nhận.
-- Giá sản phẩm phải lớn hơn 0; tồn kho không âm; số lượng đặt mua phải lớn hơn 0.
-- Không xóa tùy tiện dữ liệu đã phát sinh giao dịch; ưu tiên trạng thái ẩn hoặc khóa.
-- `order_items` lưu tên và giá snapshot để lịch sử đơn không thay đổi khi sản phẩm được sửa.
-- `cart_items` không lưu giá; giá giỏ hàng luôn được đọc từ `products.price` hiện tại.
-- `payments` là nguồn chuẩn duy nhất cho phương thức và trạng thái thanh toán; `orders` không lặp hai trường này.
-- `shops` lưu `lock_reason`, `locked_by` và `locked_at` khi bị khóa.
-- Trừ tồn kho dùng cập nhật nguyên tử có điều kiện `stock_quantity >= quantity`.
-
-## 5. Trạng thái nghiệp vụ
-
-### Tài khoản
-
-```text
-ACTIVE | LOCKED
-```
-
-### Gian hàng
-
-```text
-PENDING | APPROVED | REJECTED | LOCKED
-```
-
-### Sản phẩm
-
-```text
-ACTIVE | HIDDEN
-```
-
-Hết hàng không phải trạng thái lưu riêng; sản phẩm hết hàng khi `stock_quantity = 0`.
-
-### Đơn hàng
-
-```text
-PENDING → CONFIRMED → PREPARING → SHIPPING → COMPLETED
-    └──────────────→ CANCELLED
-```
-
-Các bước hợp lệ:
-
-| Hiện tại | Tiếp theo |
+| Constraint | Mục đích |
 | --- | --- |
-| `PENDING` | `CONFIRMED` hoặc `CANCELLED` |
-| `CONFIRMED` | `PREPARING` hoặc `CANCELLED` |
-| `PREPARING` | `SHIPPING` hoặc `CANCELLED` |
-| `SHIPPING` | `COMPLETED` |
-| `COMPLETED` | Không có |
-| `CANCELLED` | Không có |
+| Unique index `LOWER(users.email)` | Email duy nhất không phân biệt hoa thường |
+| `UNIQUE(shops.owner_id)` | Một user tối đa một shop |
+| `UNIQUE(carts.user_id)` | Một user một cart |
+| `UNIQUE(cart_items.cart_id, product_id)` | Không trùng product trong cart |
+| `UNIQUE(favorites.user_id, product_id)` | Không trùng favorite |
+| `UNIQUE(payments.order_id)` | Một payment cho mỗi order |
+| `UNIQUE(reviews.order_item_id)` | Một review cho mỗi order item |
+| `UNIQUE(notifications.event_id, receiver_id)` | Listener idempotent theo receiver |
+| `CHECK(products.price > 0)` | Giá hợp lệ |
+| `CHECK(products.stock_quantity >= 0)` | Tồn kho không âm |
+| `CHECK(cart_items.quantity > 0)` | Quantity hợp lệ |
+| `CHECK(reviews.rating BETWEEN 1 AND 5)` | Rating hợp lệ |
 
-### Thanh toán
+Khóa ngoại giao dịch không được xóa tùy tiện; ưu tiên trạng thái ẩn/khóa.
+
+## 5. Snapshot và nguồn dữ liệu chuẩn
+
+- Cart không lưu giá; đọc `products.price` hiện tại.
+- `order_items` lưu tên, đơn giá, quantity và subtotal tại thời điểm đặt.
+- `payments` là nguồn chuẩn duy nhất cho payment method/status.
+- `products.stock_quantity = 0` biểu diễn hết hàng; không tạo trạng thái OUT_OF_STOCK.
+- Shop bị khóa lưu lý do, người khóa và thời điểm.
+- Notification lưu `event_id` để chống xử lý lặp.
+
+## 6. Index đề xuất
+
+Ngoài unique index và index do FK yêu cầu, cân nhắc:
+
+- `products(shop_id, status)`.
+- `products(category_id, status)`.
+- Index tìm kiếm tên product phù hợp với chiến lược query.
+- `orders(buyer_id, created_at DESC)`.
+- `orders(shop_id, status, created_at DESC)`.
+- `order_status_histories(order_id, changed_at)`.
+- `notifications(receiver_id, is_read, created_at DESC)`.
+- `reviews(product_id, created_at DESC)`.
+
+Chỉ thêm index khi có query cụ thể và xác minh kế hoạch truy vấn phù hợp.
+
+## 7. Transaction và concurrency
+
+- Checkout nhiều shop chạy all-or-nothing trong một transaction.
+- Trừ kho dùng conditional update nguyên tử với điều kiện tồn kho đủ.
+- Một bước tạo order/payment, trừ kho hoặc xóa cart lỗi phải rollback toàn bộ checkout.
+- Hủy order hoàn kho và cập nhật payment đúng một lần.
+- Contract hoàn kho cần khóa/idempotency phù hợp để request lặp không cộng kho hai lần.
+- Event notification chỉ được xử lý sau commit.
+- Review và favorite chống trùng ở cả Service và database constraint.
+
+## 8. Migration
+
+- Đặt tại `src/main/resources/db/migration`.
+- Tạo migration mới; không sửa migration đã dùng ở môi trường chung.
+- Tên: `VyyyyMMddHHmm__module_description.sql`.
+- Chủ bảng tạo migration; khóa ngoại chéo module cần hai chủ module review.
+- Migration được review cùng Entity/Repository liên quan.
+- Không chỉnh database dùng chung mà không có script tương ứng.
+- Không chứa secret hoặc dữ liệu cá nhân thật.
+
+Ví dụ:
 
 ```text
-PENDING | COD_PENDING | PAID | FAILED | CANCELLED | REFUNDED
+V202609301430__merchant_create_products.sql
+V202609301500__ordering_create_orders.sql
 ```
 
-- COD tạo `COD_PENDING`, chuyển `PAID` khi đơn `COMPLETED`.
-- Chuyển khoản tạo `PENDING`; chủ shop xác nhận mô phỏng để chuyển `PAID` trước khi xác nhận đơn.
-- Hủy đơn chưa thanh toán chuyển payment thành `CANCELLED`; hủy đơn đã thanh toán chuyển thành `REFUNDED`.
+## 9. Dữ liệu demo và backup
 
-## 6. Toàn vẹn checkout và event
-
-- Checkout nhiều shop là một giao dịch all-or-nothing. Một sản phẩm hoặc nhóm shop lỗi phải rollback toàn bộ order, payment, tồn kho và cart.
-- Giá được đọc lại ở checkout; nếu khác màn hình buyer vừa xác nhận thì dừng và yêu cầu xác nhận tổng tiền mới.
-- Điều kiện bán gồm owner `ACTIVE`, shop `APPROVED`, category active, product `ACTIVE` và tồn kho lớn hơn 0.
-- Category bị ẩn không dùng cho sản phẩm mới; sản phẩm cũ vẫn tồn tại nhưng không xuất hiện công khai.
-- Event tạo notification chỉ được xử lý sau commit; cặp `event_id`, `receiver_id` xác định duy nhất notification của từng người nhận.
-
-## 7. Quy tắc migration và dữ liệu mẫu
-
-1. Mọi thay đổi schema phải được quản lý bằng migration trong `src/main/resources/db/migration`.
-2. Tên migration dùng `VyyyyMMddHHmm__module_description.sql`, ví dụ `V202609271430__merchant_create_shops.sql`.
-3. Chỉ chủ module được tạo migration cho bảng module sở hữu.
-4. Migration có khóa ngoại chéo module phải được cả hai chủ module review.
-5. Không chỉnh trực tiếp production database mà không có script tương ứng.
-6. Migration phải được review cùng entity và repository liên quan.
-7. Dữ liệu mẫu không sử dụng email, số điện thoại hoặc mật khẩu thật.
-8. Trước buổi bảo vệ phải xuất bản sao schema và dữ liệu demo.
-
-Dữ liệu demo tối thiểu:
-
-- Một tài khoản Admin và ba tài khoản User.
-- Hai gian hàng `APPROVED`, một `PENDING` và một `REJECTED`.
-- Ba danh mục và mười hai sản phẩm.
-- Đơn hàng ở nhiều trạng thái để trình diễn luồng xử lý và thống kê.
+Dữ liệu demo tối thiểu lấy theo SRS: Admin/User, shop ở nhiều trạng thái, category, product và order phục vụ toàn bộ luồng trình diễn. Trước buổi bảo vệ cần xuất bản sao schema và dữ liệu demo đã loại thông tin nhạy cảm.

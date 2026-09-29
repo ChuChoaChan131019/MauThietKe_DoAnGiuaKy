@@ -1,49 +1,45 @@
 # Hướng dẫn module Engagement
 
-[← Playbook chung](../DEVELOPMENT_PLAYBOOK.md)
+[← Playbook](../DEVELOPMENT_PLAYBOOK.md) · [Phân công](../PHAN_CONG_CONG_VIEC.md)
 
 ## Phạm vi
 
-- **Chủ sở hữu:** Thành viên 5.
-- **Requirement:** [NOTI 01–07](../SRS.md#sec_1019), [REV 01–04](../SRS.md#sec_1020), [STAT 01–05](../SRS.md#sec_1021) và các màn hình tổng hợp quản trị.
+- **Chủ sở hữu:** Huỳnh Thiên Phúc (2113010).
+- **Requirement:** NOTI 01–07, REV 01–04, STAT 01–05.
+- **Phối hợp:** Admin giám sát/cancel order qua `ordering.api`.
 - **Bảng:** `notifications`, `reviews`.
-- **Package:** `com.senvia.doangiuaky.engagement`.
-- **Template:** `templates/engagement`.
+- **Code/view:** `com.senvia.doangiuaky.engagement`, `templates/engagement`.
 
-Module quản lý thông báo, đánh giá, dashboard và các view tổng hợp. Nó không sở hữu lại nghiệp vụ shop, product hoặc order.
+## Dependency
 
-## Phụ thuộc và public contract
+- Dùng `identity.api` cho receiver/reviewer/Admin ACTIVE.
+- Dùng `merchant.api` cho shop/product/product count.
+- Dùng `ordering.api` cho review verification, order query/cancel và statistics.
+- Listener xử lý shop/order/review event sau commit.
+- Không truy cập Entity/Repository/Service nội bộ module khác.
 
-- Dùng `identity.api` để xác định người nhận/người đánh giá.
-- Dùng `merchant.api` để hiển thị shop/product và số lượng sản phẩm.
-- Dùng `ordering.api` để xác minh order item thuộc đơn COMPLETED và lấy thống kê đơn/doanh thu.
-- Lắng nghe event shop/order/review sau commit để tạo notification; mỗi event có eventId và notification đặt unique trên cặp event_id, receiver_id.
+## Thứ tự feature
 
-## Thứ tự triển khai
+1. Migration Notification/Review.
+2. Listener ShopRequested, ShopReviewed, OrderCreated, OrderStatusChanged, ReviewCreated.
+3. Notification list/unread/read-one/read-all.
+4. Review create/validation/list/average.
+5. Shop dashboard.
+6. Admin order list/filter/detail/cancel orchestration.
+7. Integration test event và public contract.
 
-1. Tạo migration/entity/repository cho notification và review.
-2. Triển khai listener ShopRequested, ShopReviewed, OrderCreated, OrderStatusChanged và ReviewCreated theo Observer Pattern.
-3. Làm danh sách, số chưa đọc, đánh dấu một/tất cả thông báo đã đọc.
-4. Làm tạo review sau khi xác minh buyer, order COMPLETED, đúng product/order item và chưa đánh giá; review không sửa hoặc xóa trong MVP.
-5. Làm danh sách review và điểm trung bình sản phẩm.
-6. Làm dashboard shop bằng public API của merchant/ordering.
-7. Làm màn hình tổng hợp admin bằng public API, không gọi repository chéo module.
-8. Hoàn thiện template notification, review và dashboard.
+## Quy tắc đặc thù
 
-## Kiểm tra bắt buộc
+- Event có `eventId`; unique `(event_id, receiver_id)`.
+- Listener chạy sau commit và xử lý lặp không tạo notification trùng.
+- Notification thuộc riêng receiver.
+- Review chỉ cho order item COMPLETED của đúng buyer/product.
+- Rating 1–5; unique `order_item_id`; không sửa/xóa trong MVP.
+- Dashboard chỉ hiện đúng shop; revenue chỉ từ COMPLETED.
+- Admin UI gọi Ordering API; không tự hủy/hoàn stock/refund.
 
-- Notification thuộc riêng receiver; user khác không đọc hoặc đánh dấu được.
-- ShopRequested gửi cho tất cả Admin ACTIVE; ReviewCreated gửi cho owner của shop chứa sản phẩm.
-- Event chỉ được xử lý sau commit, tạo đúng người nhận và không tạo trùng khi eventId được xử lý lặp.
-- Review chỉ được tạo cho order item thuộc đơn COMPLETED của buyer và chứa đúng sản phẩm.
-- Rating nằm trong 1–5; database đặt `UNIQUE(order_item_id)` để một order item chỉ được review một lần.
-- Điểm trung bình chỉ tính review hợp lệ.
-- Dashboard shop chỉ hiển thị số liệu của shop đang đăng nhập.
-- Doanh thu chỉ lấy từ đơn COMPLETED.
+## Kiểm thử/bàn giao
 
-## Bàn giao
+Test listener sau commit/idempotency, receiver ownership, review validation/unique/average, dashboard đúng shop và Admin query/cancel qua API. Doàn Trương Duy Khang review quyền; Trần Thị Phương Trang review product/shop; Lê Anh Khoa review order/statistics.
 
-- NOTI 01–07, REV 01–04 và STAT 01–05 có test chính/phân quyền.
-- Listener Observer được test độc lập với event.
-- Dashboard chỉ dùng public API, không import Entity/Repository module khác.
-- Thành viên 1 review quyền user/admin; thành viên 2 và 4 review contract dữ liệu dashboard/review.
+Checklist chất lượng chung xem [CONTRIBUTING.md](../CONTRIBUTING.md).

@@ -1,50 +1,47 @@
 # Hướng dẫn module Shopping
 
-[← Playbook chung](../DEVELOPMENT_PLAYBOOK.md)
+[← Playbook](../DEVELOPMENT_PLAYBOOK.md) · [Phân công](../PHAN_CONG_CONG_VIEC.md)
 
 ## Phạm vi
 
-- **Chủ sở hữu:** Thành viên 3.
-- **Requirement:** [CART 01–07](../SRS.md#sec_1016), [FAV 01–03](../SRS.md#sec_1020).
+- **Chủ sở hữu:** Đỗ Đặng Diệu Linh (2312663).
+- **Requirement:** CART 01–07, FAV 01–03.
+- **Phối hợp:** giao diện/query Buyer Order History cho ORDER 01 qua `ordering.api`.
 - **Bảng:** `carts`, `cart_items`, `favorites`.
-- **Package:** `com.senvia.doangiuaky.shopping`.
-- **Template:** `templates/shopping`.
+- **Code/view:** `com.senvia.doangiuaky.shopping`, `templates/shopping`.
 
-Module quản lý giỏ hàng hiện tại và danh sách sản phẩm yêu thích của người dùng.
+## Dependency và public contract
 
-## Phụ thuộc và public contract
+- Dùng `identity.api` cho user hiện tại và role.
+- Dùng `merchant.api` cho product/shop, giá, stock và khả năng bán.
+- Dùng `ordering.api` cho lịch sử/chi tiết/cancel order của buyer.
+- Cung cấp `shopping.api`: checkout snapshot và xóa item sau checkout thành công.
+- Không tạo Order, Payment hoặc cập nhật stock.
 
-- Dùng `identity.api` để lấy người dùng hiện tại.
-- Dùng `merchant.api` để đọc trạng thái, giá, tồn kho, shop và thông tin hiển thị sản phẩm.
-- Cung cấp qua `shopping.api` snapshot checkout theo shop và thao tác xóa các mục đã mua sau khi đặt hàng thành công.
+## Thứ tự feature
 
-Shopping không tự cập nhật tồn kho và không tạo Order.
+1. Migration và mapping cart/cart item/favorite.
+2. Tạo/lấy một cart cho user.
+3. Thêm/cộng dồn/cập nhật/xóa cart item.
+4. Nhóm theo shop, subtotal giá hiện tại và cảnh báo trước checkout.
+5. Favorite thêm/xóa/danh sách/chống trùng.
+6. Checkout snapshot và command xóa item.
+7. Buyer Order History qua `ordering.api`.
+8. Integration test Buyer Flow.
 
-## Thứ tự triển khai
+## Quy tắc đặc thù
 
-1. Tạo migration/entity/repository cho cart, cart item và favorite.
-2. Triển khai tạo hoặc lấy một cart duy nhất theo user.
-3. Triển khai thêm sản phẩm, cộng dồn số lượng và kiểm tra tồn kho.
-4. Triển khai cập nhật số lượng, xóa mục và nhóm hiển thị theo shop; subtotal luôn dùng giá sản phẩm hiện tại.
-5. Cảnh báo sản phẩm ẩn, hết hàng hoặc vượt tồn kho trước checkout.
-6. Triển khai thêm/xóa/xem favorite và chống bản ghi trùng.
-7. Công bố checkout snapshot và thao tác xóa mục cho `ordering`.
-8. Hoàn thiện template cart và favorite.
+- Một user một cart; một product một dòng trong cart.
+- Quantity > 0 và không vượt stock hiện tại.
+- Cart không lưu giá; subtotal luôn đọc giá hiện tại.
+- Admin không mua; owner không mua product của chính shop.
+- Không đọc/sửa cart hoặc favorite người khác.
+- Favorite chống trùng ở Service và database.
+- Cart chỉ bị xóa sau khi Ordering báo checkout thành công.
+- Buyer Order UI không truy cập Order Entity/Repository/Service nội bộ.
 
-## Kiểm tra bắt buộc
+## Kiểm thử/bàn giao
 
-- Chưa đăng nhập không được sửa cart/favorite.
-- Một user có một cart; một product không tạo hai dòng trong cùng cart.
-- Số lượng phải lớn hơn 0 và không vượt tồn kho hiện tại.
-- Cart item không lưu giá; thay đổi giá sản phẩm phải phản ánh ngay khi đọc giỏ.
-- Chủ shop không được thêm sản phẩm của chính shop mình vào giỏ.
-- User không đọc hoặc sửa cart/favorite của người khác.
-- Favorite trùng bị ngăn bởi service và unique constraint.
-- Xóa mục sau checkout chỉ xảy ra khi ordering báo thành công.
+Test cart/favorite ownership, unique constraint, price/stock/status thay đổi, snapshot checkout và Buyer Order History. Chạy integration flow Product → Cart → Checkout → Order → Cancel → Stock restored. Lê Anh Khoa review checkout/order contract; Trần Thị Phương Trang review product/shop contract.
 
-## Bàn giao
-
-- CART 01–07 và FAV 01–03 có test chính/ngoại lệ.
-- Cart hiển thị subtotal và nhóm đúng theo shop.
-- `shopping.api` không lộ Cart Entity hoặc Repository.
-- Thành viên 4 review checkout contract; thành viên 2 review cách đọc product/shop.
+Checklist chất lượng chung xem [CONTRIBUTING.md](../CONTRIBUTING.md).

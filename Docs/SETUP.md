@@ -5,19 +5,20 @@
 | Thành phần | Yêu cầu |
 | --- | --- |
 | JDK | Java 21 |
-| Build tool | Maven Wrapper đi kèm dự án |
-| Cơ sở dữ liệu | PostgreSQL hoặc Supabase PostgreSQL |
-| Quản lý mã nguồn | Git |
-| IDE | VS Code, IntelliJ IDEA hoặc IDE hỗ trợ Java tương đương |
+| Build | Maven Wrapper đi kèm repository |
+| Database | PostgreSQL hoặc Supabase PostgreSQL |
+| Lưu ảnh | Cloudinary khi triển khai upload |
+| Công cụ | Git và IDE hỗ trợ Java 21 |
 
-Kiểm tra môi trường:
+Kiểm tra:
 
-```bash
+```powershell
 java -version
 git --version
+.\mvnw.cmd -version
 ```
 
-Kết quả `java -version` phải hiển thị Java 21.
+Maven phải sử dụng JDK 21.
 
 ## 2. Lấy mã nguồn
 
@@ -26,20 +27,16 @@ git clone <repository-url>
 cd doangiuaky
 ```
 
-Thay `<repository-url>` bằng đường dẫn repository chính thức của nhóm.
+## 3. Cấu hình PostgreSQL
 
-## 3. Cấu hình cơ sở dữ liệu
+Không ghi thông tin đăng nhập thật vào source code hoặc Git.
 
-Dự án dùng PostgreSQL. Không ghi trực tiếp thông tin đăng nhập vào Git.
-
-Các biến môi trường cần thiết:
-
-| Biến | Ý nghĩa | Ví dụ |
+| Biến môi trường | Ý nghĩa | Ví dụ |
 | --- | --- | --- |
-| `SPRING_DATASOURCE_URL` | JDBC URL của PostgreSQL | `jdbc:postgresql://localhost:5432/ecommerce` |
-| `SPRING_DATASOURCE_USERNAME` | Tài khoản cơ sở dữ liệu | `postgres` |
-| `SPRING_DATASOURCE_PASSWORD` | Mật khẩu cơ sở dữ liệu | `your_password` |
-| `SPRING_JPA_HIBERNATE_DDL_AUTO` | Chính sách cập nhật schema | `validate` |
+| `SPRING_DATASOURCE_URL` | JDBC URL | `jdbc:postgresql://localhost:5432/ecommerce` |
+| `SPRING_DATASOURCE_USERNAME` | Database user | `postgres` |
+| `SPRING_DATASOURCE_PASSWORD` | Database password | `your_password` |
+| `SPRING_JPA_HIBERNATE_DDL_AUTO` | Chính sách schema | `validate` |
 
 PowerShell:
 
@@ -59,82 +56,71 @@ export SPRING_DATASOURCE_PASSWORD="your_password"
 export SPRING_JPA_HIBERNATE_DDL_AUTO="validate"
 ```
 
-Thông tin Cloudinary sẽ được bổ sung khi module tải ảnh được triển khai. Không commit `api_secret` hoặc thông tin Supabase vào repository.
+## 4. Cấu hình Cloudinary
 
-## 4. Chạy ứng dụng
+Khi chức năng upload ảnh được triển khai, dùng biến môi trường thay cho giá trị thật trong repository:
+
+```text
+CLOUDINARY_CLOUD_NAME
+CLOUDINARY_API_KEY
+CLOUDINARY_API_SECRET
+```
+
+Tên biến cuối cùng phải khớp cấu hình ứng dụng tại thời điểm tích hợp. Không đưa API secret vào log, issue, ảnh chụp hoặc dữ liệu demo.
+
+## 5. Chạy và đóng gói
 
 Windows:
 
 ```powershell
 .\mvnw.cmd spring-boot:run
+.\mvnw.cmd test
+.\mvnw.cmd clean package
 ```
 
-Linux hoặc macOS:
+Linux/macOS:
 
 ```bash
 chmod +x mvnw
 ./mvnw spring-boot:run
-```
-
-Mặc định ứng dụng chạy tại:
-
-```text
-http://localhost:8080
-```
-
-## 5. Chạy kiểm thử
-
-Windows:
-
-```powershell
-.\mvnw.cmd test
-```
-
-Linux hoặc macOS:
-
-```bash
 ./mvnw test
+./mvnw clean package
 ```
 
-## 6. Đóng gói ứng dụng
+Ứng dụng mặc định chạy tại `http://localhost:8080`. File JAR được tạo trong `target/`; không commit thư mục này.
 
-```powershell
-.\mvnw.cmd clean package
-```
+## 6. Database migration
 
-File JAR được tạo trong thư mục `target/`. Không commit thư mục này lên Git.
-
-## 7. Cấu trúc làm việc theo module
-
-Mỗi thành viên phát triển trọn backend, template, static asset và test trong module được phân công. Xem [MODULE_OWNERSHIP.md](MODULE_OWNERSHIP.md) trước khi sửa mã thuộc module khác.
-
-Database migration được đặt trong:
+Migration được đặt tại:
 
 ```text
 src/main/resources/db/migration
 ```
 
-## 8. Lỗi thường gặp
+Quy tắc đặt tên, review và dữ liệu mẫu xem [DATABASE.md](DATABASE.md). Không chỉnh trực tiếp schema dùng chung mà không có migration tương ứng.
 
-### Sai phiên bản Java
+## 7. Lỗi thường gặp
 
-Kiểm tra `JAVA_HOME` và bảo đảm Maven đang sử dụng JDK 21:
+### Sai Java
 
-```powershell
-.\mvnw.cmd -version
-```
+Kiểm tra `JAVA_HOME` và kết quả `.\mvnw.cmd -version`.
 
-### Không kết nối được PostgreSQL
+### Không kết nối PostgreSQL
 
-- Kiểm tra JDBC URL, username và password.
-- Kiểm tra database đã tồn tại và cho phép kết nối.
-- Với Supabase, kiểm tra đúng host, port và chế độ SSL.
-- Không đăng ảnh chứa chuỗi kết nối hoặc mật khẩu lên issue công khai.
+- Kiểm tra URL, username, password và database.
+- Với Supabase, kiểm tra host, port và SSL.
+- Không đăng log chứa chuỗi kết nối hoặc mật khẩu.
 
-### Cổng 8080 đang được sử dụng
+### Test ApplicationContext thất bại
 
-Có thể chạy tạm bằng cổng khác:
+Các test tải Spring context cần datasource/test database phù hợp. Không xóa test hoặc vô hiệu auto-configuration chỉ để build xanh.
+
+### Cổng 8080 bị chiếm
 
 ```powershell
 .\mvnw.cmd spring-boot:run "-Dspring-boot.run.arguments=--server.port=8081"
 ```
+
+## 8. Bước tiếp theo
+
+Sau khi chạy được dự án, đọc [CONTRIBUTING.md](CONTRIBUTING.md), [DEVELOPMENT_PLAYBOOK.md](DEVELOPMENT_PLAYBOOK.md) và guide của module được giao.

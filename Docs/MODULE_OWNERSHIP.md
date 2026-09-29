@@ -6,13 +6,13 @@ Tài liệu này là nguồn chuẩn để xác định ranh giới khi năm th�
 
 | Module | Chủ sở hữu | Nghiệp vụ | Bảng sở hữu |
 | --- | --- | --- | --- |
-| [`identity`](modules/IDENTITY_GUIDE.md) | Thành viên 1 | Đăng ký, đăng nhập, tài khoản, phân quyền | `users` |
-| [`merchant`](modules/MERCHANT_GUIDE.md) | Thành viên 2 | Gian hàng, xét duyệt, danh mục, sản phẩm | `shops`, `categories`, `products`, `product_images` |
-| [`shopping`](modules/SHOPPING_GUIDE.md) | Thành viên 3 | Giỏ hàng và sản phẩm yêu thích | `carts`, `cart_items`, `favorites` |
-| [`ordering`](modules/ORDERING_GUIDE.md) | Thành viên 4 | Checkout, đơn hàng, lịch sử trạng thái, thanh toán | `orders`, `order_items`, `payments`, `order_status_histories` |
-| [`engagement`](modules/ENGAGEMENT_GUIDE.md) | Thành viên 5 | Thông báo, đánh giá, trang quản trị và báo cáo | `notifications`, `reviews` |
+| [`merchant`](modules/MERCHANT_GUIDE.md) | Trần Thị Phương Trang (2314288) — Nhóm trưởng | Gian hàng, xét duyệt, danh mục, sản phẩm | `shops`, `categories`, `products`, `product_images` |
+| [`ordering`](modules/ORDERING_GUIDE.md) | Lê Anh Khoa (2312647) | Checkout, đơn hàng, lịch sử trạng thái, thanh toán | `orders`, `order_items`, `payments`, `order_status_histories` |
+| [`shopping`](modules/SHOPPING_GUIDE.md) | Đỗ Đặng Diệu Linh (2312663) | Giỏ hàng, sản phẩm yêu thích và Buyer Order History qua `ordering.api` | `carts`, `cart_items`, `favorites` |
+| [`identity`](modules/IDENTITY_GUIDE.md) | Doàn Trương Duy Khang (2111844) | Đăng ký, đăng nhập, tài khoản, phân quyền | `users` |
+| [`engagement`](modules/ENGAGEMENT_GUIDE.md) | Huỳnh Thiên Phúc (2113010) | Thông báo, đánh giá, trang quản trị và báo cáo | `notifications`, `reviews` |
 
-`common` do thành viên 1 quản lý và chỉ chứa thành phần kỹ thuật thật sự dùng chung. Không đặt nghiệp vụ của một module vào `common` để tránh ownership không rõ ràng.
+`common` do Doàn Trương Duy Khang (2111844) quản lý và chỉ chứa thành phần kỹ thuật thật sự dùng chung. Không đặt nghiệp vụ của một module vào `common` để tránh ownership không rõ ràng.
 
 ## 2. Hướng phụ thuộc
 
@@ -43,7 +43,7 @@ src/main/resources/static/js/modules/<module>/
 src/test/java/com/senvia/doangiuaky/<module>/
 ```
 
-Tài nguyên dùng chung cần thành viên 1 review:
+Tài nguyên dùng chung cần Doàn Trương Duy Khang (2111844) review:
 
 - `pom.xml` và `application.properties`.
 - `com.senvia.doangiuaky.common`.
