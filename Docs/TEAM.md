@@ -12,7 +12,7 @@
 
 | TV | Họ và tên | MSSV | Vai trò chính | Module |
 | --- | --- | --- | --- | --- |
-| TV1 | Trần Thị Phương Trang | 2314288 | Team Leader / Merchant Owner | [`merchant`](modules/MERCHANT_GUIDE.md) |
+| TV1 | Trần Thị Phương Trang | 2314288 | Merchant Owner | [`merchant`](modules/MERCHANT_GUIDE.md) |
 | TV2 | Lê Anh Khoa | 2312647 | Ordering Owner | [`ordering`](modules/ORDERING_GUIDE.md) |
 | TV3 | Đỗ Đặng Diệu Linh | 2312663 | Shopping Owner | [`shopping`](modules/SHOPPING_GUIDE.md) |
 | TV4 | Doàn Trương Duy Khang | 2111844 | Identity/Common Owner | [`identity`](modules/IDENTITY_GUIDE.md), `common` |
