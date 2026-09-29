@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Chi tiết sản phẩm - Bàn phím cơ không dây - SENVIA MARKET</title>
+
+  <!-- Bootstrap 5.3 CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <!-- Bootstrap Icons -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
+  <!-- Common Badges & Tokens -->
+  <link rel="stylesheet" th:href="@{/css/common/badges.css}" href="../../../static/css/common/badges.css" />
+  <!-- Common Layout CSS -->
+  <link rel="stylesheet" th:href="@{/css/common/layout.css}" href="../../../static/css/common/layout.css" />
+  <!-- Merchant Product Detail CSS -->
+  <link rel="stylesheet" th:href="@{/css/modules/merchant/product-detail.css}" href="../../../static/css/modules/merchant/product-detail.css" />
+</head>
+<body class="bg-light">
+
+  <!-- Header Fragment -->
+  <div th:replace="~{fragments/header :: header}">
+    <header class="navbar navbar-expand-lg navbar-dark bg-dark py-3 mb-4 shadow-sm">
+      <div class="container">
+        <a class="navbar-brand fw-bold d-flex align-items-center gap-2" href="/">
+          <i class="bi bi-shop-window text-warning"></i> SENVIA MARKET
+        </a>
+      </div>
+    </header>
+  </div>
+
+  <!-- Main Container -->
+  <main class="container my-4">
+
+    <!-- Breadcrumb -->
+    <nav aria-label="breadcrumb" class="mb-3">
+      <ol class="breadcrumb mb-0">
+        <li class="breadcrumb-item"><a href="/" class="text-decoration-none text-secondary">Trang chủ</a></li>
+        <li class="breadcrumb-item"><a th:href="@{/products}" href="list.html" class="text-decoration-none text-secondary">Danh mục sản phẩm</a></li>
+        <li class="breadcrumb-item active text-dark fw-medium text-truncate" style="max-width: 320px;" aria-current="page"
+            th:text="${product != null ? product.name : 'Bàn phím cơ không dây Custom 75%'}">
+          Bàn phím cơ không dây Custom 75%
+        </li>
+      </ol>
+    </nav>
+
+    <!-- =======================================================================
+         PHẦN 1: SHOWCASE SẢN PHẨM & MUA HÀNG (2 CỘT 6:6)
+         ======================================================================= -->
+    <section class="product-showcase-card">
+      <div class="row g-4">
+
+        <!-- CỘT TRÁI (6 COLS): THƯ VIỆN HÌNH ẢNH STUDIO -->
+        <div class="col-lg-6">
+          <div class="product-gallery-container">
+
+            <!-- Ảnh chính lớn 800x800 -->
+            <div class="gallery-main-image-wrapper">
+              <img id="mainProductImg"
+                   src="../../../static/images/demo/product-tech-mechanical-keyboard.jpg"
+                   th:src="${product != null && product.mainImageUrl != null ? product.mainImageUrl : '/images/demo/product-tech-mechanical-keyboard.jpg'}"
+                   alt="Ảnh sản phẩm chính"
+                   class="gallery-main-img" />
+              <span class="badge bg-danger position-absolute top-0 start-0 m-3 px-2 py-1 fs-7 rounded-pill">
+                -30% GIẢM GIÁ
+              </span>
+            </div>
+
+            <!-- Hàng ảnh thumbnail phụ -->
+            <div class="gallery-thumbnails-row">
+              <div class="gallery-thumb-item active" data-img="../../../static/images/demo/product-tech-mechanical-keyboard.jpg">
+                <img src="../../../static/images/demo/product-tech-mechanical-keyboard.jpg" alt="Thumb 1" />
+              </div>
+              <div class="gallery-thumb-item" data-img="../../../static/images/demo/product-tech-wireless-headphones.jpg">
+                <img src="../../../static/images/demo/product-tech-wireless-headphones.jpg" alt="Thumb 2" />
+              </div>
+              <div class="gallery-thumb-item" data-img="../../../static/images/demo/product-fashion-bomber-jacket.jpg">
+                <img src="../../../static/images/demo/product-fashion-bomber-jacket.jpg" alt="Thumb 3" />
+              </div>
+              <div class="gallery-thumb-item" data-img="../../../static/images/demo/product-household-airfryer.jpg">
+                <img src="../../../static/images/demo/product-household-airfryer.jpg" alt="Thumb 4" />
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- CỘT PHẢI (6 COLS): THÔNG TIN & NÚT THÊM GIỎ HÀNG -->
+        <div class="col-lg-6">
+          <div class="product-meta-header">
+
+            <!-- Danh mục & Tình trạng kho -->
+            <div class="d-flex align-items-center justify-content-between mb-2">
+              <span class="badge bg-primary-subtle text-primary border border-primary-subtle fw-semibold">
+                <i class="bi bi-tag-fill me-1"></i>
+                <span th:text="${product != null ? product.categoryName : 'Phụ kiện công nghệ cao cấp'}">Phụ kiện công nghệ cao cấp</span>
+              </span>
+
+              <!-- Badge Tồn kho -->
+              <span class="badge bg-success-subtle text-success border border-success-subtle fw-semibold"
+                    th:if="${product == null || product.stockQuantity > 0}">
+                <i class="bi bi-check-circle-fill me-1"></i>
+                Còn <strong th:text="${product != null ? product.stockQuantity : 15}">15</strong> sản phẩm
+              </span>
+              <span class="badge bg-danger-subtle text-danger border border-danger-subtle fw-semibold"
+                    th:if="${product != null && product.stockQuantity == 0}">
+                <i class="bi bi-x-circle-fill me-1"></i> Hết hàng
+              </span>
+            </div>
+
+            <!-- Tên sản phẩm -->
+            <h1 class="product-detail-title"
+                th:text="${product != null ? product.name : 'Bàn phím cơ không dây Bluetooth RGB Layout 75% - Keycaps PBT Vintage'}">
+              Bàn phím cơ không dây Bluetooth RGB Layout 75% - Keycaps PBT Vintage
+            </h1>
+
+            <!-- Đánh giá số sao & Đã bán -->
+            <div class="product-rating-bar">
+              <div class="stars-rating">
+                <i class="bi bi-star-fill"></i>
+                <i class="bi bi-star-fill"></i>
+                <i class="bi bi-star-fill"></i>
+                <i class="bi bi-star-fill"></i>
+                <i class="bi bi-star-half"></i>
+              </div>
+              <strong class="text-dark">4.8</strong>
+              <span class="text-muted">|</span>
+              <a href="#reviewsSection" class="text-decoration-none text-secondary">
+                <strong th:text="${reviewCount != null ? reviewCount : 142}">142</strong> đánh giá
+              </a>
+              <span class="text-muted">|</span>
+              <span class="text-muted">Đã bán 520</span>
+            </div>
+
+            <!-- Khung giá bán -->
+            <div class="product-price-box">
+              <div class="product-current-price"
+                   th:text="${product != null ? #numbers.formatDecimal(product.price, 0, 'COMMA', 0, 'POINT') + ' đ' : '450.000 đ'}">
+                450.000 đ
+              </div>
+              <div class="product-original-price">650.000 đ</div>
+              <span class="product-discount-tag">Tiết kiệm 30%</span>
+            </div>
+
+            <!-- Thuộc tính tóm tắt -->
+            <div class="mb-4">
+              <div class="product-spec-row">
+                <span class="product-spec-label"><i class="bi bi-shield-check text-primary me-2"></i>Bảo hành:</span>
+                <span class="product-spec-value">12 tháng chính hãng (1 đổi 1 trong 30 ngày)</span>
+              </div>
+              <div class="product-spec-row">
+                <span class="product-spec-label"><i class="bi bi-truck text-success me-2"></i>Vận chuyển:</span>
+                <span class="product-spec-value">Giao hàng toàn quốc (Hỗ trợ COD & Chuyển khoản)</span>
+              </div>
+              <div class="product-spec-row">
+                <span class="product-spec-label"><i class="bi bi-arrow-repeat text-info me-2"></i>Đổi trả:</span>
+                <span class="product-spec-value">Miễn phí đổi trả trong 7 ngày nếu lỗi từ NSX</span>
+              </div>
+            </div>
+
+            <!-- FORM ĐẶT HÀNG & THÊM GIỎ -->
+            <!-- th:action="@{/shopping/cart/add}" method="post" -->
+            <form th:action="@{/shopping/cart/add}" action="/shopping/cart/add" method="post" id="addToCartForm">
+              <input type="hidden" name="productId" th:value="${product != null ? product.id : 1}" value="1" />
+
+              <!-- Chọn số lượng -->
+              <div class="d-flex align-items-center gap-3 mb-4">
+                <label for="productQuantityInput" class="fw-semibold text-secondary mb-0">Số lượng:</label>
+
+                <div class="quantity-controller">
+                  <button type="button" class="quantity-btn" id="btnQtyMinus"><i class="bi bi-dash"></i></button>
+                  <input type="number"
+                         class="quantity-input"
+                         id="productQuantityInput"
+                         name="quantity"
+                         value="1"
+                         min="1"
+                         th:max="${product != null ? product.stockQuantity : 15}"
+                         max="15" />
+                  <button type="button" class="quantity-btn" id="btnQtyPlus"><i class="bi bi-plus"></i></button>
+                </div>
+
+                <small class="text-muted">
+                  (<span th:text="${product != null ? product.stockQuantity : 15}">15</span> sản phẩm có sẵn)
+                </small>
+              </div>
+
+              <!-- Nút hành động (Thêm giỏ / Mua ngay / Yêu thích) -->
+              <div class="product-action-group">
+                <!-- Nút 1: Thêm vào giỏ hàng -->
+                <button type="submit" class="btn btn-outline-primary btn-add-cart" id="btnAddToCart">
+                  <i class="bi bi-cart-plus fs-5"></i>
+                  <span>Thêm vào giỏ hàng</span>
+                </button>
+
+                <!-- Nút 2: Mua ngay (Chuyển thẳng sang Checkout) -->
+                <button type="button" class="btn btn-primary btn-buy-now" id="btnBuyNow">
+                  <i class="bi bi-lightning-charge-fill"></i>
+                  <span>Mua ngay</span>
+                </button>
+
+                <!-- Nút 3: Nút thích (Yêu thích) -->
+                <button type="button" class="btn-favorite-icon" id="btnToggleFavorite" title="Lưu vào sản phẩm yêu thích">
+                  <i class="bi bi-heart" id="favHeartIcon"></i>
+                </button>
+              </div>
+
+            </form>
+
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+
+    <!-- =======================================================================
+         PHẦN 2: THÔNG TIN GIAN HÀNG SỞ HỮU (SHOP PROFILE CARD)
+         ======================================================================= -->
+    <section class="shop-profile-card">
+      <div class="shop-profile-info">
+        <img src="../../../static/images/demo/logo-techzone.png"
+             th:src="${shop != null && shop.logoUrl != null ? shop.logoUrl : '/images/demo/logo-techzone.png'}"
+             alt="Logo Gian Hàng"
+             class="shop-profile-avatar" />
+        <div>
+          <div class="d-flex align-items-center gap-2 mb-1">
+            <h2 class="fs-5 fw-bold text-dark mb-0" th:text="${shop != null ? shop.shopName : 'TechZone Official'}">
+              TechZone Official
+            </h2>
+            <span class="badge bg-success-subtle text-success border border-success-subtle small py-0 px-2 rounded-pill">
+              <i class="bi bi-patch-check-fill"></i> Shop Chính Hãng
+            </span>
+          </div>
+          <div class="text-muted small">
+            <i class="bi bi-geo-alt me-1"></i> <span th:text="${shop != null ? shop.address : 'Số 123 Đường Cầu Giấy, Hà Nội'}">Số 123 Đường Cầu Giấy, Hà Nội</span>
+            <span class="mx-2">•</span>
+            <i class="bi bi-star-fill text-warning me-1"></i> <strong>4.9 / 5.0</strong>
+          </div>
+        </div>
+      </div>
+
+      <div class="d-flex align-items-center gap-2">
+        <a th:href="@{'/shops/' + ${shop != null ? shop.id : 1}}" href="/shops/1" class="btn btn-outline-secondary btn-sm">
+          <i class="bi bi-shop me-1"></i> Xem gian hàng
+        </a>
+        <button type="button" class="btn btn-outline-primary btn-sm">
+          <i class="bi bi-chat-dots me-1"></i> Chat với Shop
+        </button>
+      </div>
+    </section>
+
+
+    <!-- =======================================================================
+         PHẦN 3: TABS MÔ TẢ CHI TIẾT & ĐÁNH GIÁ TỪ MODULE ENGAGEMENT
+         ======================================================================= -->
+    <section class="product-content-card" id="reviewsSection">
+
+      <!-- Nav Tabs -->
+      <ul class="nav nav-tabs product-content-nav pt-2" id="productTabs" role="tablist">
+        <li class="nav-item" role="presentation">
+          <button class="nav-link active fw-bold text-dark" id="desc-tab" data-bs-toggle="tab" data-bs-target="#desc-pane" type="button" role="tab">
+            <i class="bi bi-card-text me-1"></i> Mô tả chi tiết sản phẩm
+          </button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button class="nav-link fw-bold text-dark" id="reviews-tab" data-bs-toggle="tab" data-bs-target="#reviews-pane" type="button" role="tab">
+            <i class="bi bi-chat-square-quote me-1"></i> Đánh giá từ khách hàng (142)
+          </button>
+        </li>
+      </ul>
+
+      <!-- Tab Content -->
+      <div class="tab-content product-content-body" id="productTabsContent">
+
+        <!-- PANE 1: MÔ TẢ CHI TIẾT -->
+        <div class="tab-pane fade show active" id="desc-pane" role="tabpanel" tabindex="0">
+          <h3 class="fs-5 fw-bold text-dark mb-3">Đặc điểm nổi bật của sản phẩm</h3>
+          <p>
+            Bàn phím cơ không dây Bluetooth RGB Layout 75% mang đến trải nghiệm gõ phím êm ái, đầm tay với switch cơ học cao cấp đã được lube sẵn từ nhà máy. Sản phẩm sở hữu thiết kế gọn gàng, tiết kiệm không gian bàn làm việc nhưng vẫn giữ trọn cụm phím điều hướng và hàng phím chức năng F1-F12 tiện lợi.
+          </p>
+
+          <h4 class="fs-6 fw-bold text-dark mt-4 mb-2">Thông số kỹ thuật chính:</h4>
+          <ul>
+            <li><strong>Layout:</strong> 75% (84 phím bấm nhỏ gọn).</li>
+            <li><strong>Kết nối 3 chế độ:</strong> Bluetooth 5.1 (kết nối tối đa 3 thiết bị), Wireless 2.4GHz, và dây Type-C.</li>
+            <li><strong>Chất liệu Keycaps:</strong> Nhựa PBT Double-shot siêu bền, không bị bóng mờ theo thời gian.</li>
+            <li><strong>Hệ thống đèn LED:</strong> LED RGB 16.8 triệu màu với 18 hiệu ứng ánh sáng bắt mắt.</li>
+            <li><strong>Dung lượng Pin:</strong> 4000mAh cho thời gian sử dụng liên tục lên đến 80 giờ.</li>
+            <li><strong>Khả năng tương thích:</strong> Hỗ trợ hoàn hảo Windows, macOS, Android và iOS.</li>
+          </ul>
+
+          <div class="alert alert-light border mt-4 small text-secondary">
+            <i class="bi bi-info-circle text-primary me-1"></i>
+            Tất cả sản phẩm bán ra đều được kiểm tra kỹ lưỡng trước khi đóng gói và gửi cho đơn vị vận chuyển.
+          </div>
+        </div>
+
+        <!-- PANE 2: ĐÁNH GIÁ (MODULE ENGAGEMENT INTEGRATION - REV 01-04) -->
+        <div class="tab-pane fade" id="reviews-pane" role="tabpanel" tabindex="0">
+
+          <!-- Rating Summary Box -->
+          <div class="row align-items-center p-3 bg-light rounded-3 mb-4">
+            <div class="col-md-4 text-center border-end-md">
+              <div class="display-4 fw-bold text-danger mb-0">4.8</div>
+              <div class="stars-rating fs-5 mb-1">
+                <i class="bi bi-star-fill"></i>
+                <i class="bi bi-star-fill"></i>
+                <i class="bi bi-star-fill"></i>
+                <i class="bi bi-star-fill"></i>
+                <i class="bi bi-star-half"></i>
+              </div>
+              <small class="text-muted">Dựa trên 142 lượt đánh giá thực tế</small>
+            </div>
+            <div class="col-md-8 ps-md-4 mt-3 mt-md-0">
+              <span class="small text-muted d-block mb-2">Đánh giá sản phẩm chỉ mở cho người mua sở hữu đơn hàng COMPLETED (Quy tắc BR 15):</span>
+              <div class="d-flex flex-wrap gap-2">
+                <span class="badge bg-white text-dark border px-3 py-2">Tất cả (142)</span>
+                <span class="badge bg-white text-dark border px-3 py-2">5 Sao (120)</span>
+                <span class="badge bg-white text-dark border px-3 py-2">4 Sao (18)</span>
+                <span class="badge bg-white text-dark border px-3 py-2">3 Sao (4)</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Danh sách nhận xét mẫu (Review List) -->
+          <div class="review-items-list">
+
+            <!-- Review 1 -->
+            <div class="review-item-card">
+              <div class="d-flex align-items-center gap-3 mb-2">
+                <div class="review-author-avatar">H</div>
+                <div>
+                  <div class="fw-bold text-dark">Hoàng Minh Vũ</div>
+                  <div class="stars-rating small">
+                    <i class="bi bi-star-fill"></i>
+                    <i class="bi bi-star-fill"></i>
+                    <i class="bi bi-star-fill"></i>
+                    <i class="bi bi-star-fill"></i>
+                    <i class="bi bi-star-fill"></i>
+                  </div>
+                </div>
+                <small class="text-muted ms-auto">2 ngày trước • Đã mua hàng</small>
+              </div>
+              <p class="mb-0 text-secondary">
+                Bàn phím gõ rất đầm và êm tay, keycaps dày dặn màu sắc cổ điển cực kỳ ưng ý. Đóng gói 2 lớp bóng khí cẩn thận, giao hàng chỉ mất 2 ngày là nhận được. Đánh giá 5 sao cho shop!
+              </p>
+            </div>
+
+            <!-- Review 2 -->
+            <div class="review-item-card">
+              <div class="d-flex align-items-center gap-3 mb-2">
+                <div class="review-author-avatar bg-warning text-dark">L</div>
+                <div>
+                  <div class="fw-bold text-dark">Lê Thu Trang</div>
+                  <div class="stars-rating small">
+                    <i class="bi bi-star-fill"></i>
+                    <i class="bi bi-star-fill"></i>
+                    <i class="bi bi-star-fill"></i>
+                    <i class="bi bi-star-fill"></i>
+                    <i class="bi bi-star-fill"></i>
+                  </div>
+                </div>
+                <small class="text-muted ms-auto">1 tuần trước • Đã mua hàng</small>
+              </div>
+              <p class="mb-0 text-secondary">
+                Pin rất trâu, dùng văn phòng cả tuần mới phải sạc lại. Chuyển đổi giữa Macbook và máy tính Windows mượt mà không bị delay. Rất đáng tiền!
+              </p>
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </section>
+
+  </main>
+
+  <!-- Toast Notification khi thêm vào giỏ thành công -->
+  <div class="toast-container position-fixed bottom-0 end-0 p-3" style="z-index: 1100;">
+    <div id="cartToast" class="toast align-items-center text-bg-success border-0 shadow" role="alert" aria-live="assertive" aria-atomic="true">
+      <div class="d-flex">
+        <div class="toast-body d-flex align-items-center gap-2">
+          <i class="bi bi-check-circle-fill fs-5"></i>
+          <span>Đã thêm sản phẩm vào giỏ hàng thành công!</span>
+        </div>
+        <a th:href="@{/shopping/cart}" href="../../shopping/cart.html" class="btn btn-sm btn-light ms-auto me-2 text-dark fw-semibold">Xem giỏ</a>
+        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer Fragment -->
+  <div th:replace="~{fragments/footer :: footer}"></div>
+
+  <!-- Bootstrap 5.3 JS Bundle -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+  <!-- Interactive JavaScript: Gallery thumbnails, Quantity Controller, Toast & Favorites -->
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      // 1. Thư viện đổi ảnh Thumbnail
+      const mainImg = document.getElementById('mainProductImg');
+      const thumbItems = document.querySelectorAll('.gallery-thumb-item');
+
+      thumbItems.forEach(thumb => {
+        thumb.addEventListener('click', function () {
+          thumbItems.forEach(t => t.classList.remove('active'));
+          this.classList.add('active');
+          const newSrc = this.getAttribute('data-img');
+          if (mainImg && newSrc) {
+            mainImg.src = newSrc;
+          }
+        });
+      });
+
+      // 2. Bộ tăng giảm số lượng
+      const btnMinus = document.getElementById('btnQtyMinus');
+      const btnPlus = document.getElementById('btnQtyPlus');
+      const inputQty = document.getElementById('productQuantityInput');
+
+      if (btnMinus && btnPlus && inputQty) {
+        btnMinus.addEventListener('click', function () {
+          let current = parseInt(inputQty.value) || 1;
+          if (current > 1) {
+            inputQty.value = current - 1;
+          }
+        });
+
+        btnPlus.addEventListener('click', function () {
+          let current = parseInt(inputQty.value) || 1;
+          let max = parseInt(inputQty.getAttribute('max')) || 99;
+          if (current < max) {
+            inputQty.value = current + 1;
+          }
+        });
+      }
+
+      // 3. Nút Thêm vào giỏ (Hiện Toast)
+      const btnAddCart = document.getElementById('btnAddToCart');
+      const toastEl = document.getElementById('cartToast');
+      if (btnAddCart && toastEl) {
+        const toast = new bootstrap.Toast(toastEl, { delay: 3500 });
+        btnAddCart.addEventListener('click', function (e) {
+          // Khi chạy tĩnh thì chặn submit và hiện toast minh họa
+          if (window.location.protocol === 'file:' || window.location.pathname.endsWith('.html')) {
+            e.preventDefault();
+            toast.show();
+          }
+        });
+      }
+
+      // 4. Nút Mua ngay (Chuyển sang checkout)
+      const btnBuyNow = document.getElementById('btnBuyNow');
+      if (btnBuyNow) {
+        btnBuyNow.addEventListener('click', function () {
+          if (window.location.protocol === 'file:' || window.location.pathname.endsWith('.html')) {
+            window.location.href = '../../ordering/checkout.html';
+          } else {
+            window.location.href = '/ordering/checkout';
+          }
+        });
+      }
+
+      // 5. Nút Thả tim yêu thích
+      const btnFav = document.getElementById('btnToggleFavorite');
+      const heartIcon = document.getElementById('favHeartIcon');
+      if (btnFav && heartIcon) {
+        btnFav.addEventListener('click', function () {
+          btnFav.classList.toggle('active');
+          if (btnFav.classList.contains('active')) {
+            heartIcon.className = 'bi bi-heart-fill text-danger';
+          } else {
+            heartIcon.className = 'bi bi-heart';
+          }
+        });
+      }
+    });
+  </script>
+</body>
+</html>

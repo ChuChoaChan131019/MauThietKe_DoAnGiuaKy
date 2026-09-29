@@ -1,0 +1,969 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Xét duyệt gian hàng - Quản trị Admin - SENVIA MARKET</title>
+
+  <!-- Bootstrap 5.3 CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <!-- Bootstrap Icons -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
+  <!-- Common Badges & Tokens -->
+  <link rel="stylesheet" th:href="@{/css/common/badges.css}" href="../../../static/css/common/badges.css" />
+  <!-- Common Layout CSS -->
+  <link rel="stylesheet" th:href="@{/css/common/layout.css}" href="../../../static/css/common/layout.css" />
+  <!-- Admin Shops CSS -->
+  <link rel="stylesheet" th:href="@{/css/modules/merchant/admin-shops.css}" href="../../../static/css/modules/merchant/admin-shops.css" />
+</head>
+<body class="bg-light">
+
+  <!-- =======================================================================
+       HEADER FRAGMENT
+       ======================================================================= -->
+  <div th:replace="~{fragments/header :: header}">
+    <header class="navbar navbar-expand-lg navbar-dark bg-dark py-3 mb-3 shadow-sm">
+      <div class="container">
+        <a class="navbar-brand fw-bold d-flex align-items-center gap-2" href="/">
+          <i class="bi bi-shop-window text-warning"></i> SENVIA MARKET
+        </a>
+        <div class="d-flex align-items-center gap-3">
+          <span class="admin-badge-indicator">
+            <i class="bi bi-shield-lock-fill me-1"></i> Quản trị viên (ADMIN)
+          </span>
+          <a href="../products/list.html" class="btn btn-outline-light btn-sm">Xem sàn thương mại</a>
+        </div>
+      </div>
+    </header>
+  </div>
+
+  <!-- Main Container -->
+  <main class="container my-4">
+
+    <!-- Breadcrumb -->
+    <nav aria-label="breadcrumb" class="mb-3">
+      <ol class="breadcrumb mb-0">
+        <li class="breadcrumb-item"><a href="/" th:href="@{/}" class="text-decoration-none text-secondary">Trang chủ</a></li>
+        <li class="breadcrumb-item"><a href="javascript:void(0)" class="text-decoration-none text-secondary">Quản trị hệ thống</a></li>
+        <li class="breadcrumb-item active text-dark fw-medium" aria-current="page">Xét duyệt gian hàng (State Pattern)</li>
+      </ol>
+    </nav>
+
+    <!-- Page Header -->
+    <div class="d-flex align-items-center justify-content-between mb-4 flex-wrap gap-3">
+      <div>
+        <div class="d-flex align-items-center gap-2 mb-1">
+          <h1 class="h3 fw-bold text-dark mb-0">Xét Duyệt &amp; Quản Lý Gian Hàng</h1>
+          <span class="badge bg-danger-subtle text-danger border border-danger-subtle py-1 px-2 fw-semibold">
+            State Pattern Model
+          </span>
+        </div>
+        <p class="text-secondary small mb-0">
+          Minh họa vòng đời gian hàng: Thẩm định hồ sơ PENDING, Phê duyệt APPROVED, Từ chối bắt buộc có lý do REJECTED (BR 05) hoặc Khóa shop LOCKED (SHOP 08).
+        </p>
+      </div>
+
+      <div class="d-flex align-items-center gap-2">
+        <a th:href="@{/engagement/admin/dashboard}" href="../../engagement/admin/dashboard.html" class="btn btn-outline-primary btn-sm">
+          <i class="bi bi-speedometer2 me-1"></i> Dashboard Thống kê Sàn
+        </a>
+        <span class="badge bg-light text-secondary border px-3 py-2">
+          <i class="bi bi-diagram-3-fill text-primary me-1"></i> Bảng điều khiển Admin
+        </span>
+      </div>
+    </div>
+
+    <!-- =======================================================================
+         PHẦN 1: STATE PATTERN KPI CARDS (4 TRẠNG THÁI VÒNG ĐỜI SHOP)
+         ======================================================================= -->
+    <div class="row g-3 mb-4">
+
+      <!-- 1. PENDING -->
+      <div class="col-6 col-lg-3">
+        <div class="state-kpi-card" onclick="filterByStateTab('PENDING')">
+          <div class="state-kpi-icon bg-warning-subtle text-warning-emphasis">
+            <i class="bi bi-hourglass-split"></i>
+          </div>
+          <div class="state-kpi-count text-warning-emphasis" id="kpiPending">2</div>
+          <div class="state-kpi-label">Chờ xét duyệt (PENDING)</div>
+        </div>
+      </div>
+
+      <!-- 2. APPROVED -->
+      <div class="col-6 col-lg-3">
+        <div class="state-kpi-card" onclick="filterByStateTab('APPROVED')">
+          <div class="state-kpi-icon bg-success-subtle text-success">
+            <i class="bi bi-patch-check-fill"></i>
+          </div>
+          <div class="state-kpi-count text-success" id="kpiApproved">2</div>
+          <div class="state-kpi-label">Đang hoạt động (APPROVED)</div>
+        </div>
+      </div>
+
+      <!-- 3. REJECTED -->
+      <div class="col-6 col-lg-3">
+        <div class="state-kpi-card" onclick="filterByStateTab('REJECTED')">
+          <div class="state-kpi-icon bg-danger-subtle text-danger">
+            <i class="bi bi-x-octagon-fill"></i>
+          </div>
+          <div class="state-kpi-count text-danger" id="kpiRejected">1</div>
+          <div class="state-kpi-label">Bị từ chối (REJECTED)</div>
+        </div>
+      </div>
+
+      <!-- 4. LOCKED -->
+      <div class="col-6 col-lg-3">
+        <div class="state-kpi-card" onclick="filterByStateTab('LOCKED')">
+          <div class="state-kpi-icon bg-secondary-subtle text-secondary">
+            <i class="bi bi-shield-lock-fill"></i>
+          </div>
+          <div class="state-kpi-count text-secondary" id="kpiLocked">1</div>
+          <div class="state-kpi-label">Bị tạm khóa (LOCKED)</div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- =======================================================================
+         PHẦN 2: THANH ĐIỀU HƯỚNG TABS & TÌM KIẾM
+         ======================================================================= -->
+    <div class="admin-toolbar-card">
+      <div class="row g-3 align-items-center justify-content-between">
+
+        <!-- Tabs lọc trạng thái -->
+        <div class="col-12 col-md-auto">
+          <ul class="nav admin-state-tabs" id="adminStateTabs">
+            <li class="nav-item">
+              <button class="nav-link active" onclick="filterByStateTab('ALL')">
+                Tất cả <span class="tab-badge-pill" id="tabCountAll">6</span>
+              </button>
+            </li>
+            <li class="nav-item">
+              <button class="nav-link" onclick="filterByStateTab('PENDING')">
+                <i class="bi bi-hourglass-split text-warning"></i> Chờ duyệt
+                <span class="tab-badge-pill bg-warning text-dark fw-bold" id="tabCountPending">2</span>
+              </button>
+            </li>
+            <li class="nav-item">
+              <button class="nav-link" onclick="filterByStateTab('APPROVED')">
+                <i class="bi bi-check2-circle text-success"></i> Đang hoạt động
+                <span class="tab-badge-pill" id="tabCountApproved">2</span>
+              </button>
+            </li>
+            <li class="nav-item">
+              <button class="nav-link" onclick="filterByStateTab('REJECTED')">
+                <i class="bi bi-x-circle text-danger"></i> Bị từ chối
+                <span class="tab-badge-pill" id="tabCountRejected">1</span>
+              </button>
+            </li>
+            <li class="nav-item">
+              <button class="nav-link" onclick="filterByStateTab('LOCKED')">
+                <i class="bi bi-lock text-secondary"></i> Bị tạm khóa
+                <span class="tab-badge-pill" id="tabCountLocked">1</span>
+              </button>
+            </li>
+          </ul>
+        </div>
+
+        <!-- Ô tìm kiếm -->
+        <div class="col-12 col-md-auto">
+          <div class="input-group input-group-sm" style="width: 260px;">
+            <span class="input-group-text bg-white border-end-0"><i class="bi bi-search text-muted"></i></span>
+            <input type="text" id="adminSearchInput" class="form-control border-start-0"
+                   placeholder="Tìm tên shop, chủ shop, SĐT..." oninput="handleAdminSearch(this.value)" />
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- =======================================================================
+         PHẦN 3: BẢNG DỮ LIỆU XÉT DUYỆT GIAN HÀNG (SHOP 04 - 08)
+         Thymeleaf Integration: th:each="shop : ${shops}"
+         ======================================================================= -->
+    <div class="admin-table-card">
+      <div class="table-responsive">
+        <table class="table admin-shops-table" id="adminShopsTable">
+          <thead>
+            <tr>
+              <th style="width: 260px;">Gian hàng &amp; Mô tả</th>
+              <th style="width: 220px;">Chủ sở hữu &amp; Liên hệ</th>
+              <th style="width: 160px;">Trạng thái State</th>
+              <th>Địa chỉ kinh doanh &amp; Lý do</th>
+              <th style="width: 210px;" class="text-end">Hành động chuyển State</th>
+            </tr>
+          </thead>
+          <tbody id="adminTableBody">
+
+            <!-- SHOP 1: PENDING - CHỜ DUYỆT -->
+            <tr data-id="1" data-status="PENDING" data-name="Gia Dụng Thông Minh ZenLife" data-owner="Trần Thị Lan" data-phone="0988123456">
+              <td>
+                <div class="d-flex align-items-center gap-3">
+                  <img src="../../../static/images/demo/logo-zenhome.png" alt="Logo" class="table-shop-logo" />
+                  <div>
+                    <div class="table-shop-name">Gia Dụng Thông Minh ZenLife</div>
+                    <div class="table-shop-desc">Chuyên phân phối thiết bị gia dụng và đồ dùng nhà bếp cao cấp</div>
+                    <small class="text-muted">Gửi lúc: 29/09/2026 10:15</small>
+                  </div>
+                </div>
+              </td>
+              <td>
+                <div class="table-owner-box">
+                  <div class="table-owner-name">Trần Thị Lan</div>
+                  <div class="table-owner-contact"><i class="bi bi-envelope me-1"></i>lan.tran@example.com</div>
+                  <div class="table-owner-contact"><i class="bi bi-telephone me-1"></i>0988 123 456</div>
+                </div>
+              </td>
+              <td>
+                <span class="badge-status badge-shop-pending">
+                  <i class="bi bi-hourglass-split"></i> PENDING: Chờ duyệt
+                </span>
+              </td>
+              <td>
+                <div class="small text-secondary mb-1">
+                  <i class="bi bi-geo-alt text-danger me-1"></i>Số 45 Đường Nguyễn Huệ, Phường Bến Nghé, Quận 1, TP.HCM
+                </div>
+              </td>
+              <td class="text-end">
+                <div class="d-flex align-items-center justify-content-end gap-1">
+                  <button type="button" class="btn btn-success btn-sm d-flex align-items-center gap-1"
+                          title="Phê duyệt hồ sơ mở shop" onclick="approveShop(1, 'Gia Dụng Thông Minh ZenLife')">
+                    <i class="bi bi-check-lg"></i> Duyệt
+                  </button>
+                  <button type="button" class="btn btn-outline-danger btn-sm d-flex align-items-center gap-1"
+                          title="Từ chối yêu cầu (bắt buộc nhập lý do)" onclick="openRejectModal(1, 'Gia Dụng Thông Minh ZenLife')">
+                    <i class="bi bi-x-lg"></i> Từ chối
+                  </button>
+                  <button type="button" class="btn btn-outline-secondary btn-sm"
+                          title="Xem chi tiết" onclick="viewShopDetail(1, 'Gia Dụng Thông Minh ZenLife', 'Trần Thị Lan', '0988 123 456', 'lan.tran@example.com', 'Số 45 Đường Nguyễn Huệ, Quận 1, TP.HCM', 'Chuyên phân phối thiết bị gia dụng và đồ dùng nhà bếp cao cấp', '../../../static/images/demo/logo-zenhome.png', 'PENDING')">
+                    <i class="bi bi-eye"></i>
+                  </button>
+                </div>
+              </td>
+            </tr>
+
+            <!-- SHOP 2: PENDING - CHỜ DUYỆT -->
+            <tr data-id="2" data-status="PENDING" data-name="Fashion Street Store" data-owner="Lê Hoàng Nam" data-phone="0903888999">
+              <td>
+                <div class="d-flex align-items-center gap-3">
+                  <div class="table-shop-logo d-flex align-items-center justify-content-center bg-light text-primary fs-4">
+                    <i class="bi bi-handbag"></i>
+                  </div>
+                  <div>
+                    <div class="table-shop-name">Fashion Street Store</div>
+                    <div class="table-shop-desc">Quần áo thời trang nam nữ phong cách trẻ trung đường phố</div>
+                    <small class="text-muted">Gửi lúc: 29/09/2026 11:40</small>
+                  </div>
+                </div>
+              </td>
+              <td>
+                <div class="table-owner-box">
+                  <div class="table-owner-name">Lê Hoàng Nam</div>
+                  <div class="table-owner-contact"><i class="bi bi-envelope me-1"></i>nam.le@example.com</div>
+                  <div class="table-owner-contact"><i class="bi bi-telephone me-1"></i>0903 888 999</div>
+                </div>
+              </td>
+              <td>
+                <span class="badge-status badge-shop-pending">
+                  <i class="bi bi-hourglass-split"></i> PENDING: Chờ duyệt
+                </span>
+              </td>
+              <td>
+                <div class="small text-secondary mb-1">
+                  <i class="bi bi-geo-alt text-danger me-1"></i>120 Hai Bà Trưng, Phường Thạch Thang, Quận Hải Châu, Đà Nẵng
+                </div>
+              </td>
+              <td class="text-end">
+                <div class="d-flex align-items-center justify-content-end gap-1">
+                  <button type="button" class="btn btn-success btn-sm d-flex align-items-center gap-1"
+                          title="Phê duyệt hồ sơ mở shop" onclick="approveShop(2, 'Fashion Street Store')">
+                    <i class="bi bi-check-lg"></i> Duyệt
+                  </button>
+                  <button type="button" class="btn btn-outline-danger btn-sm d-flex align-items-center gap-1"
+                          title="Từ chối yêu cầu (bắt buộc nhập lý do)" onclick="openRejectModal(2, 'Fashion Street Store')">
+                    <i class="bi bi-x-lg"></i> Từ chối
+                  </button>
+                  <button type="button" class="btn btn-outline-secondary btn-sm"
+                          title="Xem chi tiết" onclick="viewShopDetail(2, 'Fashion Street Store', 'Lê Hoàng Nam', '0903 888 999', 'nam.le@example.com', '120 Hai Bà Trưng, Hải Châu, Đà Nẵng', 'Quần áo thời trang nam nữ phong cách trẻ trung đường phố', '', 'PENDING')">
+                    <i class="bi bi-eye"></i>
+                  </button>
+                </div>
+              </td>
+            </tr>
+
+            <!-- SHOP 3: APPROVED - ĐANG HOẠT ĐỘNG -->
+            <tr data-id="3" data-status="APPROVED" data-name="TechZone Store" data-owner="Nguyễn Văn A" data-phone="0912345678">
+              <td>
+                <div class="d-flex align-items-center gap-3">
+                  <img src="../../../static/images/demo/logo-techzone.png" alt="Logo" class="table-shop-logo" />
+                  <div>
+                    <div class="table-shop-name">TechZone Store</div>
+                    <div class="table-shop-desc">Thiết bị công nghệ, bàn phím cơ, tai nghe chính hãng</div>
+                    <small class="text-success"><i class="bi bi-check2"></i> Duyệt ngày 25/09/2026</small>
+                  </div>
+                </div>
+              </td>
+              <td>
+                <div class="table-owner-box">
+                  <div class="table-owner-name">Nguyễn Văn A</div>
+                  <div class="table-owner-contact"><i class="bi bi-envelope me-1"></i>user@example.com</div>
+                  <div class="table-owner-contact"><i class="bi bi-telephone me-1"></i>0912 345 678</div>
+                </div>
+              </td>
+              <td>
+                <span class="badge-status badge-shop-approved">
+                  <i class="bi bi-check-circle-fill"></i> APPROVED: Đang bán
+                </span>
+              </td>
+              <td>
+                <div class="small text-secondary mb-1">
+                  <i class="bi bi-geo-alt text-danger me-1"></i>Số 123 Đường Cầu Giấy, Quận Cầu Giấy, Hà Nội
+                </div>
+              </td>
+              <td class="text-end">
+                <div class="d-flex align-items-center justify-content-end gap-1">
+                  <button type="button" class="btn btn-outline-danger btn-sm d-flex align-items-center gap-1"
+                          title="Khóa gian hàng vi phạm" onclick="openLockModal(3, 'TechZone Store')">
+                    <i class="bi bi-lock-fill"></i> Khóa shop
+                  </button>
+                  <a href="../products/manage.html" class="btn btn-outline-secondary btn-sm" title="Xem gian hàng">
+                    <i class="bi bi-shop"></i>
+                  </a>
+                </div>
+              </td>
+            </tr>
+
+            <!-- SHOP 4: APPROVED - ĐANG HOẠT ĐỘNG -->
+            <tr data-id="4" data-status="APPROVED" data-name="ZenHome Official" data-owner="Trần Thị B" data-phone="0977654321">
+              <td>
+                <div class="d-flex align-items-center gap-3">
+                  <img src="../../../static/images/demo/logo-zenhome.png" alt="Logo" class="table-shop-logo" />
+                  <div>
+                    <div class="table-shop-name">ZenHome Official</div>
+                    <div class="table-shop-desc">Đồ gia dụng thông minh, nồi chiên không dầu, máy pha cà phê</div>
+                    <small class="text-success"><i class="bi bi-check2"></i> Duyệt ngày 24/09/2026</small>
+                  </div>
+                </div>
+              </td>
+              <td>
+                <div class="table-owner-box">
+                  <div class="table-owner-name">Trần Thị B</div>
+                  <div class="table-owner-contact"><i class="bi bi-envelope me-1"></i>b.tran@example.com</div>
+                  <div class="table-owner-contact"><i class="bi bi-telephone me-1"></i>0977 654 321</div>
+                </div>
+              </td>
+              <td>
+                <span class="badge-status badge-shop-approved">
+                  <i class="bi bi-check-circle-fill"></i> APPROVED: Đang bán
+                </span>
+              </td>
+              <td>
+                <div class="small text-secondary mb-1">
+                  <i class="bi bi-geo-alt text-danger me-1"></i>Tòa nhà Landmark 81, Quận Bình Thạnh, TP.HCM
+                </div>
+              </td>
+              <td class="text-end">
+                <div class="d-flex align-items-center justify-content-end gap-1">
+                  <button type="button" class="btn btn-outline-danger btn-sm d-flex align-items-center gap-1"
+                          title="Khóa gian hàng vi phạm" onclick="openLockModal(4, 'ZenHome Official')">
+                    <i class="bi bi-lock-fill"></i> Khóa shop
+                  </button>
+                  <a href="../products/manage.html" class="btn btn-outline-secondary btn-sm" title="Xem gian hàng">
+                    <i class="bi bi-shop"></i>
+                  </a>
+                </div>
+              </td>
+            </tr>
+
+            <!-- SHOP 5: REJECTED - BỊ TỪ CHỐI KÈM LÝ DO (BR 05) -->
+            <tr data-id="5" data-status="REJECTED" data-name="Siêu Rẻ Sài Gòn" data-owner="Phạm Văn C" data-phone="0933222111">
+              <td>
+                <div class="d-flex align-items-center gap-3 opacity-75">
+                  <div class="table-shop-logo d-flex align-items-center justify-content-center bg-danger-subtle text-danger fs-4">
+                    <i class="bi bi-shop"></i>
+                  </div>
+                  <div>
+                    <div class="table-shop-name text-muted">Siêu Rẻ Sài Gòn</div>
+                    <div class="table-shop-desc">Kinh doanh đồ công nghệ và điện thoại xách tay</div>
+                    <small class="text-danger">Từ chối ngày 28/09/2026</small>
+                  </div>
+                </div>
+              </td>
+              <td>
+                <div class="table-owner-box">
+                  <div class="table-owner-name">Phạm Văn C</div>
+                  <div class="table-owner-contact"><i class="bi bi-envelope me-1"></i>c.pham@example.com</div>
+                  <div class="table-owner-contact"><i class="bi bi-telephone me-1"></i>0933 222 111</div>
+                </div>
+              </td>
+              <td>
+                <span class="badge-status badge-shop-rejected">
+                  <i class="bi bi-exclamation-triangle-fill"></i> REJECTED: Từ chối
+                </span>
+              </td>
+              <td>
+                <div class="small text-secondary mb-1">
+                  <i class="bi bi-geo-alt text-danger me-1"></i>99 Đường 3/2, Quận 10, TP.HCM
+                </div>
+                <div class="table-rejection-callout">
+                  <strong>Lý do từ chối:</strong> Địa chỉ kinh doanh chưa rõ ràng, ảnh logo tải lên mờ và nghi ngờ chứa logo bảo hộ của thương hiệu khác.
+                </div>
+              </td>
+              <td class="text-end">
+                <div class="d-flex align-items-center justify-content-end gap-1">
+                  <button type="button" class="btn btn-outline-secondary btn-sm"
+                          onclick="alert('Lý do từ chối đã gửi cho người bán: Địa chỉ kinh doanh chưa rõ ràng, ảnh logo mờ và vi phạm bảo hộ thương hiệu.')">
+                    <i class="bi bi-chat-left-text me-1"></i> Xem lý do
+                  </button>
+                </div>
+              </td>
+            </tr>
+
+            <!-- SHOP 6: LOCKED - BỊ TẠM KHÓA DO VI PHẠM (SHOP 08) -->
+            <tr data-id="6" data-status="LOCKED" data-name="Kho Phụ Kiện Giá Sỉ" data-owner="Hoàng Đức D" data-phone="0966555444">
+              <td>
+                <div class="d-flex align-items-center gap-3 opacity-75">
+                  <div class="table-shop-logo d-flex align-items-center justify-content-center bg-secondary-subtle text-secondary fs-4">
+                    <i class="bi bi-lock-fill"></i>
+                  </div>
+                  <div>
+                    <div class="table-shop-name text-muted">Kho Phụ Kiện Giá Sỉ</div>
+                    <div class="table-shop-desc">Sỉ lẻ cáp sạc, ốp lưng, phụ kiện máy tính</div>
+                    <small class="text-secondary">Bị khóa ngày 27/09/2026</small>
+                  </div>
+                </div>
+              </td>
+              <td>
+                <div class="table-owner-box">
+                  <div class="table-owner-name">Hoàng Đức D</div>
+                  <div class="table-owner-contact"><i class="bi bi-envelope me-1"></i>d.hoang@example.com</div>
+                  <div class="table-owner-contact"><i class="bi bi-telephone me-1"></i>0966 555 444</div>
+                </div>
+              </td>
+              <td>
+                <span class="badge-status badge-shop-locked">
+                  <i class="bi bi-lock-fill"></i> LOCKED: Bị khóa
+                </span>
+              </td>
+              <td>
+                <div class="small text-secondary mb-1">
+                  <i class="bi bi-geo-alt text-danger me-1"></i>Chợ Kim Biên, Quận 5, TP.HCM
+                </div>
+                <div class="small text-danger fst-italic">
+                  <i class="bi bi-exclamation-circle-fill"></i> Bị khóa do phát sinh khiếu nại giao sai hàng và không hoàn tiền.
+                </div>
+              </td>
+              <td class="text-end">
+                <div class="d-flex align-items-center justify-content-end gap-1">
+                  <button type="button" class="btn btn-outline-primary btn-sm d-flex align-items-center gap-1"
+                          title="Mở khóa gian hàng" onclick="unlockShop(6, 'Kho Phụ Kiện Giá Sỉ')">
+                    <i class="bi bi-unlock-fill"></i> Mở khóa
+                  </button>
+                </div>
+              </td>
+            </tr>
+
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Empty state -->
+      <div id="adminEmptyState" class="p-5 text-center d-none">
+        <i class="bi bi-search text-secondary fs-1 d-block mb-2"></i>
+        <h5 class="fw-bold text-dark">Không tìm thấy gian hàng nào!</h5>
+        <p class="text-secondary small mb-0">Không có hồ sơ nào thuộc bộ lọc này.</p>
+      </div>
+
+      <!-- Footer / Summary -->
+      <div class="p-3 bg-light border-top d-flex align-items-center justify-content-between flex-wrap gap-2">
+        <div class="small text-muted" id="adminShowingCount">Hiển thị 6 trên 6 hồ sơ gian hàng</div>
+        <div class="small text-muted fst-italic">
+          * Tuân thủ quy tắc State Pattern: PENDING &rarr; APPROVED/REJECTED; APPROVED &rarr; LOCKED.
+        </div>
+      </div>
+
+    </div>
+
+  </main>
+
+  <!-- =======================================================================
+       MODAL 1: TỪ CHỐI GIAN HÀNG BẮT BUỘC NHẬP LÝ DO (BR 05, SHOP 06)
+       ======================================================================= -->
+  <div class="modal fade" id="rejectShopModal" tabindex="-1" aria-labelledby="rejectShopModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content border-0 shadow-lg">
+        <div class="modal-header border-bottom">
+          <h5 class="modal-title fw-bold text-danger" id="rejectShopModalLabel">
+            <i class="bi bi-x-circle-fill me-2"></i>Từ chối yêu cầu mở gian hàng
+          </h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <form id="rejectShopForm" onsubmit="handleRejectSubmit(event)">
+          <div class="modal-body py-3">
+
+            <p class="mb-2">
+              Bạn đang thực hiện từ chối duyệt gian hàng: <strong id="rejectShopTargetName" class="text-dark"></strong>
+            </p>
+
+            <!-- Cảnh báo quy tắc nghiệp vụ BR 05 -->
+            <div class="alert alert-danger d-flex align-items-center gap-2 small py-2 mb-3">
+              <i class="bi bi-exclamation-triangle-fill fs-5"></i>
+              <div>
+                <strong>Quy tắc nghiệp vụ BR 05:</strong> Quản trị viên bắt buộc phải nhập lý do từ chối cụ thể để người dùng có thể đọc và sửa lại hồ sơ.
+              </div>
+            </div>
+
+            <!-- Gợi ý lý do nhanh -->
+            <label class="form-label fw-semibold text-dark small mb-1">Gợi ý lý do từ chối nhanh:</label>
+            <div class="mb-3">
+              <a href="javascript:void(0)" class="quick-reason-btn" onclick="fillQuickReason('Thông tin địa chỉ gian hàng chưa đầy đủ hoặc không có thật.')">
+                Địa chỉ không có thật
+              </a>
+              <a href="javascript:void(0)" class="quick-reason-btn" onclick="fillQuickReason('Tên gian hàng vi phạm thương hiệu đã được bảo hộ độc quyền.')">
+                Tên vi phạm thương hiệu
+              </a>
+              <a href="javascript:void(0)" class="quick-reason-btn" onclick="fillQuickReason('Ảnh logo mờ hoặc chứa nội dung không phù hợp thuần phong mỹ tục.')">
+                Logo không hợp lệ
+              </a>
+              <a href="javascript:void(0)" class="quick-reason-btn" onclick="fillQuickReason('Số điện thoại liên hệ không thể xác minh được.')">
+                SĐT không xác minh
+              </a>
+            </div>
+
+            <!-- Textarea nhập lý do bắt buộc -->
+            <div class="mb-2">
+              <label for="rejectReasonInput" class="form-label fw-semibold text-dark small">
+                Nội dung lý do từ chối <span class="text-danger">*</span>
+              </label>
+              <textarea class="form-control" id="rejectReasonInput" rows="3" required minlength="10"
+                        placeholder="Nhập lý do chi tiết để thông báo cho người bán..."></textarea>
+              <div class="form-text small text-muted text-end">Tối thiểu 10 ký tự.</div>
+            </div>
+
+            <input type="hidden" id="rejectShopTargetId" />
+
+          </div>
+          <div class="modal-footer border-top bg-light">
+            <button type="button" class="btn btn-secondary px-3" data-bs-dismiss="modal">Hủy bỏ</button>
+            <button type="submit" class="btn btn-danger px-4 fw-semibold">
+              <i class="bi bi-x-circle me-1"></i> Xác nhận từ chối
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- =======================================================================
+       MODAL 2: KHÓA GIAN HÀNG VI PHẠM (SHOP 08, BR 03)
+       ======================================================================= -->
+  <div class="modal fade" id="lockShopModal" tabindex="-1" aria-labelledby="lockShopModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content border-0 shadow-lg">
+        <div class="modal-header border-bottom">
+          <h5 class="modal-title fw-bold text-dark" id="lockShopModalLabel">
+            <i class="bi bi-lock-fill text-danger me-2"></i>Khóa gian hàng vi phạm
+          </h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <form id="lockShopForm" onsubmit="handleLockSubmit(event)">
+          <div class="modal-body py-3">
+            <p class="mb-3">
+              Bạn có chắc chắn muốn khóa gian hàng <strong id="lockShopTargetName" class="text-danger"></strong>?
+            </p>
+            <div class="alert alert-warning small py-2 mb-3">
+              <i class="bi bi-exclamation-circle-fill me-1"></i>
+              Khi bị khóa (LOCKED), shop sẽ không thể đăng sản phẩm mới và toàn bộ hàng hóa sẽ bị tạm ẩn khỏi sàn mua sắm (BR 03).
+            </div>
+            <div class="mb-2">
+              <label for="lockReasonInput" class="form-label fw-semibold text-dark small">Lý do khóa gian hàng:</label>
+              <select class="form-select form-select-sm" id="lockReasonInput">
+                <option value="Phát hiện kinh doanh hàng giả / hàng cấm" selected>Phát hiện kinh doanh hàng giả / hàng cấm</option>
+                <option value="Tỷ lệ hủy đơn hàng vượt mức cho phép (> 20%)">Tỷ lệ hủy đơn hàng vượt mức cho phép (> 20%)</option>
+                <option value="Hành vi lừa đảo hoặc không hoàn tiền cho người mua">Hành vi lừa đảo hoặc không hoàn tiền cho người mua</option>
+                <option value="Vi phạm nghiêm trọng tiêu chuẩn cộng đồng sàn SENVIA">Vi phạm nghiêm trọng tiêu chuẩn cộng đồng</option>
+              </select>
+            </div>
+            <input type="hidden" id="lockShopTargetId" />
+          </div>
+          <div class="modal-footer border-top bg-light">
+            <button type="button" class="btn btn-secondary px-3" data-bs-dismiss="modal">Hủy bỏ</button>
+            <button type="submit" class="btn btn-danger px-4 fw-semibold">Xác nhận khóa</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- =======================================================================
+       MODAL 3: XEM CHI TIẾT HỒ SƠ GIAN HÀNG
+       ======================================================================= -->
+  <div class="modal fade" id="detailShopModal" tabindex="-1" aria-labelledby="detailShopModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content border-0 shadow-lg">
+        <div class="modal-header border-bottom">
+          <h5 class="modal-title fw-bold" id="detailShopModalLabel">
+            <i class="bi bi-file-earmark-person-fill text-primary me-2"></i>Hồ sơ đăng ký gian hàng
+          </h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body py-4">
+          <div class="d-flex align-items-center gap-3 mb-4">
+            <img id="detailShopLogo" src="" alt="Logo" class="rounded border" style="width: 64px; height: 64px; object-fit: cover;" />
+            <div>
+              <h5 class="fw-bold text-dark mb-1" id="detailShopName"></h5>
+              <div id="detailShopBadge"></div>
+            </div>
+          </div>
+
+          <div class="list-group list-group-flush border-top border-bottom small mb-3">
+            <div class="list-group-item d-flex justify-content-between px-0">
+              <span class="text-muted">Chủ sở hữu:</span>
+              <strong class="text-dark" id="detailOwnerName"></strong>
+            </div>
+            <div class="list-group-item d-flex justify-content-between px-0">
+              <span class="text-muted">Email liên hệ:</span>
+              <span class="text-dark" id="detailOwnerEmail"></span>
+            </div>
+            <div class="list-group-item d-flex justify-content-between px-0">
+              <span class="text-muted">Số điện thoại:</span>
+              <span class="text-dark" id="detailOwnerPhone"></span>
+            </div>
+            <div class="list-group-item px-0">
+              <div class="text-muted mb-1">Địa chỉ kinh doanh:</div>
+              <div class="text-dark fw-medium" id="detailShopAddress"></div>
+            </div>
+            <div class="list-group-item px-0">
+              <div class="text-muted mb-1">Mô tả giới thiệu:</div>
+              <div class="text-secondary fst-italic" id="detailShopDesc"></div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer border-top bg-light">
+          <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Đóng</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- =======================================================================
+       TOAST FEEDBACK
+       ======================================================================= -->
+  <div class="toast-container position-fixed bottom-0 end-0 p-3" style="z-index: 1080;">
+    <div id="adminToast" class="toast align-items-center text-white bg-success border-0 shadow-lg" role="alert" aria-live="assertive" aria-atomic="true">
+      <div class="d-flex">
+        <div class="toast-body d-flex align-items-center gap-2">
+          <i class="bi bi-check-circle-fill fs-5"></i>
+          <div>
+            <div class="fw-bold" id="adminToastTitle">Chuyển trạng thái thành công!</div>
+            <div class="small text-white-50" id="adminToastMsg">Dữ liệu State Pattern đã được cập nhật.</div>
+          </div>
+        </div>
+        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+      </div>
+    </div>
+  </div>
+
+  <!-- =======================================================================
+       FOOTER FRAGMENT
+       ======================================================================= -->
+  <div th:replace="~{fragments/footer :: footer}">
+    <footer class="bg-dark text-light pt-4 pb-3 mt-5">
+      <div class="container text-center small text-secondary">
+        &copy; 2026 SENVIA MARKET. Hệ thống Quản trị Admin - Đồ án giữa kỳ môn Mẫu thiết kế.
+      </div>
+    </footer>
+  </div>
+
+  <!-- Bootstrap 5.3 JS Bundle -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+  <!-- =======================================================================
+       INTERACTIVE CLIENT-SIDE JAVASCRIPT (STATE PATTERN DEMO)
+       ======================================================================= -->
+  <script>
+    let activeStateTab = 'ALL';
+    let adminSearchTerm = '';
+
+    // 1. Filter by State Tab
+    function filterByStateTab(state) {
+      activeStateTab = state;
+      document.querySelectorAll('#adminStateTabs .nav-link').forEach(btn => btn.classList.remove('active'));
+      const activeLink = Array.from(document.querySelectorAll('#adminStateTabs .nav-link'))
+                              .find(link => link.textContent.includes(state === 'ALL' ? 'Tất cả' : state));
+      if (activeLink) activeLink.classList.add('active');
+
+      applyAdminFilters();
+    }
+
+    // 2. Search Filter
+    function handleAdminSearch(term) {
+      adminSearchTerm = term.trim().toLowerCase();
+      applyAdminFilters();
+    }
+
+    // 3. Apply Filters
+    function applyAdminFilters() {
+      const rows = document.querySelectorAll('#adminTableBody tr');
+      let visible = 0;
+
+      rows.forEach(row => {
+        const status = row.getAttribute('data-status');
+        const name = row.getAttribute('data-name').toLowerCase();
+        const owner = row.getAttribute('data-owner').toLowerCase();
+        const phone = row.getAttribute('data-phone');
+
+        const matchTab = (activeStateTab === 'ALL') || (status === activeStateTab);
+        const matchSearch = !adminSearchTerm || name.includes(adminSearchTerm) || owner.includes(adminSearchTerm) || phone.includes(adminSearchTerm);
+
+        if (matchTab && matchSearch) {
+          row.classList.remove('d-none');
+          visible++;
+        } else {
+          row.classList.add('d-none');
+        }
+      });
+
+      const emptyState = document.getElementById('adminEmptyState');
+      if (visible === 0) {
+        emptyState.classList.remove('d-none');
+      } else {
+        emptyState.classList.add('d-none');
+      }
+
+      document.getElementById('adminShowingCount').textContent = `Hiển thị ${visible} trên ${rows.length} hồ sơ gian hàng`;
+    }
+
+    // 4. Action: Phê duyệt Shop (PENDING -> APPROVED)
+    function approveShop(id, shopName) {
+      if (confirm(`Bạn có chắc chắn muốn phê duyệt gian hàng "${shopName}" chuyển sang trạng thái APPROVED?`)) {
+        const row = document.querySelector(`#adminTableBody tr[data-id="${id}"]`);
+        if (row) {
+          row.setAttribute('data-status', 'APPROVED');
+
+          // Update Status column
+          row.children[2].innerHTML = `
+            <span class="badge-status badge-shop-approved">
+              <i class="bi bi-check-circle-fill"></i> APPROVED: Đang bán
+            </span>
+          `;
+
+          // Update Actions column
+          row.children[4].innerHTML = `
+            <div class="d-flex align-items-center justify-content-end gap-1">
+              <button type="button" class="btn btn-outline-danger btn-sm d-flex align-items-center gap-1"
+                      title="Khóa gian hàng vi phạm" onclick="openLockModal(${id}, '${shopName}')">
+                <i class="bi bi-lock-fill"></i> Khóa shop
+              </button>
+              <a href="../products/manage.html" class="btn btn-outline-secondary btn-sm" title="Xem gian hàng">
+                <i class="bi bi-shop"></i>
+              </a>
+            </div>
+          `;
+        }
+
+        showAdminToast('Phê duyệt thành công!', `Gian hàng "${shopName}" đã được kích hoạt trạng thái APPROVED.`);
+        recalculateStateKPIs();
+      }
+    }
+
+    // 5. Action: Từ chối Shop (PENDING -> REJECTED)
+    function openRejectModal(id, shopName) {
+      document.getElementById('rejectShopTargetId').value = id;
+      document.getElementById('rejectShopTargetName').textContent = shopName;
+      document.getElementById('rejectReasonInput').value = '';
+
+      new bootstrap.Modal(document.getElementById('rejectShopModal')).show();
+    }
+
+    function fillQuickReason(text) {
+      document.getElementById('rejectReasonInput').value = text;
+    }
+
+    function handleRejectSubmit(e) {
+      e.preventDefault();
+      const id = document.getElementById('rejectShopTargetId').value;
+      const shopName = document.getElementById('rejectShopTargetName').textContent;
+      const reason = document.getElementById('rejectReasonInput').value;
+
+      const row = document.querySelector(`#adminTableBody tr[data-id="${id}"]`);
+      if (row) {
+        row.setAttribute('data-status', 'REJECTED');
+
+        // Update Status column
+        row.children[2].innerHTML = `
+          <span class="badge-status badge-shop-rejected">
+            <i class="bi bi-exclamation-triangle-fill"></i> REJECTED: Từ chối
+          </span>
+        `;
+
+        // Add rejection callout
+        const addrCell = row.children[3];
+        const existingCallout = addrCell.querySelector('.table-rejection-callout');
+        if (existingCallout) existingCallout.remove();
+        addrCell.innerHTML += `
+          <div class="table-rejection-callout">
+            <strong>Lý do từ chối:</strong> ${reason}
+          </div>
+        `;
+
+        // Update Actions column
+        row.children[4].innerHTML = `
+          <div class="d-flex align-items-center justify-content-end gap-1">
+            <button type="button" class="btn btn-outline-secondary btn-sm" onclick="alert('Lý do từ chối: ${reason}')">
+              <i class="bi bi-chat-left-text me-1"></i> Xem lý do
+            </button>
+          </div>
+        `;
+      }
+
+      bootstrap.Modal.getInstance(document.getElementById('rejectShopModal')).hide();
+      showAdminToast('Đã từ chối gian hàng!', `Gian hàng "${shopName}" đã chuyển sang trạng thái REJECTED kèm lý do.`, 'danger');
+      recalculateStateKPIs();
+    }
+
+    // 6. Action: Khóa shop (APPROVED -> LOCKED)
+    function openLockModal(id, shopName) {
+      document.getElementById('lockShopTargetId').value = id;
+      document.getElementById('lockShopTargetName').textContent = shopName;
+      new bootstrap.Modal(document.getElementById('lockShopModal')).show();
+    }
+
+    function handleLockSubmit(e) {
+      e.preventDefault();
+      const id = document.getElementById('lockShopTargetId').value;
+      const shopName = document.getElementById('lockShopTargetName').textContent;
+      const reason = document.getElementById('lockReasonInput').value;
+
+      const row = document.querySelector(`#adminTableBody tr[data-id="${id}"]`);
+      if (row) {
+        row.setAttribute('data-status', 'LOCKED');
+
+        row.children[2].innerHTML = `
+          <span class="badge-status badge-shop-locked">
+            <i class="bi bi-lock-fill"></i> LOCKED: Bị khóa
+          </span>
+        `;
+
+        // Add locked note
+        const addrCell = row.children[3];
+        addrCell.innerHTML += `
+          <div class="small text-danger fst-italic mt-1">
+            <i class="bi bi-exclamation-circle-fill"></i> Bị khóa: ${reason}
+          </div>
+        `;
+
+        row.children[4].innerHTML = `
+          <div class="d-flex align-items-center justify-content-end gap-1">
+            <button type="button" class="btn btn-outline-primary btn-sm d-flex align-items-center gap-1"
+                    title="Mở khóa gian hàng" onclick="unlockShop(${id}, '${shopName}')">
+              <i class="bi bi-unlock-fill"></i> Mở khóa
+            </button>
+          </div>
+        `;
+      }
+
+      bootstrap.Modal.getInstance(document.getElementById('lockShopModal')).hide();
+      showAdminToast('Đã khóa gian hàng!', `Gian hàng "${shopName}" đã bị đình chỉ (LOCKED).`, 'warning');
+      recalculateStateKPIs();
+    }
+
+    // 7. Action: Mở khóa shop (LOCKED -> APPROVED)
+    function unlockShop(id, shopName) {
+      if (confirm(`Bạn có chắc chắn muốn mở khóa cho gian hàng "${shopName}" hoạt động trở lại (APPROVED)?`)) {
+        const row = document.querySelector(`#adminTableBody tr[data-id="${id}"]`);
+        if (row) {
+          row.setAttribute('data-status', 'APPROVED');
+
+          row.children[2].innerHTML = `
+            <span class="badge-status badge-shop-approved">
+              <i class="bi bi-check-circle-fill"></i> APPROVED: Đang bán
+            </span>
+          `;
+
+          // Remove lock note
+          const lockedNote = row.children[3].querySelector('.text-danger.fst-italic');
+          if (lockedNote) lockedNote.remove();
+
+          row.children[4].innerHTML = `
+            <div class="d-flex align-items-center justify-content-end gap-1">
+              <button type="button" class="btn btn-outline-danger btn-sm d-flex align-items-center gap-1"
+                      title="Khóa gian hàng vi phạm" onclick="openLockModal(${id}, '${shopName}')">
+                <i class="bi bi-lock-fill"></i> Khóa shop
+              </button>
+              <a href="../products/manage.html" class="btn btn-outline-secondary btn-sm" title="Xem gian hàng">
+                <i class="bi bi-shop"></i>
+              </a>
+            </div>
+          `;
+        }
+
+        showAdminToast('Mở khóa thành công!', `Gian hàng "${shopName}" đã hoạt động trở lại.`);
+        recalculateStateKPIs();
+      }
+    }
+
+    // 8. Action: Xem chi tiết Shop
+    function viewShopDetail(id, name, owner, phone, email, address, desc, logo, status) {
+      document.getElementById('detailShopName').textContent = name;
+      document.getElementById('detailOwnerName').textContent = owner;
+      document.getElementById('detailOwnerPhone').textContent = phone;
+      document.getElementById('detailOwnerEmail').textContent = email;
+      document.getElementById('detailShopAddress').textContent = address;
+      document.getElementById('detailShopDesc').textContent = desc;
+
+      const logoImg = document.getElementById('detailShopLogo');
+      if (logo) {
+        logoImg.src = logo;
+        logoImg.classList.remove('d-none');
+      } else {
+        logoImg.src = '../../../static/images/demo/logo-techzone.png';
+      }
+
+      document.getElementById('detailShopBadge').innerHTML = `
+        <span class="badge-status badge-shop-${status.toLowerCase()}">${status}</span>
+      `;
+
+      new bootstrap.Modal(document.getElementById('detailShopModal')).show();
+    }
+
+    // 9. Recalculate KPIs
+    function recalculateStateKPIs() {
+      const rows = document.querySelectorAll('#adminTableBody tr');
+      let pending = 0, approved = 0, rejected = 0, locked = 0;
+
+      rows.forEach(r => {
+        const s = r.getAttribute('data-status');
+        if (s === 'PENDING') pending++;
+        else if (s === 'APPROVED') approved++;
+        else if (s === 'REJECTED') rejected++;
+        else if (s === 'LOCKED') locked++;
+      });
+
+      document.getElementById('kpiPending').textContent = pending;
+      document.getElementById('kpiApproved').textContent = approved;
+      document.getElementById('kpiRejected').textContent = rejected;
+      document.getElementById('kpiLocked').textContent = locked;
+
+      document.getElementById('tabCountAll').textContent = rows.length;
+      document.getElementById('tabCountPending').textContent = pending;
+      document.getElementById('tabCountApproved').textContent = approved;
+      document.getElementById('tabCountRejected').textContent = rejected;
+      document.getElementById('tabCountLocked').textContent = locked;
+
+      applyAdminFilters();
+    }
+
+    // 10. Toast Helper
+    function showAdminToast(title, msg, type = 'success') {
+      const toastEl = document.getElementById('adminToast');
+      document.getElementById('adminToastTitle').textContent = title;
+      document.getElementById('adminToastMsg').textContent = msg;
+
+      toastEl.className = `toast align-items-center text-white bg-${type} border-0 shadow-lg`;
+      new bootstrap.Toast(toastEl, { delay: 3500 }).show();
+    }
+  </script>
+
+</body>
+</html>

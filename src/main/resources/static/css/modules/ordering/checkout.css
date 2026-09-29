@@ -1,0 +1,358 @@
+@import url('../../common/theme.css');
+
+/**
+ * ==============================================================================
+ * ORDERING MODULE - CHECKOUT STYLESHEET
+ * ==============================================================================
+ * File: src/main/resources/static/css/modules/ordering/checkout.css
+ * Bố cục màn hình thanh toán & chọn Strategy thanh toán (COD vs Chuyển khoản)
+ * ==============================================================================
+ */
+
+/* 1. Header & Stepper */
+.checkout-header {
+  margin-bottom: 2rem;
+}
+
+.checkout-title {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: var(--color-primary, #323377);
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.checkout-stepper {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.step-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #94a3b8;
+}
+
+.step-item.active {
+  color: var(--color-primary, #323377);
+}
+
+.step-item.completed {
+  color: #16a34a;
+}
+
+.step-number {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background-color: #e2e8f0;
+  color: #475569;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.85rem;
+}
+
+.step-item.active .step-number {
+  background-color: var(--color-primary, #323377);
+  color: #ffffff;
+}
+
+.step-item.completed .step-number {
+  background-color: #16a34a;
+  color: #ffffff;
+}
+
+.step-divider {
+  flex-grow: 1;
+  max-width: 60px;
+  height: 2px;
+  background-color: #e2e8f0;
+}
+
+/* 2. Checkout Section Cards (Bento Style) */
+.checkout-card {
+  border: 1px solid var(--color-border, #e2e8f0);
+  border-radius: 16px;
+  background-color: #ffffff;
+  box-shadow: 0 4px 20px -2px rgba(50, 51, 119, 0.05), 0 2px 6px -1px rgba(0, 0, 0, 0.02);
+  margin-bottom: 1.5rem;
+  overflow: hidden;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.checkout-card:hover {
+  border-color: rgba(50, 51, 119, 0.2);
+}
+
+.checkout-card-header {
+  padding: 1.15rem 1.5rem;
+  background-color: #f8fafc;
+  border-bottom: 1px solid #e2e8f0;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.checkout-card-title {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--color-primary, #323377);
+  margin-bottom: 0;
+}
+
+.checkout-card-body {
+  padding: 1.5rem;
+}
+
+/* 3. Shop Group Item Tables in Checkout */
+.checkout-shop-block {
+  border: 1px solid var(--color-border, #e2e8f0);
+  border-radius: 12px;
+  background-color: #ffffff;
+  margin-bottom: 1.25rem;
+  overflow: hidden;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+}
+
+.checkout-shop-header {
+  padding: 0.75rem 1rem;
+  background-color: #f1f5f9;
+  font-weight: 600;
+  color: #334155;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.checkout-product-row {
+  padding: 0.875rem 1rem;
+  border-bottom: 1px solid #f1f5f9;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.checkout-product-row:last-child {
+  border-bottom: none;
+}
+
+.checkout-product-thumb {
+  width: 56px;
+  height: 56px;
+  border-radius: 0.375rem;
+  object-fit: cover;
+  border: 1px solid #e2e8f0;
+}
+
+.checkout-product-info {
+  flex-grow: 1;
+}
+
+.checkout-product-name {
+  font-weight: 600;
+  color: #1e293b;
+  font-size: 0.95rem;
+  margin-bottom: 0.25rem;
+}
+
+.checkout-product-meta {
+  font-size: 0.85rem;
+  color: #64748b;
+}
+
+.checkout-product-subtotal {
+  font-weight: 700;
+  color: #0f172a;
+  font-size: 1rem;
+  text-align: right;
+  min-width: 100px;
+}
+
+.checkout-shop-footer {
+  padding: 0.75rem 1rem;
+  background-color: #ffffff;
+  border-top: 1px dashed #e2e8f0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.9rem;
+}
+
+/* 4. Payment Strategy Option Cards */
+.payment-strategy-option {
+  position: relative;
+  display: block;
+  cursor: pointer;
+  margin-bottom: 1rem;
+}
+
+.payment-card {
+  border: 2px solid var(--color-border, #e2e8f0);
+  border-radius: 12px;
+  padding: 1.25rem;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  background-color: #ffffff;
+}
+
+.payment-strategy-option input[type="radio"] {
+  margin-top: 0.25rem;
+}
+
+.payment-strategy-option input[type="radio"]:checked + .payment-card {
+  border-color: var(--color-primary, #323377);
+  background-color: rgba(50, 51, 119, 0.03);
+  box-shadow: 0 4px 14px rgba(50, 51, 119, 0.08);
+}
+
+.payment-icon {
+  font-size: 1.75rem;
+  line-height: 1;
+  color: #64748b;
+}
+
+.payment-strategy-option input[type="radio"]:checked + .payment-card .payment-icon {
+  color: var(--color-primary, #323377);
+}
+
+.payment-title {
+  font-weight: 700;
+  color: #0f172a;
+  font-size: 1.05rem;
+  margin-bottom: 0.25rem;
+}
+
+.payment-desc {
+  font-size: 0.875rem;
+  color: #64748b;
+  margin-bottom: 0;
+  line-height: 1.45;
+}
+
+/* 5. Bank Transfer Simulation Alert Box (Strategy Pattern) */
+.bank-transfer-simulation-box {
+  margin-top: 1rem;
+  padding: 1.25rem;
+  border-radius: 12px;
+  background-color: var(--box-bank-transfer-bg, #f0fdf4);
+  border: 1px solid var(--box-bank-transfer-border, #86efac);
+  color: var(--box-bank-transfer-text, #166534);
+  animation: fadeIn 0.25s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.bank-info-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 0.75rem;
+  margin-top: 0.75rem;
+  padding: 0.85rem;
+  background-color: #ffffff;
+  border-radius: 10px;
+  border: 1px solid var(--box-bank-transfer-border, #86efac);
+}
+
+.bank-info-label {
+  font-size: 0.775rem;
+  color: #64748b;
+  text-transform: uppercase;
+  letter-spacing: 0.025em;
+  font-weight: 600;
+}
+
+.bank-info-value {
+  font-size: 0.95rem;
+  color: #0f172a;
+  font-weight: 700;
+}
+
+/* 6. Sticky Summary Column (Bento Style) */
+.checkout-summary-card {
+  position: -webkit-sticky;
+  position: sticky;
+  top: 1.5rem;
+  border: 1px solid var(--color-border, #e2e8f0);
+  border-radius: 16px;
+  background-color: #ffffff;
+  box-shadow: 0 4px 20px -2px rgba(50, 51, 119, 0.05), 0 2px 6px -1px rgba(0, 0, 0, 0.02);
+  padding: 1.75rem;
+}
+
+.checkout-summary-title {
+  font-weight: 700;
+  font-size: 1.25rem;
+  color: var(--color-primary, #323377);
+  margin-bottom: 1.25rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.checkout-summary-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.85rem;
+  font-size: 0.95rem;
+  color: #64748b;
+}
+
+.checkout-summary-total {
+  border-top: 2px dashed #cbd5e1;
+  padding-top: 1.25rem;
+  margin-top: 1.25rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.total-amount-display {
+  font-size: 1.75rem;
+  font-weight: 800;
+  color: var(--color-accent, #d1588e);
+  letter-spacing: -0.02em;
+}
+
+.btn-place-order {
+  font-size: 1.1rem;
+  padding: 0.85rem 1.5rem;
+  border-radius: 12px;
+  font-weight: 700;
+  background-color: var(--color-accent, #d1588e) !important;
+  border-color: var(--color-accent, #d1588e) !important;
+  color: #ffffff !important;
+  box-shadow: 0 4px 14px rgba(209, 88, 142, 0.35);
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.btn-place-order:hover:not(:disabled) {
+  background-color: var(--color-accent-hover, #b84377) !important;
+  border-color: var(--color-accent-hover, #b84377) !important;
+  color: #ffffff !important;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(209, 88, 142, 0.45);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .checkout-stepper {
+    display: none;
+  }
+  .checkout-summary-card {
+    position: static;
+    margin-top: 1.5rem;
+  }
+}

@@ -1,0 +1,752 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Hồ sơ cá nhân & Bảo mật - Sàn Thương Mại Điện Tử SENVIA</title>
+
+  <!-- Bootstrap 5.3 CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <!-- Bootstrap Icons -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
+  <!-- Common Badges & Tokens -->
+  <link rel="stylesheet" th:href="@{/css/common/badges.css}" href="../../static/css/common/badges.css" />
+  <!-- Common Layout CSS -->
+  <link rel="stylesheet" th:href="@{/css/common/layout.css}" href="../../static/css/common/layout.css" />
+  <!-- Identity Profile CSS -->
+  <link rel="stylesheet" th:href="@{/css/modules/identity/profile.css}" href="../../static/css/modules/identity/profile.css" />
+</head>
+<body class="bg-light">
+
+  <!-- =======================================================================
+       HEADER FRAGMENT
+       ======================================================================= -->
+  <div th:replace="~{fragments/header :: header}">
+    <header class="navbar navbar-expand-lg navbar-dark bg-dark py-3 mb-4 shadow-sm">
+      <div class="container">
+        <a class="navbar-brand fw-bold d-flex align-items-center gap-2" href="/">
+          <i class="bi bi-shop-window text-warning"></i> SENVIA MARKET
+        </a>
+      </div>
+    </header>
+  </div>
+
+  <!-- =======================================================================
+       MAIN CONTAINER
+       ======================================================================= -->
+  <main class="container my-4">
+
+    <!-- Breadcrumb -->
+    <nav aria-label="breadcrumb" class="mb-3">
+      <ol class="breadcrumb mb-0">
+        <li class="breadcrumb-item"><a href="/" class="text-decoration-none text-secondary">Trang chủ</a></li>
+        <li class="breadcrumb-item"><a href="#" class="text-decoration-none text-secondary">Tài khoản</a></li>
+        <li class="breadcrumb-item active text-dark fw-medium" aria-current="page">Hồ sơ cá nhân</li>
+      </ol>
+    </nav>
+
+    <!-- Academic Callout (Module Identity Overview) -->
+    <div class="alert alert-primary border-primary-subtle d-flex align-items-center gap-3 p-3 rounded-3 mb-4 shadow-xs" role="alert">
+      <div class="fs-3 text-primary flex-shrink-0">
+        <i class="bi bi-shield-check"></i>
+      </div>
+      <div class="flex-grow-1 small">
+        <h6 class="alert-heading fw-bold mb-1 text-primary">
+          Phân Hệ Quản Lý Tài Khoản & Bảo Mật (Module Identity - SRS AUTH 05, AUTH 06)
+        </h6>
+        <div class="text-secondary">
+          Quản lý thông tin định danh cá nhân và cơ chế bảo mật tài khoản. Mật khẩu được mã hóa an toàn bằng thuật toán
+          <strong>BCrypt</strong> (AUTH 03). Thao tác đổi mật khẩu yêu cầu xác thực mật khẩu hiện tại nhằm ngăn chặn các hành vi giả mạo và xâm nhập trái phép.
+        </div>
+      </div>
+    </div>
+
+    <!-- PROFILE HEADER CARD (AVATAR & COVER) -->
+    <div class="profile-header-card">
+      <div class="profile-cover"></div>
+
+      <div class="profile-header-body">
+        <div class="profile-avatar-row">
+
+          <!-- Avatar với nút upload -->
+          <div class="profile-avatar-wrapper">
+            <img id="mainProfileAvatar"
+                 src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&auto=format&fit=crop&q=80"
+                 alt="Avatar Người Dùng"
+                 class="profile-avatar-img" />
+            <label for="avatarFileInput" class="avatar-upload-btn" title="Thay đổi ảnh đại diện (Cloudinary)">
+              <i class="bi bi-camera-fill"></i>
+            </label>
+            <input type="file" id="avatarFileInput" accept="image/*" class="d-none" />
+          </div>
+
+          <!-- Thông tin tóm tắt người dùng -->
+          <div class="profile-name-meta flex-grow-1">
+            <div class="d-flex flex-column flex-md-row align-items-center justify-content-between gap-2">
+              <div>
+                <h2 class="profile-fullname mb-1" id="displayFullName">Nguyễn Văn A</h2>
+                <div class="profile-email-badge">
+                  <i class="bi bi-envelope-at text-primary"></i> <span id="displayEmail">nguyenvana@gmail.com</span>
+                  <span class="badge bg-success-subtle text-success border border-success-subtle ms-2">
+                    <i class="bi bi-patch-check-fill"></i> Đã kích hoạt
+                  </span>
+                  <span class="badge bg-primary-subtle text-primary border border-primary-subtle ms-1" th:text="${currentUser != null ? currentUser.role : 'USER'}">
+                    USER
+                  </span>
+                </div>
+              </div>
+
+              <!-- Thẻ trạng thái & Ngày tham gia -->
+              <div class="text-md-end text-center mt-2 mt-md-0">
+                <span class="small text-muted d-block">Thành viên từ: <strong>09/2026</strong></span>
+                <span class="badge bg-light text-secondary border mt-1">
+                  <i class="bi bi-shield-lock-fill text-success"></i> Xác thực 1 lớp
+                </span>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- MAIN BODY: SIDEBAR TABS & TAB CONTENT -->
+    <div class="row g-4">
+
+      <!-- CỘT TRÁI: SIDEBAR NAV TABS (3 CỘT) -->
+      <div class="col-lg-3">
+        <div class="profile-sidebar-card mb-4">
+          <div class="nav flex-column nav-pills profile-nav" id="profileTab" role="tablist" aria-orientation="vertical">
+
+            <button class="nav-link active" id="tab-info-btn" data-bs-toggle="pill" data-bs-target="#tab-info" type="button" role="tab" aria-controls="tab-info" aria-selected="true">
+              <i class="bi bi-person-gear text-primary fs-5"></i>
+              <span>Thông tin cá nhân</span>
+            </button>
+
+            <button class="nav-link" id="tab-security-btn" data-bs-toggle="pill" data-bs-target="#tab-security" type="button" role="tab" aria-controls="tab-security" aria-selected="false">
+              <i class="bi bi-shield-lock text-danger fs-5"></i>
+              <span>Đổi mật khẩu</span>
+            </button>
+
+            <button class="nav-link" id="tab-activity-btn" data-bs-toggle="pill" data-bs-target="#tab-activity" type="button" role="tab" aria-controls="tab-activity" aria-selected="false">
+              <i class="bi bi-grid text-info fs-5"></i>
+              <span>Hoạt động & Gian hàng</span>
+            </button>
+
+            <hr class="my-2 text-muted" />
+
+            <a th:href="@{/ordering/buyer/orders}" href="../../ordering/buyer/orders.html" class="nav-link text-secondary">
+              <i class="bi bi-box2 text-success fs-5"></i>
+              <span>Đơn mua của tôi</span>
+            </a>
+
+            <a th:href="@{/engagement/notifications}" href="../../engagement/notifications/index.html" class="nav-link text-secondary">
+              <i class="bi bi-bell text-warning fs-5"></i>
+              <span>Thông báo nội bộ</span>
+              <span class="badge bg-danger rounded-pill ms-auto">2</span>
+            </a>
+
+          </div>
+        </div>
+
+        <!-- Card Lưu ý bảo mật -->
+        <div class="card border-0 bg-white shadow-xs rounded-3 p-3">
+          <h6 class="fw-bold text-dark mb-2 small d-flex align-items-center gap-2">
+            <i class="bi bi-info-circle-fill text-primary"></i> Khuyến nghị bảo mật
+          </h6>
+          <p class="small text-muted mb-0" style="line-height: 1.5;">
+            Để bảo vệ tài khoản giao dịch, bạn nên định kỳ thay đổi mật khẩu 90 ngày một lần và tuyệt đối không chia sẻ thông tin đăng nhập với người khác.
+          </p>
+        </div>
+      </div>
+
+      <!-- CỘT PHẢI: NỘI DUNG TỪNG TAB (9 CỘT) -->
+      <div class="col-lg-9">
+        <div class="tab-content" id="profileTabContent">
+
+          <!-- =================================================================
+               TAB 1: THÔNG TIN CÁ NHÂN (SRS AUTH 05)
+               ================================================================= -->
+          <div class="tab-pane fade show active" id="tab-info" role="tabpanel" aria-labelledby="tab-info-btn">
+            <div class="profile-content-card">
+
+              <h3 class="profile-card-title">
+                <i class="bi bi-person-vcard text-primary"></i> Hồ Sơ Tài Khoản
+              </h3>
+              <p class="profile-card-subtitle">
+                Cập nhật thông tin định danh cá nhân và địa chỉ nhận hàng mặc định của bạn trên Sàn SENVIA.
+              </p>
+
+              <form id="profileInfoForm" novalidate>
+
+                <div class="row g-3">
+
+                  <!-- Họ và tên -->
+                  <div class="col-md-6">
+                    <label for="fullNameInput" class="form-label profile-label">
+                      Họ và tên <span class="text-danger">*</span>
+                    </label>
+                    <div class="input-group profile-input-group">
+                      <span class="input-group-text"><i class="bi bi-person"></i></span>
+                      <input type="text"
+                             class="form-control"
+                             id="fullNameInput"
+                             name="fullName"
+                             value="Nguyễn Văn A"
+                             required
+                             minlength="2"
+                             maxlength="50" />
+                      <div class="invalid-feedback">Vui lòng nhập họ và tên (tối thiểu 2 ký tự).</div>
+                    </div>
+                  </div>
+
+                  <!-- Email (Read-only cố định) -->
+                  <div class="col-md-6">
+                    <label for="emailInput" class="form-label profile-label">
+                      Địa chỉ Email <span class="text-muted small">(Không thể sửa)</span>
+                    </label>
+                    <div class="input-group profile-input-group">
+                      <span class="input-group-text"><i class="bi bi-envelope"></i></span>
+                      <input type="email"
+                             class="form-control bg-light"
+                             id="emailInput"
+                             name="email"
+                             value="nguyenvana@gmail.com"
+                             readonly />
+                    </div>
+                    <div class="form-text small text-muted">Email là định danh tài khoản dùng để đăng nhập.</div>
+                  </div>
+
+                  <!-- Số điện thoại -->
+                  <div class="col-md-6">
+                    <label for="phoneInput" class="form-label profile-label">
+                      Số điện thoại liên hệ <span class="text-danger">*</span>
+                    </label>
+                    <div class="input-group profile-input-group">
+                      <span class="input-group-text"><i class="bi bi-telephone"></i></span>
+                      <input type="tel"
+                             class="form-control"
+                             id="phoneInput"
+                             name="phone"
+                             value="0912345678"
+                             pattern="^0[0-9]{9,10}$"
+                             required />
+                      <div class="invalid-feedback">Vui lòng nhập số điện thoại hợp lệ (10 số, bắt đầu bằng 0).</div>
+                    </div>
+                  </div>
+
+                  <!-- Vai trò tài khoản -->
+                  <div class="col-md-6">
+                    <label class="form-label profile-label">Vai trò trong hệ thống</label>
+                    <div class="input-group profile-input-group">
+                      <span class="input-group-text"><i class="bi bi-award"></i></span>
+                      <input type="text" class="form-control bg-light" value="Thành viên mua hàng (USER)" readonly />
+                    </div>
+                  </div>
+
+                  <!-- Địa chỉ giao hàng mặc định -->
+                  <div class="col-12">
+                    <label for="addressInput" class="form-label profile-label">
+                      Địa chỉ nhận hàng mặc định <span class="text-danger">*</span>
+                    </label>
+                    <div class="input-group profile-input-group">
+                      <span class="input-group-text"><i class="bi bi-geo-alt"></i></span>
+                      <input type="text"
+                             class="form-control"
+                             id="addressInput"
+                             name="address"
+                             value="Số 123 đường Nguyễn Huệ, Phường Bến Nghé, Quận 1, TP. Hồ Chí Minh"
+                             required />
+                      <div class="invalid-feedback">Vui lòng nhập địa chỉ nhận hàng cụ thể.</div>
+                    </div>
+                    <div class="form-text small text-muted">Địa chỉ này sẽ được tự động điền sẵn tại trang Checkout thanh toán.</div>
+                  </div>
+
+                  <!-- Chọn nhanh Avatar mẫu demo -->
+                  <div class="col-12 pt-2">
+                    <label class="form-label profile-label d-block mb-1">
+                      <i class="bi bi-images text-primary"></i> Chọn nhanh Avatar mẫu demo hoặc tải ảnh Cloudinary:
+                    </label>
+                    <div class="d-flex align-items-center gap-3">
+                      <button type="button"
+                              class="preset-avatar-btn active"
+                              data-avatar="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&auto=format&fit=crop&q=80"
+                              title="Avatar Nữ hiện đại">
+                        <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&auto=format&fit=crop&q=80" alt="Avatar 1" />
+                      </button>
+
+                      <button type="button"
+                              class="preset-avatar-btn"
+                              data-avatar="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&auto=format&fit=crop&q=80"
+                              title="Avatar Nam lịch lãm">
+                        <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&auto=format&fit=crop&q=80" alt="Avatar 2" />
+                      </button>
+
+                      <button type="button"
+                              class="preset-avatar-btn"
+                              data-avatar="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=200&auto=format&fit=crop&q=80"
+                              title="Avatar Nữ năng động">
+                        <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=200&auto=format&fit=crop&q=80" alt="Avatar 3" />
+                      </button>
+
+                      <button type="button"
+                              class="preset-avatar-btn"
+                              data-avatar="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=200&auto=format&fit=crop&q=80"
+                              title="Avatar Nam sáng tạo">
+                        <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=200&auto=format&fit=crop&q=80" alt="Avatar 4" />
+                      </button>
+
+                      <span class="badge bg-light text-secondary border px-2 py-1 small">
+                        <i class="bi bi-cloud-check-fill text-primary"></i> Cloudinary Storage
+                      </span>
+                    </div>
+                    <input type="hidden" id="avatarUrlHidden" name="avatarUrl" value="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&auto=format&fit=crop&q=80" />
+                  </div>
+
+                </div>
+
+                <!-- Nút Lưu hồ sơ -->
+                <div class="mt-4 pt-3 border-top text-end">
+                  <button type="submit" class="btn btn-primary px-4 py-2 fw-semibold shadow-sm" id="saveProfileBtn">
+                    <i class="bi bi-check2-circle me-1"></i> Lưu Thay Đổi Hồ Sơ
+                  </button>
+                </div>
+
+              </form>
+
+            </div>
+          </div>
+
+
+          <!-- =================================================================
+               TAB 2: ĐỔI MẬT KHẨU AN TOÀN (SRS AUTH 06)
+               ================================================================= -->
+          <div class="tab-pane fade" id="tab-security" role="tabpanel" aria-labelledby="tab-security-btn">
+            <div class="profile-content-card">
+
+              <h3 class="profile-card-title">
+                <i class="bi bi-shield-lock-fill text-danger"></i> Đổi Mật Khẩu
+              </h3>
+              <p class="profile-card-subtitle">
+                Để bảo vệ an toàn cho tài khoản, mật khẩu mới của bạn cần có tối thiểu 6 ký tự và khác với mật khẩu cũ.
+              </p>
+
+              <form id="changePasswordForm" novalidate>
+
+                <!-- Mật khẩu hiện tại -->
+                <div class="mb-3">
+                  <label for="currentPasswordInput" class="form-label profile-label">
+                    Mật khẩu hiện tại <span class="text-danger">*</span>
+                  </label>
+                  <div class="input-group profile-input-group">
+                    <span class="input-group-text"><i class="bi bi-key-fill"></i></span>
+                    <input type="password"
+                           class="form-control"
+                           id="currentPasswordInput"
+                           name="currentPassword"
+                           placeholder="Nhập mật khẩu đang sử dụng..."
+                           required />
+                    <button class="btn btn-outline-secondary pwd-toggle-btn" type="button" data-target="currentPasswordInput">
+                      <i class="bi bi-eye"></i>
+                    </button>
+                    <div class="invalid-feedback">Vui lòng nhập mật khẩu hiện tại để xác thực.</div>
+                  </div>
+                </div>
+
+                <!-- Mật khẩu mới -->
+                <div class="mb-3">
+                  <label for="newPasswordInput" class="form-label profile-label">
+                    Mật khẩu mới <span class="text-danger">*</span>
+                  </label>
+                  <div class="input-group profile-input-group">
+                    <span class="input-group-text"><i class="bi bi-lock-fill"></i></span>
+                    <input type="password"
+                           class="form-control"
+                           id="newPasswordInput"
+                           name="newPassword"
+                           placeholder="Nhập mật khẩu mới (tối thiểu 6 ký tự)..."
+                           minlength="6"
+                           required />
+                    <button class="btn btn-outline-secondary pwd-toggle-btn" type="button" data-target="newPasswordInput">
+                      <i class="bi bi-eye"></i>
+                    </button>
+                    <div class="invalid-feedback">Mật khẩu mới phải có ít nhất 6 ký tự.</div>
+                  </div>
+
+                  <!-- Thanh đo độ mạnh mật khẩu -->
+                  <div class="password-strength-container">
+                    <div class="strength-meter-bar">
+                      <div class="strength-meter-fill" id="pwdStrengthBar"></div>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center">
+                      <span class="strength-text text-muted" id="pwdStrengthText">Độ mạnh: Chưa nhập</span>
+                      <span class="small text-muted">Nên gồm chữ hoa, số và ký tự đặc biệt</span>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Xác nhận mật khẩu mới -->
+                <div class="mb-3">
+                  <label for="confirmPasswordInput" class="form-label profile-label">
+                    Xác nhận mật khẩu mới <span class="text-danger">*</span>
+                  </label>
+                  <div class="input-group profile-input-group">
+                    <span class="input-group-text"><i class="bi bi-check2-square"></i></span>
+                    <input type="password"
+                           class="form-control"
+                           id="confirmPasswordInput"
+                           name="confirmPassword"
+                           placeholder="Nhập lại mật khẩu mới..."
+                           required />
+                    <button class="btn btn-outline-secondary pwd-toggle-btn" type="button" data-target="confirmPasswordInput">
+                      <i class="bi bi-eye"></i>
+                    </button>
+                    <div class="invalid-feedback" id="confirmFeedback">Xác nhận mật khẩu không khớp.</div>
+                  </div>
+                </div>
+
+                <!-- Tiêu chuẩn kỹ thuật BCrypt Callout -->
+                <div class="alert alert-light border small text-muted p-2 rounded-3 mb-4">
+                  <i class="bi bi-file-lock2 text-primary me-1"></i>
+                  Hệ thống sử dụng cơ chế băm <strong>BCrypt</strong> với salt ngẫu nhiên chuẩn công nghiệp, không lưu mật khẩu dạng plain text vào cơ sở dữ liệu (SRS AUTH 03).
+                </div>
+
+                <!-- Nút Cập nhật mật khẩu -->
+                <div class="mt-4 pt-3 border-top text-end">
+                  <button type="submit" class="btn btn-danger px-4 py-2 fw-semibold shadow-sm" id="savePasswordBtn">
+                    <i class="bi bi-shield-check me-1"></i> Cập Nhật Mật Khẩu Mới
+                  </button>
+                </div>
+
+              </form>
+
+            </div>
+          </div>
+
+
+          <!-- =================================================================
+               TAB 3: HOẠT ĐỘNG & TỔNG QUAN GIAN HÀNG
+               ================================================================= -->
+          <div class="tab-pane fade" id="tab-activity" role="tabpanel" aria-labelledby="tab-activity-btn">
+            <div class="profile-content-card">
+
+              <h3 class="profile-card-title">
+                <i class="bi bi-speedometer2 text-info"></i> Tổng Quan Hoạt Động Tài Khoản
+              </h3>
+              <p class="profile-card-subtitle">
+                Theo dõi tình trạng đơn mua cá nhân và trạng thái gian hàng kinh doanh trên hệ thống.
+              </p>
+
+              <!-- Mini KPI Stats Cards -->
+              <div class="row g-3 mb-4">
+                <div class="col-6 col-md-3">
+                  <div class="summary-stat-mini">
+                    <div class="stat-mini-icon bg-primary-subtle text-primary">
+                      <i class="bi bi-cart-check"></i>
+                    </div>
+                    <div class="stat-mini-number">5</div>
+                    <div class="stat-mini-label">Tổng đơn mua</div>
+                  </div>
+                </div>
+
+                <div class="col-6 col-md-3">
+                  <div class="summary-stat-mini">
+                    <div class="stat-mini-icon bg-success-subtle text-success">
+                      <i class="bi bi-check-circle"></i>
+                    </div>
+                    <div class="stat-mini-number">3</div>
+                    <div class="stat-mini-label">Giao thành công</div>
+                  </div>
+                </div>
+
+                <div class="col-6 col-md-3">
+                  <div class="summary-stat-mini">
+                    <div class="stat-mini-icon bg-danger-subtle text-danger">
+                      <i class="bi bi-heart-fill"></i>
+                    </div>
+                    <div class="stat-mini-number">4</div>
+                    <div class="stat-mini-label">Sản phẩm thích</div>
+                  </div>
+                </div>
+
+                <div class="col-6 col-md-3">
+                  <div class="summary-stat-mini">
+                    <div class="stat-mini-icon bg-warning-subtle text-warning">
+                      <i class="bi bi-bell-fill"></i>
+                    </div>
+                    <div class="stat-mini-number">2</div>
+                    <div class="stat-mini-label">Thông báo mới</div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- KHỐI LIÊN KẾT GIAN HÀNG (STATE PATTERN INTEGRATION) -->
+              <div class="card border border-primary-subtle bg-light rounded-3 p-3 mb-3">
+                <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
+                  <div class="d-flex align-items-center gap-3">
+                    <div class="rounded-circle bg-white p-2 border shadow-xs">
+                      <i class="bi bi-shop-window fs-2 text-primary"></i>
+                    </div>
+                    <div>
+                      <h6 class="fw-bold mb-1 text-dark">Gian Hàng Của Bạn (State Pattern)</h6>
+                      <div class="small text-muted">
+                        Tên Shop: <strong class="text-dark">TechZone Official Store</strong> | Trạng thái:
+                        <span class="badge bg-warning text-dark"><i class="bi bi-hourglass-split"></i> PENDING</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="d-flex gap-2">
+                    <a th:href="@{/merchant/shops/status}" href="../../merchant/shops/status.html" class="btn btn-outline-primary btn-sm">
+                      <i class="bi bi-clock-history"></i> Xem Tiến Trình Duyệt
+                    </a>
+                    <a th:href="@{/merchant/shops/register}" href="../../merchant/shops/register.html" class="btn btn-primary btn-sm">
+                      <i class="bi bi-pencil-square"></i> Cập Nhật Hồ Sơ
+                    </a>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Lịch sử hoạt động gần đây -->
+              <div class="mt-4">
+                <h6 class="fw-bold text-dark mb-3">
+                  <i class="bi bi-clock-history text-secondary me-1"></i> Nhật Ký Hoạt Động Gần Đây:
+                </h6>
+                <div class="list-group list-group-flush rounded-3 border">
+                  <div class="list-group-item d-flex justify-content-between align-items-center py-2 px-3">
+                    <div class="d-flex align-items-center gap-2">
+                      <i class="bi bi-check-circle-fill text-success"></i>
+                      <span class="small">Đơn hàng <strong>#ORD-9082</strong> đã được giao thành công.</span>
+                    </div>
+                    <span class="small text-muted">2 giờ trước</span>
+                  </div>
+
+                  <div class="list-group-item d-flex justify-content-between align-items-center py-2 px-3">
+                    <div class="d-flex align-items-center gap-2">
+                      <i class="bi bi-send-check text-primary"></i>
+                      <span class="small">Đã nộp hồ sơ mở gian hàng <strong>TechZone Official Store</strong>.</span>
+                    </div>
+                    <span class="small text-muted">Hôm qua</span>
+                  </div>
+
+                  <div class="list-group-item d-flex justify-content-between align-items-center py-2 px-3">
+                    <div class="d-flex align-items-center gap-2">
+                      <i class="bi bi-box-arrow-in-right text-info"></i>
+                      <span class="small">Đăng nhập thành công từ thiết bị Chrome trên Windows.</span>
+                    </div>
+                    <span class="small text-muted">3 ngày trước</span>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+
+  </main>
+
+  <!-- =======================================================================
+       TOAST PHẢN HỒI THÔNG BÁO THÀNH CÔNG
+       ======================================================================= -->
+  <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 1090">
+    <div id="actionToast" class="toast align-items-center text-bg-success border-0 shadow-lg" role="alert" aria-live="assertive" aria-atomic="true">
+      <div class="d-flex">
+        <div class="toast-body d-flex align-items-center gap-2">
+          <i class="bi bi-check-circle-fill fs-5"></i>
+          <span id="toastMessage" class="fw-medium">Lưu thay đổi thành công!</span>
+        </div>
+        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+      </div>
+    </div>
+  </div>
+
+  <!-- =======================================================================
+       FOOTER FRAGMENT
+       ======================================================================= -->
+  <div th:replace="~{fragments/footer :: footer}">
+    <footer class="bg-dark text-white text-center py-4 mt-5">
+      <div class="container">
+        <p class="mb-0 small text-white-50">&copy; 2026 SENVIA E-Commerce Platform. Nhóm 2 - Đồ án giữa kỳ Mẫu Thiết Kế.</p>
+      </div>
+    </footer>
+  </div>
+
+  <!-- Bootstrap 5.3 JS Bundle -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+  <!-- Script Logic: Tabs, Avatar preview, Password Strength & Validation -->
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      // 1. URL Hash routing (Ví dụ: truy cập #security tự động mở tab Đổi mật khẩu)
+      if (window.location.hash === "#security" || window.location.pathname.includes("change-password")) {
+        const securityTabBtn = document.getElementById("tab-security-btn");
+        if (securityTabBtn) {
+          const tab = new bootstrap.Tab(securityTabBtn);
+          tab.show();
+        }
+      }
+
+      // 2. Avatar Selection & Upload
+      const mainAvatar = document.getElementById("mainProfileAvatar");
+      const avatarFileInput = document.getElementById("avatarFileInput");
+      const avatarHidden = document.getElementById("avatarUrlHidden");
+      const presetButtons = document.querySelectorAll(".preset-avatar-btn");
+
+      presetButtons.forEach(btn => {
+        btn.addEventListener("click", function () {
+          presetButtons.forEach(b => b.classList.remove("active"));
+          this.classList.add("active");
+          const url = this.getAttribute("data-avatar");
+          mainAvatar.src = url;
+          avatarHidden.value = url;
+          showToast("Đã cập nhật ảnh đại diện xem trước!");
+        });
+      });
+
+      avatarFileInput.addEventListener("change", function () {
+        if (this.files && this.files[0]) {
+          const reader = new FileReader();
+          reader.onload = function (e) {
+            mainAvatar.src = e.target.result;
+            avatarHidden.value = e.target.result;
+            presetButtons.forEach(b => b.classList.remove("active"));
+            showToast("Đã tải ảnh đại diện lên thành công (Cloudinary Demo)!");
+          };
+          reader.readAsDataURL(this.files[0]);
+        }
+      });
+
+      // 3. Password Show/Hide Toggle
+      const toggleButtons = document.querySelectorAll(".pwd-toggle-btn");
+      toggleButtons.forEach(btn => {
+        btn.addEventListener("click", function () {
+          const targetId = this.getAttribute("data-target");
+          const input = document.getElementById(targetId);
+          const icon = this.querySelector("i");
+          if (input.type === "password") {
+            input.type = "text";
+            icon.classList.remove("bi-eye");
+            icon.classList.add("bi-eye-slash");
+          } else {
+            input.type = "password";
+            icon.classList.remove("bi-eye-slash");
+            icon.classList.add("bi-eye");
+          }
+        });
+      });
+
+      // 4. Password Strength Calculation
+      const newPwdInput = document.getElementById("newPasswordInput");
+      const strengthBar = document.getElementById("pwdStrengthBar");
+      const strengthText = document.getElementById("pwdStrengthText");
+
+      newPwdInput.addEventListener("input", function () {
+        const val = this.value;
+        let score = 0;
+        if (val.length >= 6) score += 25;
+        if (val.length >= 10) score += 25;
+        if (/[A-Z]/.test(val) && /[0-9]/.test(val)) score += 25;
+        if (/[^A-Za-z0-9]/.test(val)) score += 25;
+
+        strengthBar.style.width = score + "%";
+
+        if (score === 0) {
+          strengthBar.style.backgroundColor = "#e2e8f0";
+          strengthText.textContent = "Độ mạnh: Chưa nhập";
+          strengthText.className = "strength-text text-muted";
+        } else if (score <= 25) {
+          strengthBar.style.backgroundColor = "#dc3545";
+          strengthText.textContent = "Độ mạnh: Yếu (quá ngắn hoặc đơn giản)";
+          strengthText.className = "strength-text text-danger";
+        } else if (score <= 50) {
+          strengthBar.style.backgroundColor = "#fd7e14";
+          strengthText.textContent = "Độ mạnh: Trung bình";
+          strengthText.className = "strength-text text-warning";
+        } else if (score <= 75) {
+          strengthBar.style.backgroundColor = "#0d6efd";
+          strengthText.textContent = "Độ mạnh: Khá tốt";
+          strengthText.className = "strength-text text-primary";
+        } else {
+          strengthBar.style.backgroundColor = "#198754";
+          strengthText.textContent = "Độ mạnh: Rất an toàn!";
+          strengthText.className = "strength-text text-success";
+        }
+      });
+
+      // 5. Submit Form Cập nhật Hồ sơ (AUTH 05)
+      const profileForm = document.getElementById("profileInfoForm");
+      profileForm.addEventListener("submit", function (e) {
+        e.preventDefault();
+        if (!this.checkValidity()) {
+          e.stopPropagation();
+          this.classList.add("was-validated");
+          return;
+        }
+
+        const fullName = document.getElementById("fullNameInput").value.trim();
+        document.getElementById("displayFullName").textContent = fullName;
+
+        const btn = document.getElementById("saveProfileBtn");
+        btn.disabled = true;
+        btn.innerHTML = `<span class="spinner-border spinner-border-sm me-2" role="status"></span>Đang lưu...`;
+
+        setTimeout(() => {
+          btn.disabled = false;
+          btn.innerHTML = `<i class="bi bi-check2-circle me-1"></i> Lưu Thay Đổi Hồ Sơ`;
+          showToast("Cập nhật thông tin hồ sơ thành công (AUTH 05)!");
+        }, 800);
+      });
+
+      // 6. Submit Form Đổi mật khẩu (AUTH 06)
+      const pwdForm = document.getElementById("changePasswordForm");
+      pwdForm.addEventListener("submit", function (e) {
+        e.preventDefault();
+        const currentPwd = document.getElementById("currentPasswordInput").value;
+        const newPwd = document.getElementById("newPasswordInput").value;
+        const confirmPwd = document.getElementById("confirmPasswordInput").value;
+        const confirmInput = document.getElementById("confirmPasswordInput");
+
+        if (newPwd !== confirmPwd) {
+          confirmInput.setCustomValidity("Passwords do not match");
+        } else {
+          confirmInput.setCustomValidity("");
+        }
+
+        if (!this.checkValidity()) {
+          e.stopPropagation();
+          this.classList.add("was-validated");
+          return;
+        }
+
+        const btn = document.getElementById("savePasswordBtn");
+        btn.disabled = true;
+        btn.innerHTML = `<span class="spinner-border spinner-border-sm me-2" role="status"></span>Đang băm BCrypt & lưu...`;
+
+        setTimeout(() => {
+          btn.disabled = false;
+          btn.innerHTML = `<i class="bi bi-shield-check me-1"></i> Cập Nhật Mật Khẩu Mới`;
+          pwdForm.reset();
+          pwdForm.classList.remove("was-validated");
+          strengthBar.style.width = "0%";
+          strengthText.textContent = "Độ mạnh: Chưa nhập";
+          strengthText.className = "strength-text text-muted";
+          showToast("Đổi mật khẩu thành công! Hãy dùng mật khẩu mới cho lần đăng nhập tới.");
+        }, 1000);
+      });
+
+      // Toast helper
+      function showToast(msg) {
+        const toastEl = document.getElementById("actionToast");
+        document.getElementById("toastMessage").textContent = msg;
+        const toast = new bootstrap.Toast(toastEl, { delay: 3500 });
+        toast.show();
+      }
+    });
+  </script>
+
+</body>
+</html>

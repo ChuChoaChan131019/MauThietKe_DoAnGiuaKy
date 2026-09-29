@@ -1,0 +1,308 @@
+@import url('../../common/theme.css');
+
+/**
+ * ==============================================================================
+ * MERCHANT MODULE - PRODUCT DETAIL STYLESHEET
+ * ==============================================================================
+ * File: src/main/resources/static/css/modules/merchant/product-detail.css
+ * Bố cục trang chi tiết sản phẩm, thư viện ảnh thumbnail, thông tin shop & đánh giá
+ * ==============================================================================
+ */
+
+/* 1. Product Showcase Grid */
+.product-showcase-card {
+  background-color: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 0.75rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  padding: 1.75rem;
+  margin-bottom: 2rem;
+}
+
+/* 2. Gallery Component */
+.product-gallery-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.gallery-main-image-wrapper {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  background-color: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 0.5rem;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.gallery-main-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.gallery-main-image-wrapper:hover .gallery-main-img {
+  transform: scale(1.03);
+}
+
+.gallery-thumbnails-row {
+  display: flex;
+  gap: 0.75rem;
+  overflow-x: auto;
+  padding-bottom: 0.25rem;
+}
+
+.gallery-thumb-item {
+  width: 72px;
+  height: 72px;
+  border-radius: 0.375rem;
+  border: 2px solid transparent;
+  overflow: hidden;
+  cursor: pointer;
+  background-color: #f8fafc;
+  flex-shrink: 0;
+  transition: all 0.15s ease;
+}
+
+.gallery-thumb-item img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.gallery-thumb-item:hover,
+.gallery-thumb-item.active {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2);
+}
+
+/* 3. Product Info Block */
+.product-meta-header {
+  margin-bottom: 1rem;
+}
+
+.product-detail-title {
+  font-size: 1.65rem;
+  font-weight: 700;
+  color: #0f172a;
+  line-height: 1.35;
+  margin-bottom: 0.75rem;
+}
+
+.product-rating-bar {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: 0.9rem;
+  color: #64748b;
+  margin-bottom: 1.25rem;
+}
+
+.stars-rating {
+  color: #f59e0b;
+}
+
+/* Price Box */
+.product-price-box {
+  background-color: #f8fafc;
+  border-radius: 0.5rem;
+  padding: 1.25rem;
+  margin-bottom: 1.5rem;
+  display: flex;
+  align-items: baseline;
+  gap: 1rem;
+}
+
+.product-current-price {
+  font-size: 2rem;
+  font-weight: 800;
+  color: var(--color-accent, #d1588e);
+  letter-spacing: -0.02em;
+}
+
+.product-original-price {
+  font-size: 1.1rem;
+  color: #94a3b8;
+  text-decoration: line-through;
+}
+
+.product-discount-tag {
+  background-color: #fdf2f7;
+  color: var(--color-accent, #d1588e);
+  border: 1px solid var(--color-accent-muted, #d67398);
+  font-size: 0.8rem;
+  font-weight: 700;
+  padding: 0.2rem 0.5rem;
+  border-radius: 9999px;
+}
+
+/* Spec list */
+.product-spec-row {
+  display: flex;
+  align-items: center;
+  margin-bottom: 0.6rem;
+  font-size: 0.9rem;
+}
+
+.product-spec-label {
+  width: 140px;
+  color: #64748b;
+  flex-shrink: 0;
+}
+
+.product-spec-value {
+  color: #1e293b;
+  font-weight: 600;
+}
+
+/* 4. Action Buttons */
+.product-action-group {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-top: 1.75rem;
+  flex-wrap: wrap;
+}
+
+.btn-add-cart {
+  padding: 0.75rem 1.5rem;
+  font-weight: 600;
+  border-radius: 0.5rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 1rem;
+  background-color: #fdf2f7;
+  color: var(--color-accent, #d1588e);
+  border: 1.5px solid var(--color-accent, #d1588e);
+  transition: all 0.15s ease;
+}
+
+.btn-add-cart:hover {
+  background-color: var(--color-accent, #d1588e);
+  color: #ffffff;
+}
+
+.btn-buy-now {
+  padding: 0.75rem 2rem;
+  font-weight: 700;
+  border-radius: 0.5rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 1rem;
+  background-color: var(--color-accent, #d1588e);
+  border-color: var(--color-accent, #d1588e);
+  color: #ffffff;
+  box-shadow: 0 4px 14px rgba(209, 88, 142, 0.35);
+  transition: all 0.15s ease;
+}
+
+.btn-buy-now:hover {
+  background-color: var(--color-accent-hover, #b84377);
+  border-color: var(--color-accent-hover, #b84377);
+  color: #ffffff;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 18px rgba(209, 88, 142, 0.45);
+}
+
+.btn-favorite-icon {
+  width: 46px;
+  height: 46px;
+  border-radius: 0.5rem;
+  border: 1px solid #cbd5e1;
+  background-color: #ffffff;
+  color: #64748b;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.25rem;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.btn-favorite-icon:hover,
+.btn-favorite-icon.active {
+  color: #ef4444;
+  border-color: #fca5a5;
+  background-color: #fef2f2;
+}
+
+/* 5. Shop Profile Card */
+.shop-profile-card {
+  background-color: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 0.75rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  padding: 1.25rem 1.5rem;
+  margin-bottom: 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.shop-profile-info {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.shop-profile-avatar {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 1px solid #e2e8f0;
+}
+
+/* 6. Tabs & Description */
+.product-content-card {
+  background-color: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 0.75rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  overflow: hidden;
+  margin-bottom: 2rem;
+}
+
+.product-content-nav {
+  background-color: #f8fafc;
+  border-bottom: 1px solid #e2e8f0;
+  padding: 0 1.5rem;
+}
+
+.product-content-body {
+  padding: 1.75rem;
+  color: #334155;
+  line-height: 1.7;
+}
+
+/* Reviews List */
+.review-item-card {
+  padding: 1.25rem 0;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.review-item-card:last-child {
+  border-bottom: none;
+}
+
+.review-author-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: #38bdf8;
+  color: #0f172a;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 0.9rem;
+}

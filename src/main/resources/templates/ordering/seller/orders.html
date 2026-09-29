@@ -1,0 +1,840 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Quản lý đơn bán - Kênh Người Bán - SENVIA MARKET</title>
+
+  <!-- Bootstrap 5.3 CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <!-- Bootstrap Icons -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
+  <!-- Common Badges & Tokens -->
+  <link rel="stylesheet" th:href="@{/css/common/badges.css}" href="../../../static/css/common/badges.css" />
+  <!-- Common Layout CSS -->
+  <link rel="stylesheet" th:href="@{/css/common/layout.css}" href="../../../static/css/common/layout.css" />
+  <!-- Seller Orders CSS -->
+  <link rel="stylesheet" th:href="@{/css/modules/ordering/seller-orders.css}" href="../../../static/css/modules/ordering/seller-orders.css" />
+</head>
+<body class="bg-light">
+
+  <!-- =======================================================================
+       HEADER FRAGMENT
+       ======================================================================= -->
+  <div th:replace="~{fragments/header :: header}">
+    <header class="navbar navbar-expand-lg navbar-dark bg-dark py-3 mb-3 shadow-sm">
+      <div class="container">
+        <a class="navbar-brand fw-bold d-flex align-items-center gap-2" href="/">
+          <i class="bi bi-shop-window text-warning"></i> SENVIA MARKET
+        </a>
+        <div class="d-flex align-items-center gap-3">
+          <span class="badge bg-success-subtle text-success border border-success-subtle px-3 py-2">
+            <i class="bi bi-shop me-1"></i> TechZone Store (Kênh người bán)
+          </span>
+          <a href="../../merchant/products/list.html" class="btn btn-outline-light btn-sm">Xem sàn</a>
+        </div>
+      </div>
+    </header>
+  </div>
+
+  <!-- Main Container -->
+  <main class="container my-4">
+
+    <!-- Breadcrumb -->
+    <nav aria-label="breadcrumb" class="mb-3">
+      <ol class="breadcrumb mb-0">
+        <li class="breadcrumb-item"><a href="/" th:href="@{/}" class="text-decoration-none text-secondary">Trang chủ</a></li>
+        <li class="breadcrumb-item"><a href="../../merchant/shops/status.html" class="text-decoration-none text-secondary">Kênh người bán</a></li>
+        <li class="breadcrumb-item active text-dark fw-medium" aria-current="page">Xử lý đơn bán (Fulfillment)</li>
+      </ol>
+    </nav>
+
+    <!-- Page Header -->
+    <div class="d-flex align-items-center justify-content-between mb-4 flex-wrap gap-3">
+      <div>
+        <div class="d-flex align-items-center gap-2 mb-1">
+          <h1 class="h3 fw-bold text-dark mb-0">Quản Lý Đơn Bán Của Gian Hàng</h1>
+          <span class="badge bg-primary-subtle text-primary border border-primary-subtle py-1 px-2 fw-semibold">
+            Order Fulfillment (UC 07)
+          </span>
+        </div>
+        <p class="text-secondary small mb-0">
+          Tiếp nhận đơn hàng mới PENDING, xác nhận CONFIRMED, đóng gói PREPARING và bàn giao bưu tá SHIPPING theo quy tắc chuyển trạng thái hợp lệ.
+        </p>
+      </div>
+
+      <div class="d-flex align-items-center gap-2">
+        <a href="../../merchant/seller/products/index.html" class="btn btn-outline-primary btn-sm d-flex align-items-center gap-1">
+          <i class="bi bi-boxes"></i> Quản lý sản phẩm &amp; tồn kho
+        </a>
+      </div>
+    </div>
+
+    <!-- =======================================================================
+         PHẦN 1: KPI STATS CARDS (STAT 02, STAT 03 - DOANH THU & ĐƠN BÁN)
+         ======================================================================= -->
+    <div class="row g-3 mb-4">
+
+      <!-- 1. Chờ xác nhận (PENDING) -->
+      <div class="col-6 col-lg-3">
+        <div class="seller-kpi-card" onclick="filterSellerOrders('PENDING')">
+          <div class="seller-kpi-icon bg-warning-subtle text-warning-emphasis">
+            <i class="bi bi-hourglass-split"></i>
+          </div>
+          <div class="seller-kpi-count text-warning-emphasis" id="kpiPending">2</div>
+          <div class="seller-kpi-label">Chờ xác nhận (Cần duyệt ngay)</div>
+        </div>
+      </div>
+
+      <!-- 2. Đang chuẩn bị (PREPARING) -->
+      <div class="col-6 col-lg-3">
+        <div class="seller-kpi-card" onclick="filterSellerOrders('PREPARING')">
+          <div class="seller-kpi-icon bg-info-subtle text-info">
+            <i class="bi bi-box-seam-fill"></i>
+          </div>
+          <div class="seller-kpi-count text-info" id="kpiPreparing">1</div>
+          <div class="seller-kpi-label">Đang đóng gói (PREPARING)</div>
+        </div>
+      </div>
+
+      <!-- 3. Đang giao hàng (SHIPPING) -->
+      <div class="col-6 col-lg-3">
+        <div class="seller-kpi-card" onclick="filterSellerOrders('SHIPPING')">
+          <div class="seller-kpi-icon bg-primary-subtle text-primary">
+            <i class="bi bi-truck"></i>
+          </div>
+          <div class="seller-kpi-count text-primary" id="kpiShipping">1</div>
+          <div class="seller-kpi-label">Đang giao vận (SHIPPING)</div>
+        </div>
+      </div>
+
+      <!-- 4. Doanh thu thực tế (COMPLETED - BR 14) -->
+      <div class="col-6 col-lg-3">
+        <div class="seller-kpi-card" onclick="filterSellerOrders('COMPLETED')">
+          <div class="seller-kpi-icon bg-success-subtle text-success">
+            <i class="bi bi-cash-stack"></i>
+          </div>
+          <div class="seller-kpi-count text-success" id="kpiRevenue">1.850.000 ₫</div>
+          <div class="seller-kpi-label">Doanh thu đơn COMPLETED (BR 14)</div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- =======================================================================
+         PHẦN 2: TABS VÒNG ĐỜI ĐƠN HÀNG (ORDER 05) & TÌM KIẾM
+         ======================================================================= -->
+    <div class="seller-order-tabs-card">
+      <div class="row g-3 align-items-center justify-content-between">
+
+        <!-- Tabs -->
+        <div class="col-12 col-md-auto">
+          <ul class="nav seller-order-nav-tabs" id="sellerOrderTabs">
+            <li class="nav-item">
+              <button class="nav-link active" onclick="filterSellerOrders('ALL')">
+                Tất cả đơn <span class="seller-order-pill" id="tabCountAll">5</span>
+              </button>
+            </li>
+            <li class="nav-item">
+              <button class="nav-link" onclick="filterSellerOrders('PENDING')">
+                <i class="bi bi-hourglass-split text-warning"></i> Chờ xác nhận
+                <span class="seller-order-pill bg-warning text-dark fw-bold" id="tabCountPending">2</span>
+              </button>
+            </li>
+            <li class="nav-item">
+              <button class="nav-link" onclick="filterSellerOrders('CONFIRMED')">
+                <i class="bi bi-check2-circle text-info"></i> Đã duyệt
+                <span class="seller-order-pill" id="tabCountConfirmed">0</span>
+              </button>
+            </li>
+            <li class="nav-item">
+              <button class="nav-link" onclick="filterSellerOrders('PREPARING')">
+                <i class="bi bi-box-seam text-primary"></i> Đang chuẩn bị
+                <span class="seller-order-pill" id="tabCountPreparing">1</span>
+              </button>
+            </li>
+            <li class="nav-item">
+              <button class="nav-link" onclick="filterSellerOrders('SHIPPING')">
+                <i class="bi bi-truck text-primary"></i> Đang giao
+                <span class="seller-order-pill" id="tabCountShipping">1</span>
+              </button>
+            </li>
+            <li class="nav-item">
+              <button class="nav-link" onclick="filterSellerOrders('COMPLETED')">
+                <i class="bi bi-patch-check-fill text-success"></i> Đã giao
+                <span class="seller-order-pill" id="tabCountCompleted">1</span>
+              </button>
+            </li>
+          </ul>
+        </div>
+
+        <!-- Ô tìm kiếm -->
+        <div class="col-12 col-md-auto">
+          <div class="input-group input-group-sm" style="width: 250px;">
+            <span class="input-group-text bg-white border-end-0"><i class="bi bi-search text-muted"></i></span>
+            <input type="text" id="orderSearchInput" class="form-control border-start-0"
+                   placeholder="Tìm mã đơn, tên khách, SĐT..." oninput="handleOrderSearch(this.value)" />
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- =======================================================================
+         PHẦN 3: DANH SÁCH THẺ ĐƠN HÀNG CẦN XỬ LÝ (ORDER 02 - 05)
+         Thymeleaf Integration: th:each="order : ${sellerOrders}"
+         ======================================================================= -->
+    <div id="sellerOrdersList">
+
+      <!-- =====================================================================
+           ĐƠN 1: PENDING - CHỜ SHOP XÁC NHẬN (CÓ NÚT DUYỆT & HỦY)
+           ===================================================================== -->
+      <div class="seller-order-card" data-id="1" data-code="ORD-20260929-8815" data-status="PENDING" data-buyer="Trần Thị Lan" data-phone="0988123456">
+
+        <!-- Card Header -->
+        <div class="seller-order-card-header">
+          <div class="seller-buyer-identity">
+            <i class="bi bi-person-circle text-secondary fs-5"></i>
+            <div>
+              <strong>Trần Thị Lan</strong>
+              <span class="text-muted small ms-1">(0988 123 456)</span>
+            </div>
+          </div>
+          <div class="seller-order-meta">
+            <span>Mã đơn: <strong class="text-dark">#ORD-20260929-8815</strong></span>
+            <span>•</span>
+            <span>29/09/2026 16:10</span>
+            <span>•</span>
+            <span class="badge badge-order-pending">
+              <i class="bi bi-hourglass-split me-1"></i> PENDING: Chờ xác nhận
+            </span>
+          </div>
+        </div>
+
+        <!-- Item Row -->
+        <div class="seller-item-row">
+          <img src="../../../static/images/demo/product-tech-mechanical-keyboard.jpg" alt="Thumb" class="seller-item-thumb" />
+          <div class="seller-item-info">
+            <a href="../../merchant/products/detail.html" class="seller-item-title">
+              Bàn phím cơ không dây Custom 75% Switch Gateron Pro Hotswap RGB
+            </a>
+            <div class="seller-item-specs">
+              <span>Phân loại: Gateron Brown Switch</span>
+              <span class="mx-2">•</span>
+              <span>Số lượng: <strong class="text-dark">x1</strong></span>
+            </div>
+          </div>
+          <div class="seller-item-price-box">
+            <div class="seller-item-price">1.850.000 ₫</div>
+            <div class="text-muted small">Tồn kho còn: 15</div>
+          </div>
+        </div>
+
+        <!-- Card Footer -->
+        <div class="seller-order-card-footer">
+          <div class="seller-shipping-address-box">
+            <i class="bi bi-geo-alt-fill text-danger me-1"></i>
+            <strong>Địa chỉ giao:</strong> Số 45 Nguyễn Huệ, Phường Bến Nghé, Quận 1, TP.HCM
+            <div class="mt-1">
+              <span class="badge bg-light text-secondary border">
+                <i class="bi bi-qr-code me-1"></i> Chuyển khoản ngân hàng (Mô phỏng)
+              </span>
+              <span class="badge bg-info-subtle text-info-emphasis border border-info-subtle ms-1">
+                Ref: ECOM_8815
+              </span>
+            </div>
+          </div>
+
+          <div class="d-flex align-items-center gap-3 flex-wrap">
+            <div class="text-end">
+              <small class="text-muted d-block">Tổng thu kiện hàng:</small>
+              <span class="seller-order-total">1.850.000 ₫</span>
+            </div>
+            <div class="seller-order-actions">
+              <!-- Nút xác nhận đơn hàng PENDING -> CONFIRMED -->
+              <button type="button" class="btn btn-success btn-sm d-flex align-items-center gap-1 fw-semibold"
+                      onclick="confirmOrder(1, 'ORD-20260929-8815')">
+                <i class="bi bi-check-lg"></i> Xác nhận đơn
+              </button>
+              <!-- Nút hủy đơn hoàn kho (BR 12) -->
+              <button type="button" class="btn btn-outline-danger btn-sm d-flex align-items-center gap-1"
+                      onclick="openCancelByShopModal(1, 'ORD-20260929-8815', 'Bàn phím cơ Custom 75%')">
+                <i class="bi bi-x-lg"></i> Hủy đơn
+              </button>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- =====================================================================
+           ĐƠN 2: PENDING - CHỜ SHOP XÁC NHẬN
+           ===================================================================== -->
+      <div class="seller-order-card" data-id="2" data-code="ORD-20260929-8819" data-status="PENDING" data-buyer="Hoàng Văn Nam" data-phone="0903111222">
+        <div class="seller-order-card-header">
+          <div class="seller-buyer-identity">
+            <i class="bi bi-person-circle text-secondary fs-5"></i>
+            <div>
+              <strong>Hoàng Văn Nam</strong>
+              <span class="text-muted small ms-1">(0903 111 222)</span>
+            </div>
+          </div>
+          <div class="seller-order-meta">
+            <span>Mã đơn: <strong class="text-dark">#ORD-20260929-8819</strong></span>
+            <span>•</span>
+            <span>29/09/2026 17:05</span>
+            <span>•</span>
+            <span class="badge badge-order-pending">
+              <i class="bi bi-hourglass-split me-1"></i> PENDING: Chờ xác nhận
+            </span>
+          </div>
+        </div>
+
+        <div class="seller-item-row">
+          <img src="../../../static/images/demo/product-tech-wireless-headphones.jpg" alt="Thumb" class="seller-item-thumb" />
+          <div class="seller-item-info">
+            <a href="../../merchant/products/detail.html" class="seller-item-title">
+              Tai nghe chụp tai Bluetooth chống ồn chủ động ANC High-Res Audio Pin 40h
+            </a>
+            <div class="seller-item-specs">
+              <span>Màu: Đen Titan</span>
+              <span class="mx-2">•</span>
+              <span>Số lượng: <strong class="text-dark">x1</strong></span>
+            </div>
+          </div>
+          <div class="seller-item-price-box">
+            <div class="seller-item-price">2.490.000 ₫</div>
+            <div class="text-muted small">Tồn kho còn: 8</div>
+          </div>
+        </div>
+
+        <div class="seller-order-card-footer">
+          <div class="seller-shipping-address-box">
+            <i class="bi bi-geo-alt-fill text-danger me-1"></i>
+            <strong>Địa chỉ giao:</strong> Số 88 Đường Cầu Giấy, Quận Cầu Giấy, Hà Nội
+            <div class="mt-1">
+              <span class="badge bg-light text-secondary border">
+                <i class="bi bi-cash me-1"></i> COD (Thanh toán khi nhận hàng)
+              </span>
+            </div>
+          </div>
+
+          <div class="d-flex align-items-center gap-3 flex-wrap">
+            <div class="text-end">
+              <small class="text-muted d-block">Tổng thu kiện hàng:</small>
+              <span class="seller-order-total">2.490.000 ₫</span>
+            </div>
+            <div class="seller-order-actions">
+              <button type="button" class="btn btn-success btn-sm d-flex align-items-center gap-1 fw-semibold"
+                      onclick="confirmOrder(2, 'ORD-20260929-8819')">
+                <i class="bi bi-check-lg"></i> Xác nhận đơn
+              </button>
+              <button type="button" class="btn btn-outline-danger btn-sm"
+                      onclick="openCancelByShopModal(2, 'ORD-20260929-8819', 'Tai nghe Bluetooth ANC')">
+                <i class="bi bi-x-lg"></i> Hủy đơn
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- =====================================================================
+           ĐƠN 3: PREPARING - ĐANG ĐÓNG GÓI (CÓ NÚT BÀN GIAO GIAO VẬN)
+           ===================================================================== -->
+      <div class="seller-order-card" data-id="3" data-code="ORD-20260929-8802" data-status="PREPARING" data-buyer="Lê Thị Mai" data-phone="0911222333">
+        <div class="seller-order-card-header">
+          <div class="seller-buyer-identity">
+            <i class="bi bi-person-circle text-secondary fs-5"></i>
+            <div>
+              <strong>Lê Thị Mai</strong>
+              <span class="text-muted small ms-1">(0911 222 333)</span>
+            </div>
+          </div>
+          <div class="seller-order-meta">
+            <span>Mã đơn: <strong class="text-dark">#ORD-20260929-8802</strong></span>
+            <span>•</span>
+            <span>29/09/2026 14:00</span>
+            <span>•</span>
+            <span class="badge badge-order-preparing">
+              <i class="bi bi-box-seam me-1"></i> PREPARING: Đang đóng gói
+            </span>
+          </div>
+        </div>
+
+        <div class="seller-item-row">
+          <img src="../../../static/images/demo/product-tech-mechanical-keyboard.jpg" alt="Thumb" class="seller-item-thumb" />
+          <div class="seller-item-info">
+            <a href="../../merchant/products/detail.html" class="seller-item-title">
+              Bàn phím cơ không dây Custom 75% Switch Gateron Pro Hotswap RGB
+            </a>
+            <div class="seller-item-specs">
+              <span>Gateron Red Switch • SL: x1</span>
+            </div>
+          </div>
+          <div class="seller-item-price-box">
+            <div class="seller-item-price">1.850.000 ₫</div>
+          </div>
+        </div>
+
+        <div class="seller-order-card-footer">
+          <div class="seller-shipping-address-box">
+            <i class="bi bi-geo-alt-fill text-danger me-1"></i>
+            <strong>Địa chỉ giao:</strong> Tòa nhà Landmark 81, Quận Bình Thạnh, TP.HCM
+            <div class="mt-1">
+              <span class="badge bg-light text-secondary border">COD</span>
+              <span class="badge bg-success-subtle text-success ms-1">Đã đóng gói xong</span>
+            </div>
+          </div>
+
+          <div class="d-flex align-items-center gap-3 flex-wrap">
+            <div class="text-end">
+              <small class="text-muted d-block">Tổng thu kiện hàng:</small>
+              <span class="seller-order-total">1.850.000 ₫</span>
+            </div>
+            <div class="seller-order-actions">
+              <!-- Nút bàn giao vận chuyển PREPARING -> SHIPPING -->
+              <button type="button" class="btn btn-primary btn-sm d-flex align-items-center gap-1 fw-semibold"
+                      onclick="openShippingModal(3, 'ORD-20260929-8802', 'Lê Thị Mai', 'Landmark 81, Bình Thạnh, TP.HCM')">
+                <i class="bi bi-truck"></i> Bàn giao bưu tá
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- =====================================================================
+           ĐƠN 4: SHIPPING - ĐANG GIAO HÀNG
+           ===================================================================== -->
+      <div class="seller-order-card" data-id="4" data-code="ORD-20260929-8812" data-status="SHIPPING" data-buyer="Nguyễn Văn A" data-phone="0912345678">
+        <div class="seller-order-card-header">
+          <div class="seller-buyer-identity">
+            <i class="bi bi-person-circle text-secondary fs-5"></i>
+            <div>
+              <strong>Nguyễn Văn A</strong>
+              <span class="text-muted small ms-1">(0912 345 678)</span>
+            </div>
+          </div>
+          <div class="seller-order-meta">
+            <span>Mã đơn: <strong class="text-dark">#ORD-20260929-8812</strong></span>
+            <span>•</span>
+            <span>29/09/2026 14:35</span>
+            <span>•</span>
+            <span class="badge badge-order-shipping">
+              <i class="bi bi-truck me-1"></i> SHIPPING: Đang giao hàng
+            </span>
+          </div>
+        </div>
+
+        <div class="seller-item-row">
+          <img src="../../../static/images/demo/product-tech-mechanical-keyboard.jpg" alt="Thumb" class="seller-item-thumb" />
+          <div class="seller-item-info">
+            <a href="../../merchant/products/detail.html" class="seller-item-title">
+              Bàn phím cơ không dây Custom 75% Switch Gateron Pro Hotswap RGB
+            </a>
+            <div class="seller-item-specs">
+              <span>Mã vận đơn: VNPOST-EXP-9921 • Bưu tá đang giao</span>
+            </div>
+          </div>
+          <div class="seller-item-price-box">
+            <div class="seller-item-price">1.850.000 ₫</div>
+          </div>
+        </div>
+
+        <div class="seller-order-card-footer">
+          <div class="seller-shipping-address-box">
+            <i class="bi bi-geo-alt-fill text-danger me-1"></i>
+            <strong>Địa chỉ giao:</strong> KTX Khu B ĐHQG, Linh Trung, Thủ Đức, TP.HCM
+          </div>
+
+          <div class="d-flex align-items-center gap-3 flex-wrap">
+            <div class="text-end">
+              <small class="text-muted d-block">Tổng thu kiện hàng:</small>
+              <span class="seller-order-total">1.850.000 ₫</span>
+            </div>
+            <div class="seller-order-actions">
+              <span class="badge bg-light text-secondary border p-2">
+                <i class="bi bi-clock me-1"></i> Chờ khách nhận hàng
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- =====================================================================
+           ĐƠN 5: COMPLETED - HOÀN TẤT & ĐÃ TÍNH VÀO DOANH THU (BR 14)
+           ===================================================================== -->
+      <div class="seller-order-card" data-id="5" data-code="ORD-20260925-4421" data-status="COMPLETED" data-buyer="Nguyễn Văn A" data-phone="0912345678">
+        <div class="seller-order-card-header">
+          <div class="seller-buyer-identity">
+            <i class="bi bi-person-circle text-secondary fs-5"></i>
+            <div>
+              <strong>Nguyễn Văn A</strong>
+            </div>
+          </div>
+          <div class="seller-order-meta">
+            <span>Mã đơn: <strong class="text-dark">#ORD-20260925-4421</strong></span>
+            <span>•</span>
+            <span>25/09/2026 10:20</span>
+            <span>•</span>
+            <span class="badge badge-order-completed">
+              <i class="bi bi-patch-check-fill me-1"></i> COMPLETED: Đã hoàn tất
+            </span>
+          </div>
+        </div>
+
+        <div class="seller-item-row">
+          <img src="../../../static/images/demo/product-tech-mechanical-keyboard.jpg" alt="Thumb" class="seller-item-thumb" />
+          <div class="seller-item-info">
+            <a href="../../merchant/products/detail.html" class="seller-item-title">
+              Bàn phím cơ không dây Custom 75% Switch Gateron Pro Hotswap RGB
+            </a>
+            <div class="seller-item-specs text-success">
+              <i class="bi bi-check-circle-fill me-1"></i> Khách đã nhận &amp; đánh giá 5 sao
+            </div>
+          </div>
+          <div class="seller-item-price-box">
+            <div class="seller-item-price">1.850.000 ₫</div>
+          </div>
+        </div>
+
+        <div class="seller-order-card-footer">
+          <div class="seller-shipping-address-box">
+            <span class="badge bg-success-subtle text-success border border-success-subtle">
+              <i class="bi bi-check-all me-1"></i> Đã quyết toán doanh thu shop (BR 14)
+            </span>
+          </div>
+
+          <div class="d-flex align-items-center gap-3 flex-wrap">
+            <div class="text-end">
+              <small class="text-muted d-block">Doanh thu ghi nhận:</small>
+              <span class="seller-order-total text-success">+1.850.000 ₫</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Empty State -->
+    <div id="sellerEmptyState" class="p-5 text-center bg-white rounded-3 border d-none">
+      <i class="bi bi-receipt-cutoff text-secondary fs-1 d-block mb-2"></i>
+      <h5 class="fw-bold text-dark">Không có đơn hàng nào!</h5>
+      <p class="text-secondary small mb-0">Không tìm thấy đơn hàng thuộc trạng thái này.</p>
+    </div>
+
+  </main>
+
+  <!-- =======================================================================
+       MODAL 1: BÀN GIAO GIAO VẬN (PREPARING -> SHIPPING)
+       ======================================================================= -->
+  <div class="modal fade" id="shippingModal" tabindex="-1" aria-labelledby="shippingModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content border-0 shadow-lg">
+        <div class="modal-header border-bottom">
+          <h5 class="modal-title fw-bold text-primary" id="shippingModalLabel">
+            <i class="bi bi-truck me-2"></i>Xác nhận bàn giao bưu tá
+          </h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <form id="shippingForm" onsubmit="handleShippingSubmit(event)">
+          <div class="modal-body py-3">
+
+            <p class="small text-muted mb-3">
+              Sau khi bàn giao kiện hàng cho bưu tá, đơn hàng sẽ chuyển sang trạng thái <strong>SHIPPING</strong> và người mua sẽ nhận được thông báo hành trình.
+            </p>
+
+            <!-- Phiếu gửi hàng mô phỏng -->
+            <div class="shipping-label-card mb-3">
+              <div class="d-flex justify-content-between border-bottom pb-2 mb-2">
+                <span>VẬN ĐƠN MÔ PHỎNG</span>
+                <span class="text-primary fw-bold">VNPOST-EXPRESS</span>
+              </div>
+              <div>Mã đơn: <strong id="shipModalCode"></strong></div>
+              <div>Người nhận: <span id="shipModalBuyer"></span></div>
+              <div class="text-truncate">Địa chỉ: <span id="shipModalAddress"></span></div>
+              <div class="mt-2 pt-2 border-top text-center text-muted">
+                ||||| | |||| ||||| |||| |||||| ||||
+              </div>
+            </div>
+
+            <div class="mb-2">
+              <label for="shippingCarrierInput" class="form-label fw-semibold text-dark small">Đơn vị vận chuyển liên kết:</label>
+              <select class="form-select form-select-sm" id="shippingCarrierInput">
+                <option value="VNPost" selected>VNPost - Bưu Điện Việt Nam (Mô phỏng)</option>
+                <option value="GHTK">Giao Hàng Tiết Kiệm (Mô phỏng)</option>
+                <option value="GHN">Giao Hàng Nhanh (Mô phỏng)</option>
+              </select>
+            </div>
+
+            <input type="hidden" id="shipModalTargetId" />
+
+          </div>
+          <div class="modal-footer border-top bg-light">
+            <button type="button" class="btn btn-secondary btn-sm px-3" data-bs-dismiss="modal">Hủy bỏ</button>
+            <button type="submit" class="btn btn-primary btn-sm px-4 fw-semibold">
+              <i class="bi bi-check2-circle me-1"></i> Bàn giao kiện hàng
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- =======================================================================
+       MODAL 2: HỦY ĐƠN HÀNG TỪ PHÍA SHOP (BR 11, BR 12)
+       ======================================================================= -->
+  <div class="modal fade" id="cancelByShopModal" tabindex="-1" aria-labelledby="cancelByShopModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content border-0 shadow-lg">
+        <div class="modal-header border-bottom">
+          <h5 class="modal-title fw-bold text-danger" id="cancelByShopModalLabel">
+            <i class="bi bi-exclamation-triangle-fill me-2"></i>Hủy đơn hàng từ phía Shop
+          </h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <form id="cancelByShopForm" onsubmit="handleCancelByShopSubmit(event)">
+          <div class="modal-body py-3">
+            <p class="mb-2">
+              Bạn có chắc chắn muốn hủy đơn hàng <strong id="cancelShopOrderCode" class="text-dark"></strong>?
+            </p>
+            <div class="alert alert-warning small py-2 mb-3">
+              <i class="bi bi-info-circle-fill me-1"></i>
+              Hủy đơn sẽ tự động hoàn trả số lượng sản phẩm vào kho của shop (BR 12).
+            </div>
+            <div class="mb-2">
+              <label for="cancelShopReason" class="form-label fw-semibold text-dark small">Lý do hủy đơn:</label>
+              <select class="form-select form-select-sm" id="cancelShopReason">
+                <option value="Sản phẩm tạm thời hết hàng trong kho" selected>Sản phẩm tạm thời hết hàng trong kho</option>
+                <option value="Khách hàng yêu cầu hủy đơn qua tin nhắn">Khách hàng yêu cầu hủy đơn qua tin nhắn</option>
+                <option value="Địa chỉ nhận hàng không thể liên hệ hoặc giao được">Địa chỉ nhận hàng không thể liên hệ được</option>
+              </select>
+            </div>
+            <input type="hidden" id="cancelShopTargetId" />
+          </div>
+          <div class="modal-footer border-top bg-light">
+            <button type="button" class="btn btn-secondary btn-sm px-3" data-bs-dismiss="modal">Giữ lại đơn</button>
+            <button type="submit" class="btn btn-danger btn-sm px-4 fw-semibold">Xác nhận hủy</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- =======================================================================
+       TOAST FEEDBACK
+       ======================================================================= -->
+  <div class="toast-container position-fixed bottom-0 end-0 p-3" style="z-index: 1080;">
+    <div id="sellerOrderToast" class="toast align-items-center text-white bg-success border-0 shadow-lg" role="alert" aria-live="assertive" aria-atomic="true">
+      <div class="d-flex">
+        <div class="toast-body d-flex align-items-center gap-2">
+          <i class="bi bi-check-circle-fill fs-5"></i>
+          <div>
+            <div class="fw-bold" id="sellerOrderToastTitle">Thành công!</div>
+            <div class="small text-white-50" id="sellerOrderToastMsg">Trạng thái đơn hàng đã được cập nhật.</div>
+          </div>
+        </div>
+        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+      </div>
+    </div>
+  </div>
+
+  <!-- =======================================================================
+       FOOTER FRAGMENT
+       ======================================================================= -->
+  <div th:replace="~{fragments/footer :: footer}">
+    <footer class="bg-dark text-light pt-4 pb-3 mt-5">
+      <div class="container text-center small text-secondary">
+        &copy; 2026 SENVIA MARKET. Kênh Người Bán - Đồ án giữa kỳ môn Mẫu thiết kế.
+      </div>
+    </footer>
+  </div>
+
+  <!-- Bootstrap 5.3 JS Bundle -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+  <!-- =======================================================================
+       INTERACTIVE CLIENT-SIDE JAVASCRIPT (ORDER FULFILLMENT DEMO)
+       ======================================================================= -->
+  <script>
+    let activeStatusFilter = 'ALL';
+    let searchOrderTerm = '';
+
+    // 1. Filter by Tab
+    function filterSellerOrders(status) {
+      activeStatusFilter = status;
+
+      document.querySelectorAll('#sellerOrderTabs .nav-link').forEach(btn => btn.classList.remove('active'));
+      const activeBtn = Array.from(document.querySelectorAll('#sellerOrderTabs .nav-link'))
+                             .find(link => link.textContent.includes(status === 'ALL' ? 'Tất cả' : status));
+      if (activeBtn) activeBtn.classList.add('active');
+
+      applySellerOrderFilters();
+    }
+
+    // 2. Search
+    function handleOrderSearch(term) {
+      searchOrderTerm = term.trim().toLowerCase();
+      applySellerOrderFilters();
+    }
+
+    // 3. Apply Filters
+    function applySellerOrderFilters() {
+      const cards = document.querySelectorAll('.seller-order-card');
+      let visible = 0;
+
+      cards.forEach(card => {
+        const status = card.getAttribute('data-status');
+        const code = card.getAttribute('data-code').toLowerCase();
+        const buyer = card.getAttribute('data-buyer').toLowerCase();
+        const phone = card.getAttribute('data-phone');
+
+        const matchTab = (activeStatusFilter === 'ALL') || (status === activeStatusFilter);
+        const matchSearch = !searchOrderTerm || code.includes(searchOrderTerm) || buyer.includes(searchOrderTerm) || phone.includes(searchOrderTerm);
+
+        if (matchTab && matchSearch) {
+          card.classList.remove('d-none');
+          visible++;
+        } else {
+          card.classList.add('d-none');
+        }
+      });
+
+      const emptyBox = document.getElementById('sellerEmptyState');
+      if (visible === 0) {
+        emptyBox.classList.remove('d-none');
+      } else {
+        emptyBox.classList.add('d-none');
+      }
+    }
+
+    // 4. Confirm Order (PENDING -> CONFIRMED -> PREPARING)
+    function confirmOrder(id, code) {
+      const card = document.querySelector(`.seller-order-card[data-id="${id}"]`);
+      if (card) {
+        card.setAttribute('data-status', 'PREPARING');
+
+        // Update badge
+        const badge = card.querySelector('.seller-order-meta .badge');
+        badge.className = 'badge badge-order-preparing';
+        badge.innerHTML = '<i class="bi bi-box-seam me-1"></i> PREPARING: Đang chuẩn bị';
+
+        // Update action buttons to Shipping handover
+        const actionBox = card.querySelector('.seller-order-actions');
+        actionBox.innerHTML = `
+          <button type="button" class="btn btn-primary btn-sm d-flex align-items-center gap-1 fw-semibold"
+                  onclick="openShippingModal(${id}, '${code}', '${card.getAttribute('data-buyer')}', 'Địa chỉ giao hàng')">
+            <i class="bi bi-truck"></i> Bàn giao bưu tá
+          </button>
+        `;
+
+        showSellerToast('Đã xác nhận đơn hàng!', `Đơn hàng #${code} đã được duyệt và chuyển sang giai đoạn chuẩn bị hàng (PREPARING).`);
+        recalculateSellerKPIs();
+      }
+    }
+
+    // 5. Handover to Shipper (PREPARING -> SHIPPING)
+    function openShippingModal(id, code, buyer, address) {
+      document.getElementById('shipModalTargetId').value = id;
+      document.getElementById('shipModalCode').textContent = '#' + code;
+      document.getElementById('shipModalBuyer').textContent = buyer;
+      document.getElementById('shipModalAddress').textContent = address;
+
+      new bootstrap.Modal(document.getElementById('shippingModal')).show();
+    }
+
+    function handleShippingSubmit(e) {
+      e.preventDefault();
+      const id = document.getElementById('shipModalTargetId').value;
+      const code = document.getElementById('shipModalCode').textContent;
+
+      const card = document.querySelector(`.seller-order-card[data-id="${id}"]`);
+      if (card) {
+        card.setAttribute('data-status', 'SHIPPING');
+
+        const badge = card.querySelector('.seller-order-meta .badge');
+        badge.className = 'badge badge-order-shipping';
+        badge.innerHTML = '<i class="bi bi-truck me-1"></i> SHIPPING: Đang giao hàng';
+
+        const actionBox = card.querySelector('.seller-order-actions');
+        actionBox.innerHTML = `
+          <span class="badge bg-light text-secondary border p-2">
+            <i class="bi bi-clock me-1"></i> Chờ khách nhận hàng
+          </span>
+        `;
+      }
+
+      bootstrap.Modal.getInstance(document.getElementById('shippingModal')).hide();
+      showSellerToast('Bàn giao thành công!', `Đơn hàng ${code} đã được bàn giao cho bưu tá và chuyển sang trạng thái SHIPPING.`);
+      recalculateSellerKPIs();
+    }
+
+    // 6. Cancel by Shop (BR 11, BR 12)
+    function openCancelByShopModal(id, code, product) {
+      document.getElementById('cancelShopTargetId').value = id;
+      document.getElementById('cancelShopOrderCode').textContent = '#' + code;
+      new bootstrap.Modal(document.getElementById('cancelByShopModal')).show();
+    }
+
+    function handleCancelByShopSubmit(e) {
+      e.preventDefault();
+      const id = document.getElementById('cancelShopTargetId').value;
+      const code = document.getElementById('cancelShopOrderCode').textContent;
+
+      const card = document.querySelector(`.seller-order-card[data-id="${id}"]`);
+      if (card) {
+        card.setAttribute('data-status', 'CANCELLED');
+
+        const badge = card.querySelector('.seller-order-meta .badge');
+        badge.className = 'badge badge-order-cancelled';
+        badge.innerHTML = '<i class="bi bi-x-circle-fill me-1"></i> CANCELLED: Shop đã hủy';
+
+        const actionBox = card.querySelector('.seller-order-actions');
+        actionBox.innerHTML = `<span class="badge bg-secondary text-white">Đã hoàn tồn kho</span>`;
+      }
+
+      bootstrap.Modal.getInstance(document.getElementById('cancelByShopModal')).hide();
+      showSellerToast('Đã hủy đơn hàng!', `Đơn hàng ${code} đã hủy và số lượng sản phẩm đã được tự động hoàn lại vào tồn kho của shop.`, 'danger');
+      recalculateSellerKPIs();
+    }
+
+    // 7. Recalculate KPIs
+    function recalculateSellerKPIs() {
+      const cards = document.querySelectorAll('.seller-order-card');
+      let pending = 0, confirmed = 0, preparing = 0, shipping = 0, completed = 0;
+
+      cards.forEach(c => {
+        const s = c.getAttribute('data-status');
+        if (s === 'PENDING') pending++;
+        else if (s === 'CONFIRMED') confirmed++;
+        else if (s === 'PREPARING') preparing++;
+        else if (s === 'SHIPPING') shipping++;
+        else if (s === 'COMPLETED') completed++;
+      });
+
+      document.getElementById('kpiPending').textContent = pending;
+      document.getElementById('kpiPreparing').textContent = preparing;
+      document.getElementById('kpiShipping').textContent = shipping;
+
+      document.getElementById('tabCountAll').textContent = cards.length;
+      document.getElementById('tabCountPending').textContent = pending;
+      document.getElementById('tabCountConfirmed').textContent = confirmed;
+      document.getElementById('tabCountPreparing').textContent = preparing;
+      document.getElementById('tabCountShipping').textContent = shipping;
+      document.getElementById('tabCountCompleted').textContent = completed;
+
+      applySellerOrderFilters();
+    }
+
+    // 8. Toast Helper
+    function showSellerToast(title, msg, type = 'success') {
+      const toastEl = document.getElementById('sellerOrderToast');
+      document.getElementById('sellerOrderToastTitle').textContent = title;
+      document.getElementById('sellerOrderToastMsg').textContent = msg;
+
+      toastEl.className = `toast align-items-center text-white bg-${type} border-0 shadow-lg`;
+      new bootstrap.Toast(toastEl, { delay: 3500 }).show();
+    }
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,255 @@
+@import url('theme.css');
+
+/**
+ * ==============================================================================
+ * SÀN THƯƠNG MẠI ĐIỆN TỬ - COLOR TOKENS & SEMANTIC BADGES
+ * ==============================================================================
+ * Tương thích hoàn toàn với Bootstrap 5.
+ * File: src/main/resources/static/css/common/badges.css
+ * Áp dụng cho:
+ *   1. Vòng đời Gian hàng (State Pattern: PENDING, APPROVED, REJECTED, LOCKED)
+ *   2. Vòng đời Đơn hàng (PENDING, CONFIRMED, PREPARING, SHIPPING, COMPLETED, CANCELLED)
+ *   3. Trạng thái Thanh toán (PENDING, COD_PENDING, PAID, FAILED)
+ * Tuân thủ chuẩn tương phản WCAG 2.1 AA (> 4.5:1) và nguyên tắc độc lập màu sắc.
+ * ==============================================================================
+ */
+
+:root {
+  /* --------------------------------------------------------------------------
+   * 1. Shop State Tokens (Vòng đời gian hàng - State Pattern)
+   * -------------------------------------------------------------------------- */
+  --badge-shop-pending-bg: #fef3c7;      /* Vàng kem nhạt */
+  --badge-shop-pending-text: #b45309;    /* Vàng hổ phách */
+  --badge-shop-pending-border: #f59e0b;
+  --badge-shop-pending-solid: #f59e0b;
+
+  --badge-shop-approved-bg: #e6f4f1;     /* Xanh ngọc nhạt, pha từ #8CC3B2 */
+  --badge-shop-approved-text: #1b6852;   /* Xanh ngọc đậm (WCAG > 4.5:1) */
+  --badge-shop-approved-border: #8cc3b2;
+  --badge-shop-approved-solid: #16a34a;
+
+  --badge-shop-rejected-bg: #fee2e2;     /* Đỏ hồng nhạt */
+  --badge-shop-rejected-text: #b91c1c;   /* Đỏ cảnh báo */
+  --badge-shop-rejected-border: #fca5a5;
+  --badge-shop-rejected-solid: #ef4444;
+
+  --badge-shop-locked-bg: #e2e8f0;       /* Xám khói */
+  --badge-shop-locked-text: #475569;     /* Xám than */
+  --badge-shop-locked-border: #cbd5e1;
+  --badge-shop-locked-solid: #475569;
+
+  /* --------------------------------------------------------------------------
+   * 2. Order Lifecycle Tokens (Vòng đời đơn hàng - Strategy Pattern)
+   * -------------------------------------------------------------------------- */
+  --badge-order-pending-bg: #f1f5f9;     /* Xám trung tính */
+  --badge-order-pending-text: #475569;
+  --badge-order-pending-border: #cbd5e1;
+
+  --badge-order-confirmed-bg: #e0f2fe;   /* Xanh da trời */
+  --badge-order-confirmed-text: #0369a1;
+  --badge-order-confirmed-border: #bae6fd;
+
+  --badge-order-preparing-bg: #e0f2fe;   /* Đã xác nhận / Đang chuẩn bị hàng */
+  --badge-order-preparing-text: #0369a1;
+  --badge-order-preparing-border: #bae6fd;
+
+  --badge-order-shipping-bg: #ede9fe;    /* Tím nhạt */
+  --badge-order-shipping-text: #6d28d9;
+  --badge-order-shipping-border: #ddd6fe;
+
+  --badge-order-completed-bg: #dcfce7;   /* Xanh lá chuẩn */
+  --badge-order-completed-text: #15803d;
+  --badge-order-completed-border: #86efac;
+
+  --badge-order-cancelled-bg: #fee2e2;   /* Đỏ */
+  --badge-order-cancelled-text: #b91c1c;
+  --badge-order-cancelled-border: #fca5a5;
+
+  /* --------------------------------------------------------------------------
+   * 3. Payment Status & Strategy Tokens
+   * -------------------------------------------------------------------------- */
+  --box-bank-transfer-bg: #f0fdf4;       /* Khung thanh toán chuyển khoản: nền xanh nhạt */
+  --box-bank-transfer-border: #86efac;   /* Viền xanh lá */
+  --box-bank-transfer-text: #166534;     /* Chữ xanh lá đậm */
+
+  --badge-payment-pending-bg: #fef3c7;
+  --badge-payment-pending-text: #b45309;
+  --badge-payment-pending-border: #fcd34d;
+
+  --badge-payment-cod-pending-bg: #ccfbf1;
+  --badge-payment-cod-pending-text: #115e59;
+  --badge-payment-cod-pending-border: #99f6e4;
+
+  --badge-payment-paid-bg: #dcfce7;
+  --badge-payment-paid-text: #15803d;
+  --badge-payment-paid-border: #86efac;
+
+  --badge-payment-failed-bg: #fee2e2;
+  --badge-payment-failed-text: #b91c1c;
+  --badge-payment-failed-border: #fca5a5;
+}
+
+/* ==============================================================================
+ * BASE BADGE UTILITY EXTENSIONS
+ * ============================================================================== */
+.badge-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  font-size: 0.775rem;
+  font-weight: 600;
+  line-height: 1.25;
+  padding: 0.35rem 0.65rem;
+  border-radius: 9999px; /* Pill style */
+  border: 1px solid transparent;
+  white-space: nowrap;
+  letter-spacing: 0.015em;
+  transition: all 0.15s ease-in-out;
+}
+
+.badge-status i,
+.badge-status svg {
+  font-size: 0.85em;
+  line-height: 1;
+}
+
+/* ==============================================================================
+ * 1. SHOP STATE BADGES (State Pattern)
+ * ============================================================================== */
+.badge-shop-pending {
+  background-color: var(--badge-shop-pending-bg);
+  color: var(--badge-shop-pending-text);
+  border-color: var(--badge-shop-pending-border);
+}
+
+.badge-shop-approved {
+  background-color: var(--badge-shop-approved-bg);
+  color: var(--badge-shop-approved-text);
+  border-color: var(--badge-shop-approved-border);
+}
+
+.badge-shop-rejected {
+  background-color: var(--badge-shop-rejected-bg);
+  color: var(--badge-shop-rejected-text);
+  border-color: var(--badge-shop-rejected-border);
+}
+
+.badge-shop-locked {
+  background-color: var(--badge-shop-locked-bg);
+  color: var(--badge-shop-locked-text);
+  border-color: var(--badge-shop-locked-border);
+}
+
+/* Khối hiển thị lý do từ chối gian hàng (Rejection Callout Box) */
+.callout-shop-rejected {
+  background-color: var(--badge-shop-rejected-bg);
+  border-left: 4px solid var(--badge-shop-rejected-solid);
+  color: var(--badge-shop-rejected-text);
+  padding: 1rem 1.25rem;
+  border-radius: 0.375rem;
+  margin-top: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.callout-shop-rejected .callout-title {
+  font-weight: 700;
+  margin-bottom: 0.35rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* Khối hiển thị thông báo khóa gian hàng */
+.callout-shop-locked {
+  background-color: var(--badge-shop-locked-bg);
+  border-left: 4px solid var(--badge-shop-locked-solid);
+  color: var(--badge-shop-locked-text);
+  padding: 1rem 1.25rem;
+  border-radius: 0.375rem;
+  margin-top: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+/* ==============================================================================
+ * 2. ORDER LIFECYCLE BADGES
+ * ============================================================================== */
+.badge-order-pending {
+  background-color: var(--badge-order-pending-bg);
+  color: var(--badge-order-pending-text);
+  border-color: var(--badge-order-pending-border);
+}
+
+.badge-order-confirmed {
+  background-color: var(--badge-order-confirmed-bg);
+  color: var(--badge-order-confirmed-text);
+  border-color: var(--badge-order-confirmed-border);
+}
+
+.badge-order-preparing {
+  background-color: var(--badge-order-preparing-bg);
+  color: var(--badge-order-preparing-text);
+  border-color: var(--badge-order-preparing-border);
+}
+
+.badge-order-shipping {
+  background-color: var(--badge-order-shipping-bg);
+  color: var(--badge-order-shipping-text);
+  border-color: var(--badge-order-shipping-border);
+}
+
+.badge-order-completed {
+  background-color: var(--badge-order-completed-bg);
+  color: var(--badge-order-completed-text);
+  border-color: var(--badge-order-completed-border);
+}
+
+.badge-order-cancelled {
+  background-color: var(--badge-order-cancelled-bg);
+  color: var(--badge-order-cancelled-text);
+  border-color: var(--badge-order-cancelled-border);
+}
+
+/* ==============================================================================
+ * 3. PAYMENT STATUS BADGES (Strategy Pattern)
+ * ============================================================================== */
+.badge-payment-pending {
+  background-color: var(--badge-payment-pending-bg);
+  color: var(--badge-payment-pending-text);
+  border-color: var(--badge-payment-pending-border);
+}
+
+.badge-payment-cod-pending {
+  background-color: var(--badge-payment-cod-pending-bg);
+  color: var(--badge-payment-cod-pending-text);
+  border-color: var(--badge-payment-cod-pending-border);
+}
+
+.badge-payment-paid {
+  background-color: var(--badge-payment-paid-bg);
+  color: var(--badge-payment-paid-text);
+  border-color: var(--badge-payment-paid-border);
+}
+
+.badge-payment-failed {
+  background-color: var(--badge-payment-failed-bg);
+  color: var(--badge-payment-failed-text);
+  border-color: var(--badge-payment-failed-border);
+}
+
+/* Strategy Pattern: Khung hướng dẫn thanh toán & mã tham chiếu chuyển khoản */
+.box-bank-transfer,
+.payment-strategy-box {
+  background-color: var(--box-bank-transfer-bg, #f0fdf4);
+  border: 1px solid var(--box-bank-transfer-border, #86efac);
+  color: var(--box-bank-transfer-text, #166534);
+  border-radius: 0.5rem;
+  padding: 1rem;
+}
+
+/* ==============================================================================
+ * SOLID VARIANTS (Nếu cần kiểu nền màu đậm truyền thống)
+ * ============================================================================== */
+.badge-solid-shop-pending    { background-color: var(--badge-shop-pending-solid); color: #ffffff; }
+.badge-solid-shop-approved   { background-color: var(--badge-shop-approved-solid); color: #ffffff; }
+.badge-solid-shop-rejected   { background-color: var(--badge-shop-rejected-solid); color: #ffffff; }
+.badge-solid-shop-locked     { background-color: var(--badge-shop-locked-solid); color: #ffffff; }

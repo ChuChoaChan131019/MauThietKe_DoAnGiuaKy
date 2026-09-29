@@ -1,0 +1,859 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Đơn mua của tôi - Sàn Thương Mại Điện Tử SENVIA</title>
+
+  <!-- Bootstrap 5.3 CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <!-- Bootstrap Icons -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
+  <!-- Common Badges & Tokens -->
+  <link rel="stylesheet" th:href="@{/css/common/badges.css}" href="../../../static/css/common/badges.css" />
+  <!-- Common Layout CSS -->
+  <link rel="stylesheet" th:href="@{/css/common/layout.css}" href="../../../static/css/common/layout.css" />
+  <!-- Ordering Module CSS -->
+  <link rel="stylesheet" th:href="@{/css/modules/ordering/orders.css}" href="../../../static/css/modules/ordering/orders.css" />
+</head>
+<body class="bg-light">
+
+  <!-- =======================================================================
+       HEADER FRAGMENT
+       ======================================================================= -->
+  <div th:replace="~{fragments/header :: header}">
+    <header class="navbar navbar-expand-lg navbar-dark bg-dark py-3 mb-3 shadow-sm">
+      <div class="container">
+        <a class="navbar-brand fw-bold d-flex align-items-center gap-2" href="/">
+          <i class="bi bi-shop-window text-warning"></i> SENVIA MARKET
+        </a>
+        <div class="d-flex align-items-center gap-3">
+          <a href="../../shopping/cart.html" class="btn btn-outline-light btn-sm position-relative">
+            <i class="bi bi-cart3"></i> Giỏ hàng
+            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">2</span>
+          </a>
+          <a href="../../merchant/products/list.html" class="btn btn-primary btn-sm">Sản phẩm</a>
+        </div>
+      </div>
+    </header>
+  </div>
+
+  <!-- Main Container -->
+  <main class="container my-4" style="max-width: 1000px;">
+
+    <!-- Breadcrumb -->
+    <nav aria-label="breadcrumb" class="mb-3">
+      <ol class="breadcrumb mb-0">
+        <li class="breadcrumb-item"><a href="/" th:href="@{/}" class="text-decoration-none text-secondary">Trang chủ</a></li>
+        <li class="breadcrumb-item"><a href="javascript:void(0)" class="text-decoration-none text-secondary">Tài khoản</a></li>
+        <li class="breadcrumb-item active text-dark fw-medium" aria-current="page">Đơn mua của tôi</li>
+      </ol>
+    </nav>
+
+    <!-- Page Title -->
+    <div class="d-flex align-items-center justify-content-between mb-3 flex-wrap gap-2">
+      <div>
+        <h1 class="h3 fw-bold text-dark mb-1">Đơn Mua Của Tôi</h1>
+        <p class="text-secondary small mb-0">Theo dõi tiến trình vận chuyển, quản lý và đánh giá các đơn hàng đã đặt</p>
+      </div>
+      <a href="../../merchant/products/list.html" th:href="@{/products}" class="btn btn-outline-primary btn-sm">
+        <i class="bi bi-bag me-1"></i> Tiếp tục mua sắm
+      </a>
+    </div>
+
+    <!-- =======================================================================
+         PHẦN 1: HÀNG TABS TRẠNG THÁI (ORDER 05 - 6 TRẠNG THÁI ĐƠN HÀNG)
+         ======================================================================= -->
+    <div class="order-tabs-card">
+      <ul class="nav order-nav-tabs" id="orderStatusTabs" role="tablist">
+        <li class="nav-item" role="presentation">
+          <button class="nav-link active" id="tab-all" type="button" onclick="filterOrdersByTab('ALL')">
+            <i class="bi bi-collection"></i> Tất cả đơn
+            <span class="badge-tab-count" id="countTabAll">4</span>
+          </button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button class="nav-link" id="tab-pending" type="button" onclick="filterOrdersByTab('PENDING')">
+            <i class="bi bi-hourglass-split"></i> Chờ xác nhận
+            <span class="badge-tab-count">1</span>
+          </button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button class="nav-link" id="tab-confirmed" type="button" onclick="filterOrdersByTab('CONFIRMED')">
+            <i class="bi bi-check2-circle"></i> Đã xác nhận
+            <span class="badge-tab-count">0</span>
+          </button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button class="nav-link" id="tab-preparing" type="button" onclick="filterOrdersByTab('PREPARING')">
+            <i class="bi bi-box-seam"></i> Đang chuẩn bị
+            <span class="badge-tab-count">0</span>
+          </button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button class="nav-link" id="tab-shipping" type="button" onclick="filterOrdersByTab('SHIPPING')">
+            <i class="bi bi-truck"></i> Đang giao hàng
+            <span class="badge-tab-count">1</span>
+          </button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button class="nav-link" id="tab-completed" type="button" onclick="filterOrdersByTab('COMPLETED')">
+            <i class="bi bi-patch-check"></i> Đã giao
+            <span class="badge-tab-count">1</span>
+          </button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button class="nav-link" id="tab-cancelled" type="button" onclick="filterOrdersByTab('CANCELLED')">
+            <i class="bi bi-x-circle"></i> Đã hủy
+            <span class="badge-tab-count">1</span>
+          </button>
+        </li>
+      </ul>
+    </div>
+
+    <!-- =======================================================================
+         PHẦN 2: THANH TÌM KIẾM ĐƠN HÀNG
+         ======================================================================= -->
+    <div class="order-search-box d-flex align-items-center gap-2">
+      <i class="bi bi-search text-secondary ms-1"></i>
+      <input type="text" id="orderSearchInput" class="form-control form-control-sm border-0 shadow-none"
+             placeholder="Tìm kiếm theo Mã đơn hàng hoặc Tên sản phẩm..."
+             oninput="handleOrderSearch(this.value)" />
+      <button class="btn btn-light btn-sm text-secondary" type="button" onclick="clearOrderSearch()" title="Xóa tìm kiếm">
+        <i class="bi bi-x-lg"></i>
+      </button>
+    </div>
+
+    <!-- =======================================================================
+         PHẦN 3: DANH SÁCH THẺ ĐƠN HÀNG (MOCK DỮ LIỆU ĐẠT CHUẨN SRS ORDER 01-09)
+         Thymeleaf Integration: th:each="order : ${orders}"
+         ======================================================================= -->
+    <div id="ordersListContainer">
+
+      <!-- =====================================================================
+           ĐƠN 1: ĐANG GIAO HÀNG (SHIPPING)
+           ===================================================================== -->
+      <div class="order-card order-item-card" data-status="SHIPPING" data-code="ORD-20260929-8812" data-products="bàn phím cơ không dây custom 75%">
+
+        <!-- Header: Shop & Trạng thái -->
+        <div class="order-card-header">
+          <div class="order-shop-identity">
+            <img src="../../../static/images/demo/logo-techzone.png" alt="TechZone Store" class="order-shop-avatar" />
+            <a href="../../merchant/products/list.html" class="order-shop-title">TechZone Store</a>
+            <span class="badge bg-primary-subtle text-primary border border-primary-subtle rounded-pill py-0 px-2" style="font-size: 0.7rem;">
+              Chính hãng
+            </span>
+          </div>
+          <div class="order-meta-info">
+            <span>Mã đơn: <strong class="text-dark">#ORD-20260929-8812</strong></span>
+            <span>•</span>
+            <span>29/09/2026 14:35</span>
+            <span>•</span>
+            <span class="badge badge-order-shipping">
+              <i class="bi bi-truck me-1"></i> Đang giao hàng
+            </span>
+          </div>
+        </div>
+
+        <!-- Order Items -->
+        <div class="order-item-row">
+          <div class="order-item-thumb">
+            <img src="../../../static/images/demo/product-tech-mechanical-keyboard.jpg" alt="Bàn phím cơ không dây" />
+          </div>
+          <div class="order-item-details">
+            <a href="../../merchant/products/detail.html" class="order-item-name">
+              Bàn phím cơ không dây Custom 75% Switch Gateron Pro Hotswap RGB
+            </a>
+            <div class="order-item-meta">
+              <span>Phân loại: Gateron Brown Switch</span>
+              <span>Số lượng: x1</span>
+            </div>
+            <div class="text-secondary small mt-1">
+              <i class="bi bi-shield-check text-success"></i> Bảo hành chính hãng 12 tháng
+            </div>
+          </div>
+          <div class="order-item-pricing">
+            <div class="order-item-price">1.850.000 ₫</div>
+            <div class="text-muted small text-decoration-line-through">2.150.000 ₫</div>
+          </div>
+        </div>
+
+        <!-- Footer: Tóm tắt thanh toán & Nút hành động -->
+        <div class="order-card-footer">
+          <div class="order-payment-badge-group">
+            <span class="badge bg-light text-secondary border">
+              <i class="bi bi-cash me-1"></i> COD (Thanh toán khi nhận hàng)
+            </span>
+            <span class="badge bg-warning-subtle text-warning-emphasis border border-warning-subtle">
+              Chờ thu tiền khi giao
+            </span>
+          </div>
+
+          <div class="d-flex align-items-center gap-3 flex-wrap">
+            <div class="order-total-block">
+              <span class="order-total-label">Tổng số tiền:</span>
+              <span class="order-total-price">1.850.000 ₫</span>
+            </div>
+            <div class="order-actions-group">
+              <button type="button" class="btn btn-outline-secondary btn-sm" onclick="openTimelineModal('ORD-20260929-8812', 'SHIPPING')">
+                <i class="bi bi-clock-history me-1"></i> Theo dõi hành trình
+              </button>
+              <button type="button" class="btn btn-success btn-sm" onclick="confirmOrderReceived('ORD-20260929-8812')">
+                <i class="bi bi-check-lg me-1"></i> Đã nhận được hàng
+              </button>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- =====================================================================
+           ĐƠN 2: CHỜ XÁC NHẬN (PENDING) - CÓ THỂ HỦY HOÀN KHO (BR 11, BR 12)
+           ===================================================================== -->
+      <div class="order-card order-item-card" data-status="PENDING" data-code="ORD-20260929-8815" data-products="nồi chiên không dầu điện tử 6.5l">
+
+        <!-- Header -->
+        <div class="order-card-header">
+          <div class="order-shop-identity">
+            <img src="../../../static/images/demo/logo-zenhome.png" alt="ZenHome Official" class="order-shop-avatar" />
+            <a href="../../merchant/products/list.html" class="order-shop-title">ZenHome Official</a>
+          </div>
+          <div class="order-meta-info">
+            <span>Mã đơn: <strong class="text-dark">#ORD-20260929-8815</strong></span>
+            <span>•</span>
+            <span>29/09/2026 16:10</span>
+            <span>•</span>
+            <span class="badge badge-order-pending">
+              <i class="bi bi-hourglass-split me-1"></i> Chờ xác nhận
+            </span>
+          </div>
+        </div>
+
+        <!-- Order Items -->
+        <div class="order-item-row">
+          <div class="order-item-thumb">
+            <img src="../../../static/images/demo/product-household-airfryer.jpg" alt="Nồi chiên không dầu" />
+          </div>
+          <div class="order-item-details">
+            <a href="../../merchant/products/detail.html" class="order-item-name">
+              Nồi chiên không dầu điện tử 6.5L Digital công nghệ Rapid Air giảm 85% mỡ
+            </a>
+            <div class="order-item-meta">
+              <span>Dung tích: 6.5 Lít</span>
+              <span>Số lượng: x1</span>
+            </div>
+          </div>
+          <div class="order-item-pricing">
+            <div class="order-item-price">1.450.000 ₫</div>
+            <div class="text-muted small text-decoration-line-through">1.890.000 ₫</div>
+          </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="order-card-footer">
+          <div class="order-payment-badge-group">
+            <span class="badge bg-light text-secondary border">
+              <i class="bi bi-qr-code me-1"></i> Chuyển khoản ngân hàng (Mô phỏng)
+            </span>
+            <span class="badge bg-info-subtle text-info-emphasis border border-info-subtle">
+              Đã tạo mã tham chiếu
+            </span>
+          </div>
+
+          <div class="d-flex align-items-center gap-3 flex-wrap">
+            <div class="order-total-block">
+              <span class="order-total-label">Tổng số tiền:</span>
+              <span class="order-total-price">1.450.000 ₫</span>
+            </div>
+            <div class="order-actions-group">
+              <button type="button" class="btn btn-outline-danger btn-sm" onclick="openCancelModal('ORD-20260929-8815', 'Nồi chiên không dầu điện tử 6.5L', 1)">
+                <i class="bi bi-x-circle me-1"></i> Hủy đơn hàng
+              </button>
+              <button type="button" class="btn btn-outline-secondary btn-sm" onclick="openTimelineModal('ORD-20260929-8815', 'PENDING')">
+                <i class="bi bi-info-circle me-1"></i> Chi tiết đơn
+              </button>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- =====================================================================
+           ĐƠN 3: ĐÃ GIAO THÀNH CÔNG (COMPLETED) - CÓ THỂ ĐÁNH GIÁ (UC 08, BR 15)
+           ===================================================================== -->
+      <div class="order-card order-item-card" data-status="COMPLETED" data-code="ORD-20260925-4421" data-products="áo khoác bomber phong cách retro">
+
+        <!-- Header -->
+        <div class="order-card-header">
+          <div class="order-shop-identity">
+            <img src="../../../static/images/demo/logo-zenhome.png" alt="ZenHome Official" class="order-shop-avatar" />
+            <a href="../../merchant/products/list.html" class="order-shop-title">ZenHome Official</a>
+          </div>
+          <div class="order-meta-info">
+            <span>Mã đơn: <strong class="text-dark">#ORD-20260925-4421</strong></span>
+            <span>•</span>
+            <span>25/09/2026 10:20</span>
+            <span>•</span>
+            <span class="badge badge-order-completed">
+              <i class="bi bi-patch-check-fill me-1"></i> Đã giao thành công
+            </span>
+          </div>
+        </div>
+
+        <!-- Order Items -->
+        <div class="order-item-row">
+          <div class="order-item-thumb">
+            <img src="../../../static/images/demo/product-fashion-bomber-jacket.jpg" alt="Áo khoác Bomber" />
+          </div>
+          <div class="order-item-details">
+            <a href="../../merchant/products/detail.html" class="order-item-name">
+              Áo khoác Bomber phong cách Retro Minimalist vải dù 2 lớp chống nước
+            </a>
+            <div class="order-item-meta">
+              <span>Màu sắc: Xanh Rêu • Size: L</span>
+              <span>Số lượng: x1</span>
+            </div>
+            <div class="text-success small mt-1">
+              <i class="bi bi-box-arrow-in-down-right"></i> Giao thành công ngày 27/09/2026
+            </div>
+          </div>
+          <div class="order-item-pricing">
+            <div class="order-item-price">580.000 ₫</div>
+            <div class="text-muted small text-decoration-line-through">690.000 ₫</div>
+          </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="order-card-footer">
+          <div class="order-payment-badge-group">
+            <span class="badge bg-light text-secondary border">
+              <i class="bi bi-cash me-1"></i> COD
+            </span>
+            <span class="badge bg-success-subtle text-success border border-success-subtle">
+              Đã thanh toán
+            </span>
+          </div>
+
+          <div class="d-flex align-items-center gap-3 flex-wrap">
+            <div class="order-total-block">
+              <span class="order-total-label">Tổng số tiền:</span>
+              <span class="order-total-price">580.000 ₫</span>
+            </div>
+            <div class="order-actions-group">
+              <button type="button" class="btn btn-warning btn-sm text-dark fw-semibold"
+                      onclick="openReviewModal('Áo khoác Bomber Retro Minimalist', '../../../static/images/demo/product-fashion-bomber-jacket.jpg', 'ORD-20260925-4421')">
+                <i class="bi bi-star-fill text-dark me-1"></i> Viết đánh giá
+              </button>
+              <button type="button" class="btn btn-outline-primary btn-sm" onclick="reOrder('Áo khoác Bomber Retro Minimalist')">
+                <i class="bi bi-arrow-repeat me-1"></i> Mua lại
+              </button>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- =====================================================================
+           ĐƠN 4: ĐÃ HỦY (CANCELLED) - ĐÃ HOÀN TỒN KHO (BR 12, BR 13)
+           ===================================================================== -->
+      <div class="order-card order-item-card" data-status="CANCELLED" data-code="ORD-20260920-1109" data-products="giày sneakers da pu cao cấp">
+
+        <!-- Header -->
+        <div class="order-card-header">
+          <div class="order-shop-identity">
+            <img src="../../../static/images/demo/logo-techzone.png" alt="TechZone Store" class="order-shop-avatar" />
+            <a href="../../merchant/products/list.html" class="order-shop-title">TechZone Store</a>
+          </div>
+          <div class="order-meta-info">
+            <span>Mã đơn: <strong class="text-dark">#ORD-20260920-1109</strong></span>
+            <span>•</span>
+            <span>20/09/2026 09:15</span>
+            <span>•</span>
+            <span class="badge badge-order-cancelled">
+              <i class="bi bi-x-circle-fill me-1"></i> Đã hủy
+            </span>
+          </div>
+        </div>
+
+        <!-- Order Items -->
+        <div class="order-item-row opacity-75">
+          <div class="order-item-thumb">
+            <img src="../../../static/images/demo/product-fashion-white-sneakers.jpg" alt="Giày Sneakers da PU" />
+          </div>
+          <div class="order-item-details">
+            <a href="../../merchant/products/detail.html" class="order-item-name">
+              Giày Sneakers da PU cao cấp phong cách năng động đế êm chống trượt
+            </a>
+            <div class="order-item-meta">
+              <span>Màu: Trắng • Size: 42</span>
+              <span>Số lượng: x1</span>
+            </div>
+            <div class="text-danger small mt-1">
+              <i class="bi bi-info-circle"></i> Lý do hủy: Người mua đổi ý định • Đã hoàn 1 sản phẩm vào tồn kho
+            </div>
+          </div>
+          <div class="order-item-pricing">
+            <div class="order-item-price">750.000 ₫</div>
+          </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="order-card-footer">
+          <div class="order-payment-badge-group">
+            <span class="badge bg-light text-secondary border">
+              <i class="bi bi-cash me-1"></i> COD
+            </span>
+            <span class="badge bg-secondary-subtle text-secondary border border-secondary-subtle">
+              Đơn đã đóng
+            </span>
+          </div>
+
+          <div class="d-flex align-items-center gap-3 flex-wrap">
+            <div class="order-total-block">
+              <span class="order-total-label">Tổng số tiền:</span>
+              <span class="order-total-price text-secondary">750.000 ₫</span>
+            </div>
+            <div class="order-actions-group">
+              <button type="button" class="btn btn-outline-primary btn-sm" onclick="reOrder('Giày Sneakers da PU')">
+                <i class="bi bi-arrow-repeat me-1"></i> Mua lại
+              </button>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- =======================================================================
+         TRẠNG THÁI RỖNG (EMPTY STATE CHO TAB KHÔNG CÓ ĐƠN)
+         ======================================================================= -->
+    <div id="ordersEmptyState" class="orders-empty-state d-none my-4">
+      <div class="orders-empty-icon">
+        <i class="bi bi-receipt-cutoff"></i>
+      </div>
+      <h4 class="fw-bold text-dark mb-2">Chưa có đơn hàng nào!</h4>
+      <p class="text-secondary mb-4 mx-auto" style="max-width: 420px;">
+        Không tìm thấy đơn hàng nào thuộc trạng thái này. Hãy tiếp tục dạo xem các sản phẩm ưu đãi hấp dẫn trên sàn nhé!
+      </p>
+      <a href="../../merchant/products/list.html" class="btn btn-primary px-4 py-2">
+        <i class="bi bi-bag-plus me-1"></i> Khám phá sản phẩm ngay
+      </a>
+    </div>
+
+  </main>
+
+  <!-- =======================================================================
+       MODAL 1: VIẾT ĐÁNH GIÁ SẢN PHẨM (UC 08, BR 15, REV 01-02)
+       ======================================================================= -->
+  <div class="modal fade" id="reviewModal" tabindex="-1" aria-labelledby="reviewModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content border-0 shadow-lg">
+        <div class="modal-header border-bottom">
+          <h5 class="modal-title fw-bold" id="reviewModalLabel">
+            <i class="bi bi-star-fill text-warning me-2"></i>Đánh giá sản phẩm
+          </h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <form id="reviewForm" onsubmit="handleReviewSubmit(event)">
+          <div class="modal-body py-4">
+
+            <!-- Snapshot sản phẩm được đánh giá -->
+            <div class="d-flex align-items-center gap-3 p-3 bg-light rounded-3 mb-4">
+              <img id="reviewProductThumb" src="" alt="Thumbnail" class="rounded border" style="width: 60px; height: 60px; object-fit: cover;" />
+              <div>
+                <div class="fw-bold text-dark text-truncate" id="reviewProductName" style="max-width: 320px;"></div>
+                <div class="text-muted small">Đơn hàng: <span id="reviewOrderCode" class="fw-medium"></span></div>
+              </div>
+            </div>
+
+            <!-- Bộ chọn sao tương tác (Interactive 5-star rating) -->
+            <div class="text-center mb-4">
+              <label class="form-label d-block fw-semibold text-dark mb-1">Chất lượng sản phẩm</label>
+              <div class="rating-stars-input mb-1">
+                <input type="radio" id="star5" name="rating" value="5" checked />
+                <label for="star5" title="5 sao - Tuyệt vời"><i class="bi bi-star-fill"></i></label>
+                <input type="radio" id="star4" name="rating" value="4" />
+                <label for="star4" title="4 sao - Rất tốt"><i class="bi bi-star-fill"></i></label>
+                <input type="radio" id="star3" name="rating" value="3" />
+                <label for="star3" title="3 sao - Bình thường"><i class="bi bi-star-fill"></i></label>
+                <input type="radio" id="star2" name="rating" value="2" />
+                <label for="star2" title="2 sao - Chưa hài lòng"><i class="bi bi-star-fill"></i></label>
+                <input type="radio" id="star1" name="rating" value="1" />
+                <label for="star1" title="1 sao - Kém"><i class="bi bi-star-fill"></i></label>
+              </div>
+              <div class="small text-muted" id="ratingTextDesc">Tuyệt vời (5/5 sao)</div>
+            </div>
+
+            <!-- Nhận xét chi tiết -->
+            <div class="mb-3">
+              <label for="reviewComment" class="form-label fw-semibold text-dark small">
+                Nhận xét chi tiết <span class="text-danger">*</span>
+              </label>
+              <textarea class="form-control" id="reviewComment" rows="3" required minlength="10"
+                        placeholder="Hãy chia sẻ cảm nhận thực tế về chất lượng sản phẩm, độ hoàn thiện, đóng gói để giúp người mua khác nhé..."></textarea>
+              <div class="form-text small text-muted text-end">Tối thiểu 10 ký tự</div>
+            </div>
+
+            <!-- Tải ảnh trải nghiệm (Mô phỏng Cloudinary) -->
+            <div class="mb-2">
+              <label class="form-label fw-semibold text-dark small">Thêm hình ảnh / video thực tế</label>
+              <div class="border border-dashed rounded-3 p-3 text-center bg-light">
+                <i class="bi bi-camera text-secondary fs-4 d-block mb-1"></i>
+                <span class="small text-muted">Nhấp để tải lên ảnh trải nghiệm thực tế (Tối đa 3 ảnh)</span>
+              </div>
+            </div>
+
+          </div>
+          <div class="modal-footer border-top bg-light">
+            <button type="button" class="btn btn-outline-secondary px-3" data-bs-dismiss="modal">Hủy bỏ</button>
+            <button type="submit" class="btn btn-primary px-4 fw-semibold">
+              <i class="bi bi-send-fill me-1"></i> Gửi đánh giá
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- =======================================================================
+       MODAL 2: XÁC NHẬN HỦY ĐƠN HÀNG (BR 11, BR 12 - TỰ ĐỘNG HOÀN KHO)
+       ======================================================================= -->
+  <div class="modal fade" id="cancelModal" tabindex="-1" aria-labelledby="cancelModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content border-0 shadow-lg">
+        <div class="modal-header border-bottom">
+          <h5 class="modal-title fw-bold text-danger" id="cancelModalLabel">
+            <i class="bi bi-exclamation-triangle-fill me-2"></i>Xác nhận hủy đơn hàng
+          </h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <form id="cancelOrderForm" onsubmit="handleCancelSubmit(event)">
+          <div class="modal-body py-3">
+            <p class="mb-3">
+              Bạn có chắc chắn muốn hủy đơn hàng <strong id="cancelModalOrderCode" class="text-dark"></strong>?
+            </p>
+
+            <!-- Cảnh báo hoàn kho theo quy tắc BR 12 -->
+            <div class="alert alert-warning d-flex align-items-center gap-2 small py-2 mb-3">
+              <i class="bi bi-info-circle-fill fs-5"></i>
+              <div>
+                <strong>Quy tắc hoàn kho:</strong> Số lượng tồn kho của các sản phẩm trong đơn sẽ được hoàn trả tự động vào gian hàng ngay sau khi hủy.
+              </div>
+            </div>
+
+            <!-- Lý do hủy đơn -->
+            <label class="form-label fw-semibold text-dark small mb-2">Vui lòng chọn lý do hủy đơn:</label>
+            <div class="d-flex flex-column gap-2 mb-2">
+              <div class="form-check">
+                <input class="form-check-input" type="radio" name="cancelReason" id="reason1" value="Đổi ý không muốn mua nữa" checked />
+                <label class="form-check-label small" for="reason1">Đổi ý không muốn mua nữa</label>
+              </div>
+              <div class="form-check">
+                <input class="form-check-input" type="radio" name="cancelReason" id="reason2" value="Muốn thay đổi địa chỉ hoặc số điện thoại nhận hàng" />
+                <label class="form-check-label small" for="reason2">Muốn thay đổi địa chỉ hoặc số điện thoại nhận hàng</label>
+              </div>
+              <div class="form-check">
+                <input class="form-check-input" type="radio" name="cancelReason" id="reason3" value="Tìm thấy giá rẻ hơn ở nơi khác" />
+                <label class="form-check-label small" for="reason3">Tìm thấy giá rẻ hơn ở nơi khác</label>
+              </div>
+              <div class="form-check">
+                <input class="form-check-input" type="radio" name="cancelReason" id="reason4" value="Muốn đặt thêm sản phẩm khác" />
+                <label class="form-check-label small" for="reason4">Muốn đặt thêm sản phẩm khác</label>
+              </div>
+            </div>
+
+          </div>
+          <div class="modal-footer border-top bg-light">
+            <button type="button" class="btn btn-secondary px-3" data-bs-dismiss="modal">Giữ lại đơn</button>
+            <button type="submit" class="btn btn-danger px-4 fw-semibold">
+              <i class="bi bi-trash3 me-1"></i> Xác nhận hủy
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- =======================================================================
+       MODAL 3: HÀNH TRÌNH VẬN CHUYỂN & LỊCH SỬ TRẠNG THÁI (ORDER 07)
+       ======================================================================= -->
+  <div class="modal fade" id="timelineModal" tabindex="-1" aria-labelledby="timelineModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content border-0 shadow-lg">
+        <div class="modal-header border-bottom">
+          <h5 class="modal-title fw-bold" id="timelineModalLabel">
+            <i class="bi bi-truck text-primary me-2"></i>Lịch sử trạng thái đơn hàng
+          </h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body py-4">
+          <div class="mb-3">
+            <div class="small text-muted">Mã đơn hàng: <strong class="text-dark" id="timelineOrderCode"></strong></div>
+          </div>
+
+          <!-- Stepper Timeline -->
+          <ul class="timeline-stepper" id="orderTimelineList">
+            <li class="timeline-step-item completed">
+              <div class="timeline-step-icon"><i class="bi bi-check-lg"></i></div>
+              <div class="timeline-step-title">Đặt hàng thành công</div>
+              <div class="timeline-step-time">29/09/2026 14:35 - Đơn hàng đã được tạo với trạng thái PENDING</div>
+            </li>
+            <li class="timeline-step-item completed">
+              <div class="timeline-step-icon"><i class="bi bi-check-lg"></i></div>
+              <div class="timeline-step-title">Shop đã xác nhận đơn</div>
+              <div class="timeline-step-time">29/09/2026 15:10 - Chủ gian hàng TechZone Store đã duyệt đơn</div>
+            </li>
+            <li class="timeline-step-item completed">
+              <div class="timeline-step-icon"><i class="bi bi-check-lg"></i></div>
+              <div class="timeline-step-title">Đang chuẩn bị hàng</div>
+              <div class="timeline-step-time">29/09/2026 16:00 - Đơn hàng đang được đóng gói và dán mã vận đơn</div>
+            </li>
+            <li class="timeline-step-item active">
+              <div class="timeline-step-icon"><i class="bi bi-truck"></i></div>
+              <div class="timeline-step-title text-primary">Đang giao hàng</div>
+              <div class="timeline-step-time">30/09/2026 08:30 - Bưu tá đang giao kiện hàng đến địa chỉ nhận</div>
+            </li>
+          </ul>
+        </div>
+        <div class="modal-footer border-top bg-light">
+          <button type="button" class="btn btn-primary btn-sm px-4" data-bs-dismiss="modal">Đóng</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- =======================================================================
+       TOAST FEEDBACK CONTAINER
+       ======================================================================= -->
+  <div class="toast-container position-fixed bottom-0 end-0 p-3" style="z-index: 1080;">
+    <div id="actionToast" class="toast align-items-center text-white bg-success border-0 shadow-lg" role="alert" aria-live="assertive" aria-atomic="true">
+      <div class="d-flex">
+        <div class="toast-body d-flex align-items-center gap-2">
+          <i class="bi bi-check-circle-fill fs-5" id="toastIcon"></i>
+          <div>
+            <div class="fw-bold" id="toastTitle">Thành công!</div>
+            <div class="small text-white-50" id="toastMessage">Thao tác của bạn đã được cập nhật.</div>
+          </div>
+        </div>
+        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+      </div>
+    </div>
+  </div>
+
+  <!-- =======================================================================
+       FOOTER FRAGMENT
+       ======================================================================= -->
+  <div th:replace="~{fragments/footer :: footer}">
+    <footer class="bg-dark text-light pt-5 pb-4 mt-5">
+      <div class="container text-center text-md-start">
+        <div class="row">
+          <div class="col-md-4 mb-4">
+            <h5 class="text-uppercase fw-bold text-warning mb-3">SENVIA MARKET</h5>
+            <p class="text-secondary small">Nền tảng thương mại điện tử đa gian hàng sinh viên.</p>
+          </div>
+          <div class="col-md-8 text-md-end">
+            <p class="text-secondary small mb-0">&copy; 2026 SENVIA MARKET. Đồ án giữa kỳ môn Mẫu thiết kế.</p>
+          </div>
+        </div>
+      </div>
+    </footer>
+  </div>
+
+  <!-- Bootstrap 5.3 JS Bundle -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+  <!-- =======================================================================
+       INTERACTIVE CLIENT-SIDE JAVASCRIPT
+       ======================================================================= -->
+  <script>
+    let activeTabStatus = 'ALL';
+    let currentSearchTerm = '';
+    let targetCancelCode = '';
+
+    // 1. Tab Status Filtering (ORDER 05)
+    function filterOrdersByTab(status) {
+      activeTabStatus = status;
+
+      // Update tab active classes
+      document.querySelectorAll('#orderStatusTabs .nav-link').forEach(link => {
+        link.classList.remove('active');
+      });
+      const activeBtn = document.getElementById(`tab-${status.toLowerCase()}`);
+      if (activeBtn) activeBtn.classList.add('active');
+
+      applyOrderFilters();
+    }
+
+    // 2. Search Handler
+    function handleOrderSearch(term) {
+      currentSearchTerm = term.trim().toLowerCase();
+      applyOrderFilters();
+    }
+
+    function clearOrderSearch() {
+      document.getElementById('orderSearchInput').value = '';
+      currentSearchTerm = '';
+      applyOrderFilters();
+    }
+
+    // 3. Apply Filters
+    function applyOrderFilters() {
+      const cards = document.querySelectorAll('.order-item-card');
+      let visibleCount = 0;
+
+      cards.forEach(card => {
+        const status = card.getAttribute('data-status');
+        const code = card.getAttribute('data-code').toLowerCase();
+        const products = card.getAttribute('data-products').toLowerCase();
+
+        const matchTab = (activeTabStatus === 'ALL') || (status === activeTabStatus);
+        const matchSearch = !currentSearchTerm || code.includes(currentSearchTerm) || products.includes(currentSearchTerm);
+
+        if (matchTab && matchSearch) {
+          card.classList.remove('d-none');
+          visibleCount++;
+        } else {
+          card.classList.add('d-none');
+        }
+      });
+
+      const emptyState = document.getElementById('ordersEmptyState');
+      if (visibleCount === 0) {
+        emptyState.classList.remove('d-none');
+      } else {
+        emptyState.classList.add('d-none');
+      }
+    }
+
+    // 4. Modal Reviews Handler (UC 08, REV 01-02)
+    function openReviewModal(productName, productThumb, orderCode) {
+      document.getElementById('reviewProductName').textContent = productName;
+      document.getElementById('reviewProductThumb').src = productThumb;
+      document.getElementById('reviewOrderCode').textContent = '#' + orderCode;
+      document.getElementById('reviewComment').value = '';
+
+      // Reset rating to 5
+      document.getElementById('star5').checked = true;
+      document.getElementById('ratingTextDesc').textContent = 'Tuyệt vời (5/5 sao)';
+
+      const modal = new bootstrap.Modal(document.getElementById('reviewModal'));
+      modal.show();
+    }
+
+    // Rating star radio change listener
+    document.querySelectorAll('input[name="rating"]').forEach(radio => {
+      radio.addEventListener('change', (e) => {
+        const val = e.target.value;
+        const descMap = {
+          '5': 'Tuyệt vời (5/5 sao)',
+          '4': 'Rất tốt (4/5 sao)',
+          '3': 'Bình thường (3/5 sao)',
+          '2': 'Chưa hài lòng (2/5 sao)',
+          '1': 'Kém (1/5 sao)'
+        };
+        document.getElementById('ratingTextDesc').textContent = descMap[val] || '';
+      });
+    });
+
+    function handleReviewSubmit(event) {
+      event.preventDefault();
+      const modalEl = document.getElementById('reviewModal');
+      const modal = bootstrap.Modal.getInstance(modalEl);
+      modal.hide();
+
+      showToast('Đánh giá thành công!', 'Cảm ơn bạn đã gửi đánh giá. Ý kiến của bạn đã được ghi nhận vào hệ thống.', 'success');
+    }
+
+    // 5. Cancel Order Modal (BR 11, BR 12)
+    function openCancelModal(orderCode, productName, quantity) {
+      targetCancelCode = orderCode;
+      document.getElementById('cancelModalOrderCode').textContent = '#' + orderCode;
+
+      const modal = new bootstrap.Modal(document.getElementById('cancelModal'));
+      modal.show();
+    }
+
+    function handleCancelSubmit(event) {
+      event.preventDefault();
+      const modalEl = document.getElementById('cancelModal');
+      const modal = bootstrap.Modal.getInstance(modalEl);
+      modal.hide();
+
+      // Find the card and change state to CANCELLED
+      const targetCard = document.querySelector(`.order-item-card[data-code="${targetCancelCode}"]`);
+      if (targetCard) {
+        targetCard.setAttribute('data-status', 'CANCELLED');
+        const headerBadge = targetCard.querySelector('.order-meta-info .badge');
+        if (headerBadge) {
+          headerBadge.className = 'badge badge-order-cancelled';
+          headerBadge.innerHTML = '<i class="bi bi-x-circle-fill me-1"></i> Đã hủy';
+        }
+        const actionGroup = targetCard.querySelector('.order-actions-group');
+        if (actionGroup) {
+          actionGroup.innerHTML = '<button type="button" class="btn btn-outline-primary btn-sm" onclick="reOrder(\'Sản phẩm\')"><i class="bi bi-arrow-repeat me-1"></i> Mua lại</button>';
+        }
+      }
+
+      showToast('Hủy đơn thành công!', `Đơn hàng #${targetCancelCode} đã được hủy và hoàn lại số lượng vào tồn kho.`, 'danger');
+      applyOrderFilters();
+    }
+
+    // 6. Confirm Order Received
+    function confirmOrderReceived(orderCode) {
+      if (confirm(`Bạn xác nhận đã nhận được đầy đủ kiện hàng của đơn #${orderCode}?`)) {
+        const targetCard = document.querySelector(`.order-item-card[data-code="${orderCode}"]`);
+        if (targetCard) {
+          targetCard.setAttribute('data-status', 'COMPLETED');
+          const headerBadge = targetCard.querySelector('.order-meta-info .badge');
+          if (headerBadge) {
+            headerBadge.className = 'badge badge-order-completed';
+            headerBadge.innerHTML = '<i class="bi bi-patch-check-fill me-1"></i> Đã giao thành công';
+          }
+          const actionGroup = targetCard.querySelector('.order-actions-group');
+          if (actionGroup) {
+            actionGroup.innerHTML = `
+              <button type="button" class="btn btn-warning btn-sm text-dark fw-semibold"
+                      onclick="openReviewModal('Bàn phím cơ không dây Custom 75%', '../../../static/images/demo/product-tech-mechanical-keyboard.jpg', '${orderCode}')">
+                <i class="bi bi-star-fill text-dark me-1"></i> Viết đánh giá
+              </button>
+              <button type="button" class="btn btn-outline-primary btn-sm" onclick="reOrder('Bàn phím cơ')">
+                <i class="bi bi-arrow-repeat me-1"></i> Mua lại
+              </button>`;
+          }
+        }
+        showToast('Xác nhận thành công!', `Đơn hàng #${orderCode} đã hoàn tất. Bạn có thể để lại đánh giá cho Shop ngay bây giờ.`, 'success');
+        applyOrderFilters();
+      }
+    }
+
+    // 7. Timeline Modal (ORDER 07)
+    function openTimelineModal(orderCode, currentStatus) {
+      document.getElementById('timelineOrderCode').textContent = '#' + orderCode;
+      const modal = new bootstrap.Modal(document.getElementById('timelineModal'));
+      modal.show();
+    }
+
+    // 8. Re-order action
+    function reOrder(productName) {
+      showToast('Đã thêm vào giỏ hàng!', `Sản phẩm "${productName}" đã được đưa vào giỏ hàng để bạn đặt mua lại.`, 'info');
+    }
+
+    // 9. Toast Helper
+    function showToast(title, message, type = 'success') {
+      const toastEl = document.getElementById('actionToast');
+      const toastTitle = document.getElementById('toastTitle');
+      const toastMessage = document.getElementById('toastMessage');
+
+      toastTitle.textContent = title;
+      toastMessage.textContent = message;
+
+      toastEl.className = `toast align-items-center text-white bg-${type === 'info' ? 'primary' : type} border-0 shadow-lg`;
+
+      const toast = new bootstrap.Toast(toastEl, { delay: 3500 });
+      toast.show();
+    }
+  </script>
+
+</body>
+</html>

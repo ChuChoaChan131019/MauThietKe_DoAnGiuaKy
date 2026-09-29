@@ -1,0 +1,120 @@
+/**
+ * ==============================================================================
+ * COMMON ERROR PAGES STYLESHEET (403 FORBIDDEN & 404 NOT FOUND)
+ * ==============================================================================
+ * File: src/main/resources/static/css/common/error.css
+ * Tuân thủ: ARCHITECTURE.md, PROJECT_STRUCTURE_GUIDE.md, SRS AUTH 07, AT 12
+ * ==============================================================================
+ */
+
+.error-page-wrapper {
+  min-height: calc(100vh - 380px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem 1rem;
+}
+
+.error-card {
+  max-width: 680px;
+  width: 100%;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 1.25rem;
+  padding: 2.75rem 2.25rem;
+  text-align: center;
+  box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.05);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Biểu tượng đồ họa lỗi */
+.error-illustration {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 3rem;
+  margin-bottom: 1.5rem;
+  position: relative;
+}
+
+.error-illustration.forbidden {
+  background-color: #fee2e2;
+  color: #ef4444;
+  box-shadow: 0 0 0 12px rgba(239, 68, 68, 0.08);
+}
+
+.error-illustration.not-found {
+  background-color: #fef3c7;
+  color: #d97706;
+  box-shadow: 0 0 0 12px rgba(217, 119, 6, 0.08);
+}
+
+/* Mã lỗi lớn */
+.error-status-code {
+  font-size: 3.5rem;
+  font-weight: 900;
+  line-height: 1;
+  letter-spacing: -0.03em;
+  margin-bottom: 0.5rem;
+}
+
+.error-status-code.forbidden {
+  color: #dc2626;
+}
+
+.error-status-code.not-found {
+  color: #d97706;
+}
+
+.error-headline {
+  font-size: 1.45rem;
+  font-weight: 700;
+  color: #0f172a;
+  margin-bottom: 0.75rem;
+}
+
+.error-description {
+  font-size: 0.95rem;
+  color: #64748b;
+  max-width: 520px;
+  margin: 0 auto 1.75rem;
+  line-height: 1.6;
+}
+
+/* Hộp lý do & Khuyến nghị kỹ thuật */
+.error-reasons-box {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 0.75rem;
+  padding: 1.15rem 1.25rem;
+  text-align: left;
+  font-size: 0.85rem;
+  color: #475569;
+  margin-bottom: 2rem;
+}
+
+.error-reasons-box ul {
+  padding-left: 1.25rem;
+  margin-bottom: 0;
+}
+
+.error-reasons-box li {
+  margin-bottom: 0.35rem;
+}
+
+.error-reasons-box li:last-child {
+  margin-bottom: 0;
+}
+
+/* Nút hành động */
+.error-actions-group {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+}

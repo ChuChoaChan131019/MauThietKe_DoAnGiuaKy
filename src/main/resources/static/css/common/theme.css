@@ -1,0 +1,304 @@
+/**
+ * ==============================================================================
+ * SENVIA E-COMMERCE PLATFORM - CENTRAL DESIGN SYSTEM & THEME TOKENS
+ * ==============================================================================
+ * File: src/main/resources/static/css/common/theme.css
+ * Chuẩn hóa màu sắc thương hiệu & màu ngữ nghĩa theo tiêu chuẩn WCAG 2.1 AA
+ * ==============================================================================
+ */
+
+:root {
+  /* --------------------------------------------------------------------------
+   * 1. Core Brand Colors (Màu thương hiệu cốt lõi)
+   * -------------------------------------------------------------------------- */
+  --color-primary: #323377;        /* Deep Indigo - Màu chủ đạo Navbar & Tiêu đề */
+  --color-primary-hover: #242557;  /* Darker Indigo - Trạng thái Hover / Active */
+  --color-accent: #d1588e;         /* Vibrant Rose - Điểm nhấn CTA: Mua ngay, Giỏ hàng */
+  --color-accent-hover: #b84377;   /* Deep Rose - Hover của nút CTA */
+  --color-accent-muted: #d67398;   /* Muted Rose - Viền thẻ nổi bật & badge phụ */
+  --color-sage: #8cc3b2;           /* Sage Green - Màu xanh xô thơm trang nhã */
+
+  --color-bg-canvas: #f2f3f4;      /* Soft Gray - Nền tổng thể toàn bộ trang web */
+  --color-surface: #ffffff;        /* Pure White - Nền Card sản phẩm, modal, form */
+  --color-border: #e2e8f0;         /* Slate Border - Đường viền phân cách, khung card */
+
+  /* --------------------------------------------------------------------------
+   * 2. Typography & Content Colors (Màu chữ chuẩn hóa)
+   * -------------------------------------------------------------------------- */
+  --color-text-main: #1e293b;      /* Dark Slate - Tiêu đề, giá tiền, nội dung chính */
+  --color-text-muted: #64748b;     /* Muted Slate - Thông tin phụ, ngày giờ, mã đơn */
+  --color-text-inverse: #ffffff;   /* Pure White - Chữ trên nền tối/indigo */
+
+  /* --------------------------------------------------------------------------
+   * 3. State Pattern - Shop Lifecycle Tokens (Vòng đời gian hàng)
+   * -------------------------------------------------------------------------- */
+  --badge-shop-pending-bg: #fef3c7;      /* Vàng kem nhạt */
+  --badge-shop-pending-text: #b45309;    /* Vàng hổ phách đậm (> 4.5:1 WCAG) */
+  --badge-shop-pending-border: #fcd34d;
+  --badge-shop-pending-solid: #f59e0b;
+
+  --badge-shop-approved-bg: #e6f4f1;     /* Xanh ngọc nhạt */
+  --badge-shop-approved-text: #1b6852;   /* Xanh ngọc đậm */
+  --badge-shop-approved-border: #8cc3b2;
+  --badge-shop-approved-solid: #16a34a;
+
+  --badge-shop-rejected-bg: #fee2e2;     /* Đỏ hồng nhạt */
+  --badge-shop-rejected-text: #b91c1c;   /* Đỏ cảnh báo */
+  --badge-shop-rejected-border: #fca5a5;
+  --badge-shop-rejected-solid: #ef4444;
+
+  --badge-shop-locked-bg: #e2e8f0;       /* Xám khói */
+  --badge-shop-locked-text: #475569;     /* Xám than */
+  --badge-shop-locked-border: #cbd5e1;
+  --badge-shop-locked-solid: #64748b;
+
+  /* --------------------------------------------------------------------------
+   * 4. Strategy Pattern - Order Status Tokens (Vòng đời đơn hàng)
+   * -------------------------------------------------------------------------- */
+  --badge-order-pending-bg: #f1f5f9;     /* Xám trung tính */
+  --badge-order-pending-text: #475569;
+  --badge-order-pending-border: #cbd5e1;
+
+  --badge-order-confirmed-bg: #e0f2fe;   /* Xanh da trời nhạt */
+  --badge-order-confirmed-text: #0369a1;
+  --badge-order-confirmed-border: #bae6fd;
+
+  --badge-order-preparing-bg: #e0f2fe;   /* Đang chuẩn bị hàng */
+  --badge-order-preparing-text: #0369a1;
+  --badge-order-preparing-border: #bae6fd;
+
+  --badge-order-shipping-bg: #ede9fe;    /* Tím nhạt */
+  --badge-order-shipping-text: #6d28d9;
+  --badge-order-shipping-border: #ddd6fe;
+
+  --badge-order-completed-bg: #dcfce7;   /* Xanh lá chuẩn */
+  --badge-order-completed-text: #15803d;
+  --badge-order-completed-border: #86efac;
+
+  --badge-order-cancelled-bg: #fee2e2;   /* Đỏ hủy đơn */
+  --badge-order-cancelled-text: #b91c1c;
+  --badge-order-cancelled-border: #fca5a5;
+
+  /* --------------------------------------------------------------------------
+   * 5. Strategy Pattern - Payment Tokens (Phương thức thanh toán)
+   * -------------------------------------------------------------------------- */
+  --box-bank-transfer-bg: #f0fdf4;
+  --box-bank-transfer-border: #86efac;
+  --box-bank-transfer-text: #166534;
+
+  --badge-payment-pending-bg: #fef3c7;
+  --badge-payment-pending-text: #b45309;
+  --badge-payment-pending-border: #fcd34d;
+
+  --badge-payment-cod-pending-bg: #ccfbf1;
+  --badge-payment-cod-pending-text: #115e59;
+  --badge-payment-cod-pending-border: #99f6e4;
+
+  --badge-payment-paid-bg: #dcfce7;
+  --badge-payment-paid-text: #15803d;
+  --badge-payment-paid-border: #86efac;
+}
+
+/* ==============================================================================
+ * BASE GLOBAL STYLES (ĐỒNG BỘ NỀN & CHỮ)
+ * ============================================================================== */
+body {
+  background-color: var(--color-bg-canvas, #f2f3f4) !important;
+  color: var(--color-text-main, #1e293b);
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+
+/* ==============================================================================
+ * UTILITY CLASSES CHO NÚT BẤM & ĐIỂM NHẤN BRAND
+ * ============================================================================== */
+
+/* Nút Accent Vibrant Rose (Thêm vào giỏ hàng, Mua ngay, Thanh toán) */
+.btn-accent,
+.btn-cta {
+  background-color: var(--color-accent, #d1588e) !important;
+  border-color: var(--color-accent, #d1588e) !important;
+  color: #ffffff !important;
+  font-weight: 600;
+  transition: all 0.2s ease-in-out;
+}
+
+.btn-accent:hover,
+.btn-cta:hover,
+.btn-accent:focus,
+.btn-cta:focus {
+  background-color: var(--color-accent-hover, #b84377) !important;
+  border-color: var(--color-accent-hover, #b84377) !important;
+  color: #ffffff !important;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(209, 88, 142, 0.35);
+}
+
+/* Nút Primary Deep Indigo */
+.btn-primary-indigo {
+  background-color: var(--color-primary, #323377) !important;
+  border-color: var(--color-primary, #323377) !important;
+  color: #ffffff !important;
+  font-weight: 600;
+  transition: all 0.2s ease-in-out;
+}
+
+.btn-primary-indigo:hover,
+.btn-primary-indigo:focus {
+  background-color: var(--color-primary-hover, #242557) !important;
+  border-color: var(--color-primary-hover, #242557) !important;
+  color: #ffffff !important;
+  box-shadow: 0 4px 12px rgba(50, 51, 119, 0.35);
+}
+
+/* Nút viền Rose nhẹ */
+.btn-outline-accent {
+  background-color: transparent !important;
+  border-color: var(--color-accent, #d1588e) !important;
+  color: var(--color-accent, #d1588e) !important;
+  font-weight: 600;
+  transition: all 0.2s ease;
+}
+
+.btn-outline-accent:hover {
+  background-color: var(--color-accent, #d1588e) !important;
+  color: #ffffff !important;
+}
+
+/* Text & Border Utilities */
+.text-indigo { color: var(--color-primary, #323377) !important; }
+.text-rose { color: var(--color-accent, #d1588e) !important; }
+.text-rose-muted { color: var(--color-accent-muted, #d67398) !important; }
+.text-sage { color: var(--color-sage, #8cc3b2) !important; }
+.bg-indigo { background-color: var(--color-primary, #323377) !important; }
+.bg-rose { background-color: var(--color-accent, #d1588e) !important; }
+.bg-sage { background-color: var(--color-sage, #8cc3b2) !important; }
+.border-rose-muted { border-color: var(--color-accent-muted, #d67398) !important; }
+
+/* ==============================================================================
+ * SOFT EDITORIAL & MODERN BENTO DESIGN SYSTEM
+ * ============================================================================== */
+
+/* 1. Bento Card Modern (Bo góc 16px, viền mỏng, bóng đa tầng sang trọng) */
+.card-modern,
+.bento-card {
+  background-color: var(--color-surface, #ffffff);
+  border: 1px solid var(--color-border, #e2e8f0);
+  border-radius: 16px;
+  box-shadow: 0 4px 20px -2px rgba(50, 51, 119, 0.05), 0 2px 6px -1px rgba(0, 0, 0, 0.02);
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  overflow: hidden;
+}
+
+.card-modern:hover,
+.bento-card:hover {
+  box-shadow: 0 14px 30px -4px rgba(50, 51, 119, 0.09), 0 4px 12px -2px rgba(0, 0, 0, 0.03);
+  border-color: rgba(50, 51, 119, 0.2);
+}
+
+/* 2. Modern Brand Buttons */
+.btn-brand-primary {
+  background-color: var(--color-primary, #323377) !important;
+  border-color: var(--color-primary, #323377) !important;
+  color: #ffffff !important;
+  font-weight: 600;
+  border-radius: 12px;
+  padding: 0.6rem 1.35rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.btn-brand-primary:hover {
+  background-color: var(--color-primary-hover, #242557) !important;
+  border-color: var(--color-primary-hover, #242557) !important;
+  color: #ffffff !important;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 18px rgba(50, 51, 119, 0.28);
+}
+
+.btn-brand-accent {
+  background-color: var(--color-accent, #d1588e) !important;
+  border-color: var(--color-accent, #d1588e) !important;
+  color: #ffffff !important;
+  font-weight: 600;
+  border-radius: 12px;
+  padding: 0.6rem 1.35rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.btn-brand-accent:hover {
+  background-color: var(--color-accent-hover, #b84377) !important;
+  border-color: var(--color-accent-hover, #b84377) !important;
+  color: #ffffff !important;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(209, 88, 142, 0.35);
+}
+
+/* 3. Soft Pastel Badges */
+.badge-soft {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  font-weight: 600;
+  font-size: 0.775rem;
+  padding: 0.35rem 0.75rem;
+  border-radius: 9999px;
+  letter-spacing: 0.015em;
+  border: 1px solid transparent;
+}
+
+.badge-soft-primary {
+  background-color: rgba(50, 51, 119, 0.08);
+  color: var(--color-primary, #323377);
+  border-color: rgba(50, 51, 119, 0.18);
+}
+
+.badge-soft-accent {
+  background-color: rgba(209, 88, 142, 0.1);
+  color: var(--color-accent, #d1588e);
+  border-color: rgba(209, 88, 142, 0.25);
+}
+
+.badge-soft-sage {
+  background-color: rgba(140, 195, 178, 0.18);
+  color: #1b6852;
+  border-color: rgba(140, 195, 178, 0.4);
+}
+
+.badge-soft-warning {
+  background-color: #fef3c7;
+  color: #b45309;
+  border-color: #fde68a;
+}
+
+.badge-soft-danger {
+  background-color: #fee2e2;
+  color: #b91c1c;
+  border-color: #fca5a5;
+}
+
+/* 4. Bento Grid Layout Helpers */
+.bento-grid {
+  display: grid;
+  gap: 1.25rem;
+}
+
+.bento-stat-number {
+  font-size: 2rem;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1.1;
+  color: var(--color-primary, #323377);
+}
+
+.bento-stat-label {
+  font-size: 0.825rem;
+  font-weight: 600;
+  color: var(--color-text-muted, #64748b);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}

@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8" />
+</head>
+<body>
+
+  <!-- =========================================================================
+       FRAGMENT FOOTER DÙNG CHUNG (CHÂN TRANG TOÀN SÀN)
+       Nhúng bằng: <div th:replace="~{fragments/footer :: footer}"></div>
+       ========================================================================= -->
+  <footer th:fragment="footer" class="senvia-footer">
+    <div class="container">
+      <div class="row g-4">
+
+        <!-- CỘT 1: THÔNG TIN SÀN & ĐỒ ÁN -->
+        <div class="col-lg-4 col-md-6">
+          <div class="d-flex align-items-center gap-2 mb-3">
+            <i class="bi bi-shop-window text-warning fs-3"></i>
+            <span class="fs-4 fw-bold text-white tracking-tight">SENVIA<span class="text-info">MARKET</span></span>
+          </div>
+          <p class="text-secondary small line-height-lg mb-3">
+            Sàn thương mại điện tử đa gian hàng (Multi-vendor Marketplace) được xây dựng trong khuôn khổ đồ án môn <strong>Mẫu thiết kế (Design Patterns)</strong>.
+          </p>
+          <div class="small text-secondary">
+            <div><strong>Giảng viên hướng dẫn:</strong> Đoàn Minh Khuê</div>
+            <div><strong>Đơn vị thực hiện:</strong> Nhóm 2 - Kiến trúc Modular Monolith</div>
+          </div>
+        </div>
+
+        <!-- CỘT 2: DÀNH CHO NGƯỜI MUA -->
+        <div class="col-lg-2 col-md-6 col-6">
+          <h3 class="footer-heading">Dành cho Người mua</h3>
+          <ul class="footer-links-list">
+            <li><a th:href="@{/products}" href="/products">Khám phá sản phẩm</a></li>
+            <li><a th:href="@{/shopping/cart}" href="/shopping/cart">Giỏ hàng đa shop</a></li>
+            <li><a th:href="@{/ordering/buyer/orders}" href="/ordering/buyer/orders">Theo dõi đơn mua</a></li>
+            <li><a th:href="@{/shopping/favorites}" href="/shopping/favorites">Sản phẩm yêu thích</a></li>
+            <li><a href="#">Chính sách hoàn kho & hủy đơn</a></li>
+          </ul>
+        </div>
+
+        <!-- CỘT 3: DÀNH CHO NGƯỜI BÁN -->
+        <div class="col-lg-3 col-md-6 col-6">
+          <h3 class="footer-heading">Dành cho Người bán</h3>
+          <ul class="footer-links-list">
+            <li><a th:href="@{/merchant/shops/register}" href="/merchant/shops/register">Đăng ký mở gian hàng</a></li>
+            <li><a th:href="@{/merchant/shops/status}" href="/merchant/shops/status">Theo dõi xét duyệt Shop</a></li>
+            <li><a th:href="@{/merchant/seller/products}" href="/merchant/seller/products">Kênh người bán (Seller)</a></li>
+            <li><a href="#">Quy định đăng bán sản phẩm</a></li>
+            <li><a href="#">Quy trình chuyển trạng thái đơn</a></li>
+          </ul>
+        </div>
+
+        <!-- CỘT 4: PHƯƠNG THỨC THANH TOÁN & BẢO MẬT -->
+        <div class="col-lg-3 col-md-6">
+          <h3 class="footer-heading">Phương thức thanh toán</h3>
+          <p class="small text-secondary mb-3">
+            Hệ thống hỗ trợ 2 chiến lược thanh toán mô phỏng (Strategy Pattern):
+          </p>
+          <div class="d-flex flex-wrap gap-2 mb-3">
+            <span class="payment-trust-badge">
+              <i class="bi bi-cash-stack text-warning"></i> Tiền mặt COD
+            </span>
+            <span class="payment-trust-badge">
+              <i class="bi bi-qr-code text-info"></i> Chuyển khoản QR
+            </span>
+            <span class="payment-trust-badge">
+              <i class="bi bi-bank text-success"></i> Vietcombank Demo
+            </span>
+          </div>
+
+          <h3 class="footer-heading mt-4 mb-2">Hỗ trợ kỹ thuật</h3>
+          <div class="small text-secondary">
+            <div><i class="bi bi-envelope me-1"></i> support@senvia-market.local</div>
+            <div><i class="bi bi-shield-check text-success me-1"></i> Mã hóa BCrypt & Bảo mật Spring Security</div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- BOTTOM BAR: BẢN QUYỀN -->
+      <div class="footer-bottom-bar d-flex flex-column flex-md-row justify-content-between align-items-center gap-2">
+        <div>
+          © 2026 <strong>SENVIA MARKET</strong>. Bản quyền thuộc về Nhóm 2 - Đồ án giữa kỳ Mẫu thiết kế.
+        </div>
+        <div class="d-flex gap-3">
+          <span class="text-secondary small">Java 21</span>
+          <span class="text-secondary small">•</span>
+          <span class="text-secondary small">Spring Boot 4.1.1</span>
+          <span class="text-secondary small">•</span>
+          <span class="text-secondary small">Thymeleaf</span>
+          <span class="text-secondary small">•</span>
+          <span class="text-secondary small">Bootstrap 5</span>
+        </div>
+      </div>
+
+    </div>
+  </footer>
+
+</body>
+</html>

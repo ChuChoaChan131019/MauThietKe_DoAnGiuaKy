@@ -1,0 +1,1010 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Khám phá sản phẩm - Sàn Thương Mại Điện Tử SENVIA</title>
+
+  <!-- Bootstrap 5.3 CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <!-- Bootstrap Icons -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
+  <!-- Central Design System & Theme CSS -->
+  <link rel="stylesheet" th:href="@{/css/common/theme.css}" href="../../../static/css/common/theme.css" />
+  <!-- Common Badges & Tokens -->
+  <link rel="stylesheet" th:href="@{/css/common/badges.css}" href="../../../static/css/common/badges.css" />
+  <!-- Common Layout CSS -->
+  <link rel="stylesheet" th:href="@{/css/common/layout.css}" href="../../../static/css/common/layout.css" />
+  <!-- Merchant Product List CSS -->
+  <link rel="stylesheet" th:href="@{/css/modules/merchant/product-list.css}" href="../../../static/css/modules/merchant/product-list.css" />
+</head>
+<body style="background-color: var(--color-bg-canvas, #f2f3f4);">
+
+  <!-- =======================================================================
+       HEADER FRAGMENT
+       ======================================================================= -->
+  <div th:replace="~{fragments/header :: header}">
+    <header class="navbar navbar-expand-lg senvia-navbar py-3 mb-3 shadow-sm">
+      <div class="container">
+        <a class="navbar-brand-logo fw-bold d-flex align-items-center gap-2" href="list.html" th:href="@{/}">
+          <i class="bi bi-shop-window brand-icon"></i> SENVIA<span class="text-rose" style="color: var(--color-accent, #d1588e);">MARKET</span>
+        </a>
+        <div class="d-flex align-items-center gap-2 flex-wrap">
+          <a href="../../shopping/cart.html" class="btn btn-outline-light btn-sm position-relative">
+            <i class="bi bi-cart3"></i> Giỏ hàng
+            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill" style="background-color: var(--color-accent, #d1588e);" id="headerCartBadge">2</span>
+          </a>
+          <a href="../../shopping/favorites.html" class="btn btn-outline-light btn-sm">
+            <i class="bi bi-heart"></i> Yêu thích
+          </a>
+          <a href="../../engagement/notifications/index.html" class="btn btn-outline-light btn-sm">
+            <i class="bi bi-bell"></i> Thông báo
+          </a>
+          <a href="../shops/register.html" class="btn btn-sm text-white fw-semibold" style="background-color: var(--color-accent, #d1588e);">
+            <i class="bi bi-plus-circle"></i> Mở Shop
+          </a>
+          <a href="../../engagement/admin/dashboard.html" class="btn btn-outline-light btn-sm">
+            <i class="bi bi-speedometer2"></i> Admin
+          </a>
+          <a href="../../identity/login.html" class="btn btn-sm text-white" style="background-color: var(--color-primary-hover, #242557); border: 1px solid rgba(255,255,255,0.2);">Đăng nhập</a>
+        </div>
+      </div>
+    </header>
+  </div>
+
+  <!-- Main Container -->
+  <main class="container my-4">
+
+    <!-- Breadcrumb -->
+    <nav aria-label="breadcrumb" class="mb-3">
+      <ol class="breadcrumb mb-0">
+        <li class="breadcrumb-item"><a href="list.html" th:href="@{/}" class="text-decoration-none text-secondary">Trang chủ</a></li>
+        <li class="breadcrumb-item active text-dark fw-medium" aria-current="page">Danh mục &amp; Tìm kiếm sản phẩm</li>
+      </ol>
+    </nav>
+
+    <!-- =======================================================================
+         HERO PROMO BANNER (MARKETPLACE SHOWCASE)
+         ======================================================================= -->
+    <section class="catalog-hero-banner shadow-sm">
+      <div class="row align-items-center position-relative z-1">
+        <div class="col-lg-8">
+          <span class="badge px-3 py-2 mb-3 fw-semibold rounded-pill d-inline-flex align-items-center gap-1"
+                style="background-color: rgba(209, 88, 142, 0.22); color: #ffffff; border: 1px solid rgba(209, 88, 142, 0.45); font-size: 0.825rem;">
+            <i class="bi bi-stars" style="color: #fbbf24;"></i> Sàn thương mại điện tử đa gian hàng
+          </span>
+          <h1 class="h2 fw-bold text-white mb-2" style="letter-spacing: -0.02em;">Khám Phá Hàng Ngàn Sản Phẩm Độc Đáo</h1>
+          <p class="text-white-50 mb-3 fs-6" style="line-height: 1.6;">
+            Mua sắm trực tiếp từ các gian hàng uy tín trên toàn quốc. Đảm bảo nguồn gốc, thanh toán an toàn và giao vận nhanh chóng.
+          </p>
+          <div class="d-flex flex-wrap gap-2">
+            <a href="javascript:void(0)" class="hero-quick-tag" onclick="filterByCategory('all')">
+              <i class="bi bi-grid-fill"></i> Tất cả
+            </a>
+            <a href="javascript:void(0)" class="hero-quick-tag" onclick="filterByCategory('tech')">
+              <i class="bi bi-laptop"></i> Thiết bị công nghệ
+            </a>
+            <a href="javascript:void(0)" class="hero-quick-tag" onclick="filterByCategory('home')">
+              <i class="bi bi-house-heart"></i> Gia dụng thông minh
+            </a>
+            <a href="javascript:void(0)" class="hero-quick-tag" onclick="filterByCategory('fashion')">
+              <i class="bi bi-handbag"></i> Thời trang nam nữ
+            </a>
+          </div>
+        </div>
+        <div class="col-lg-4 d-none d-lg-flex justify-content-end align-items-center">
+          <div class="p-3 bg-white bg-opacity-10 rounded-4 border border-white border-opacity-25 text-center w-100" style="backdrop-filter: blur(10px);">
+            <div class="d-flex justify-content-around text-white">
+              <div>
+                <i class="bi bi-shield-check fs-2" style="color: #fbbf24;"></i>
+                <div class="small fw-semibold mt-1">100% Chính Hãng</div>
+              </div>
+              <div class="border-start border-white border-opacity-25"></div>
+              <div>
+                <i class="bi bi-truck fs-2" style="color: #67e8f9;"></i>
+                <div class="small fw-semibold mt-1">Giao Toàn Quốc</div>
+              </div>
+              <div class="border-start border-white border-opacity-25"></div>
+              <div>
+                <i class="bi bi-arrow-repeat fs-2" style="color: #86efac;"></i>
+                <div class="small fw-semibold mt-1">Đổi Trả Dễ Dàng</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- =======================================================================
+         MAIN CONTENT AREA: 2 COLUMNS (SIDEBAR 3 COLS - PRODUCTS 9 COLS)
+         ======================================================================= -->
+    <div class="row g-4">
+
+      <!-- =====================================================================
+           CỘT TRÁI (3 COLS): BỘ LỌC TÌM KIẾM (PROD 07, PROD 08)
+           ===================================================================== -->
+      <aside class="col-lg-3">
+        <form id="filterForm" method="GET" th:action="@{/products}" action="#">
+          <div class="filter-card">
+
+            <!-- Header bộ lọc -->
+            <div class="filter-header">
+              <span class="fw-bold text-dark d-flex align-items-center gap-2">
+                <i class="bi bi-funnel-fill" style="color: var(--color-primary, #323377);"></i> Bộ lọc tìm kiếm
+              </span>
+              <button type="button" class="btn btn-link text-decoration-none text-muted p-0 small" onclick="resetFilters()">
+                <i class="bi bi-arrow-counterclockwise"></i> Đặt lại
+              </button>
+            </div>
+
+            <!-- 1. Tìm kiếm theo tên (PROD 07) -->
+            <div class="filter-section">
+              <div class="filter-title">
+                <span><i class="bi bi-search me-1 text-secondary"></i> Từ khóa</span>
+              </div>
+              <div class="input-group input-group-sm">
+                <input type="text" id="keywordInput" name="keyword" class="form-control rounded-start-3 py-2 px-3"
+                       placeholder="Tìm tên sản phẩm..."
+                       th:value="${param.keyword}"
+                       oninput="handleKeywordSearch(this.value)" />
+                <button class="btn btn-primary-indigo rounded-end-3 px-3" type="submit" id="btnSearch"
+                        style="background-color: var(--color-primary, #323377); border-color: var(--color-primary, #323377); color: #ffffff;">
+                  <i class="bi bi-search"></i>
+                </button>
+              </div>
+            </div>
+
+            <!-- 2. Lọc theo Danh mục (PROD 08) -->
+            <div class="filter-section">
+              <div class="filter-title">
+                <span><i class="bi bi-tags me-1 text-secondary"></i> Danh mục</span>
+              </div>
+              <div class="d-flex flex-column gap-1">
+                <div class="filter-category-item active" data-category="all" onclick="selectCategory(this, 'all')">
+                  <span><i class="bi bi-chevron-right me-1 small"></i> Tất cả danh mục</span>
+                  <span class="filter-category-badge" id="countAll">6</span>
+                </div>
+                <div class="filter-category-item" data-category="tech" onclick="selectCategory(this, 'tech')">
+                  <span><i class="bi bi-laptop me-1 small"></i> Thiết bị công nghệ</span>
+                  <span class="filter-category-badge">2</span>
+                </div>
+                <div class="filter-category-item" data-category="home" onclick="selectCategory(this, 'home')">
+                  <span><i class="bi bi-house me-1 small"></i> Gia dụng thông minh</span>
+                  <span class="filter-category-badge">2</span>
+                </div>
+                <div class="filter-category-item" data-category="fashion" onclick="selectCategory(this, 'fashion')">
+                  <span><i class="bi bi-handbag me-1 small"></i> Thời trang nam nữ</span>
+                  <span class="filter-category-badge">2</span>
+                </div>
+              </div>
+              <!-- Hidden input for form submission -->
+              <input type="hidden" name="category" id="selectedCategoryInput" th:value="${param.category ?: 'all'}" value="all" />
+            </div>
+
+            <!-- 3. Lọc theo Khoảng giá (PROD 08) -->
+            <div class="filter-section">
+              <div class="filter-title">
+                <span><i class="bi bi-cash-stack me-1 text-secondary"></i> Khoảng giá (VNĐ)</span>
+              </div>
+
+              <!-- Quick price pills -->
+              <div class="mb-3">
+                <input type="radio" class="btn-check" name="priceRange" id="priceAll" checked onchange="filterPriceRange('all')" />
+                <label class="price-pill-label" for="priceAll">Tất cả mức giá</label>
+
+                <input type="radio" class="btn-check" name="priceRange" id="priceUnder1M" onchange="filterPriceRange('under1M')" />
+                <label class="price-pill-label" for="priceUnder1M">Dưới 1.000.000 ₫</label>
+
+                <input type="radio" class="btn-check" name="priceRange" id="price1Mto25M" onchange="filterPriceRange('1Mto25M')" />
+                <label class="price-pill-label" for="price1Mto25M">1.000.000 ₫ - 2.500.000 ₫</label>
+
+                <input type="radio" class="btn-check" name="priceRange" id="priceAbove25M" onchange="filterPriceRange('above25M')" />
+                <label class="price-pill-label" for="priceAbove25M">Trên 2.500.000 ₫</label>
+              </div>
+
+              <!-- Custom input range -->
+              <div class="row g-2 align-items-center">
+                <div class="col-5">
+                  <input type="number" id="minPriceInput" name="minPrice" class="form-control form-control-sm rounded-3 py-2 px-2"
+                         placeholder="Từ (₫)" min="0" step="50000" th:value="${param.minPrice}" />
+                </div>
+                <div class="col-2 text-center text-muted small">-</div>
+                <div class="col-5">
+                  <input type="number" id="maxPriceInput" name="maxPrice" class="form-control form-control-sm rounded-3 py-2 px-2"
+                         placeholder="Đến (₫)" min="0" step="50000" th:value="${param.maxPrice}" />
+                </div>
+              </div>
+              <button type="button" class="btn btn-sm w-100 mt-2 btn-primary-indigo rounded-3 py-2 fw-semibold"
+                      style="background-color: var(--color-primary, #323377); border-color: var(--color-primary, #323377); color: #ffffff;"
+                      onclick="applyCustomPrice()">
+                <i class="bi bi-check-lg me-1"></i> Áp dụng khoảng giá
+              </button>
+            </div>
+
+            <!-- 4. Lọc theo Gian hàng (Shops) -->
+            <div class="filter-section">
+              <div class="filter-title">
+                <span><i class="bi bi-shop me-1 text-secondary"></i> Gian hàng</span>
+              </div>
+              <div class="form-check mb-2">
+                <input class="form-check-input shop-filter-check" type="checkbox" value="TechZone Store" id="shopTechZone" onchange="filterByShop()" />
+                <label class="form-check-label small" for="shopTechZone">
+                  TechZone Store <span class="badge bg-light text-secondary border ms-1">3</span>
+                </label>
+              </div>
+              <div class="form-check">
+                <input class="form-check-input shop-filter-check" type="checkbox" value="ZenHome Official" id="shopZenHome" onchange="filterByShop()" />
+                <label class="form-check-label small" for="shopZenHome">
+                  ZenHome Official <span class="badge bg-light text-secondary border ms-1">3</span>
+                </label>
+              </div>
+            </div>
+
+            <!-- 5. Tình trạng hàng -->
+            <div class="filter-section">
+              <div class="form-check form-switch">
+                <input class="form-check-input" type="checkbox" id="inStockOnlySwitch" onchange="toggleInStockOnly(this.checked)" />
+                <label class="form-check-label small fw-semibold text-dark" for="inStockOnlySwitch">
+                  Chỉ hiện hàng sẵn có
+                </label>
+              </div>
+            </div>
+
+            <!-- 6. Đánh giá sao -->
+            <div class="filter-section">
+              <div class="filter-title">
+                <span><i class="bi bi-star-fill me-1 text-warning"></i> Đánh giá</span>
+              </div>
+              <div class="d-flex flex-column gap-1">
+                <div class="form-check">
+                  <input class="form-check-input rating-check" type="radio" name="ratingFilter" id="rateAll" checked onchange="filterByRating(0)" />
+                  <label class="form-check-label small" for="rateAll">Tất cả đánh giá</label>
+                </div>
+                <div class="form-check">
+                  <input class="form-check-input rating-check" type="radio" name="ratingFilter" id="rate4" onchange="filterByRating(4.5)" />
+                  <label class="form-check-label small" for="rate4">
+                    <span class="stars-gold"><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-half"></i></span>
+                    <span class="text-secondary ms-1">Từ 4.5 sao</span>
+                  </label>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </form>
+      </aside>
+
+      <!-- =====================================================================
+           CỘT PHẢI (9 COLS): DANH SÁCH SẢN PHẨM & SẮP XẾP (PROD 06, PROD 09)
+           ===================================================================== -->
+      <section class="col-lg-9">
+
+        <!-- Toolbar Sắp xếp & Hiển thị -->
+        <div class="catalog-toolbar d-flex flex-wrap align-items-center justify-content-between gap-3">
+
+          <!-- Số lượng kết quả & Chips -->
+          <div class="d-flex align-items-center gap-2 flex-wrap">
+            <span class="fw-semibold text-dark fs-6" id="catalogResultCount">
+              Tìm thấy <span class="fw-bold" style="color: var(--color-accent, #d1588e);" id="visibleCount">6</span> sản phẩm
+            </span>
+            <div id="activeFilterChipsContainer" class="d-flex align-items-center gap-1 flex-wrap ms-2">
+              <!-- Active chips will be dynamically rendered here -->
+            </div>
+          </div>
+
+          <!-- Bộ sắp xếp & Chuyển chế độ xem -->
+          <div class="d-flex align-items-center gap-3">
+            <div class="d-flex align-items-center gap-2">
+              <label for="sortSelect" class="small text-muted text-nowrap fw-medium">Sắp xếp:</label>
+              <select id="sortSelect" class="form-select form-select-sm" style="width: 170px;" onchange="handleSortChange(this.value)">
+                <option value="popular" selected>Phổ biến nhất</option>
+                <option value="priceAsc">Giá: Thấp đến Cao</option>
+                <option value="priceDesc">Giá: Cao đến Thấp</option>
+                <option value="ratingDesc">Đánh giá cao nhất</option>
+                <option value="newest">Mới nhất</option>
+              </select>
+            </div>
+
+            <!-- View Mode Switch: Grid vs List -->
+            <div class="btn-group btn-group-sm" role="group" aria-label="View mode">
+              <button type="button" class="btn btn-outline-secondary active" id="btnViewGrid" onclick="setViewMode('grid')" title="Dạng lưới">
+                <i class="bi bi-grid-3x3-gap-fill"></i>
+              </button>
+              <button type="button" class="btn btn-outline-secondary" id="btnViewList" onclick="setViewMode('list')" title="Dạng danh sách">
+                <i class="bi bi-list-ul"></i>
+              </button>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- ===================================================================
+             LƯỚI THẺ SẢN PHẨM (MẶC ĐỊNH GRID 3 CỘT)
+             Thymeleaf Integration: th:each="product : ${products}"
+             =================================================================== -->
+        <div id="productsGridContainer" class="row g-3">
+
+          <!-- SẢN PHẨM 1: BÀN PHÍM CƠ KHÔNG DÂY (TECH) -->
+          <div class="col-sm-6 col-md-4 product-item-wrapper"
+               data-id="1"
+               data-category="tech"
+               data-shop="TechZone Store"
+               data-price="1850000"
+               data-stock="15"
+               data-rating="4.8"
+               data-name="Bàn phím cơ không dây Custom 75%">
+            <div class="product-card">
+              <div class="product-thumb-box">
+                <span class="badge-discount-float">-14%</span>
+                <button type="button" class="btn-wishlist-float" title="Thêm vào yêu thích" onclick="toggleWishlist(this, event)">
+                  <i class="bi bi-heart"></i>
+                </button>
+                <a href="detail.html" th:href="@{/products/{id}(id=1)}">
+                  <img src="../../../static/images/demo/product-tech-mechanical-keyboard.jpg"
+                       th:src="@{/images/demo/product-tech-mechanical-keyboard.jpg}"
+                       alt="Bàn phím cơ không dây" loading="lazy" />
+                </a>
+              </div>
+              <div class="product-card-body">
+                <a href="javascript:void(0)" class="product-shop-name">
+                  <i class="bi bi-patch-check-fill" style="color: var(--color-primary, #323377);"></i> TechZone Store
+                </a>
+                <a href="detail.html" th:href="@{/products/{id}(id=1)}" class="product-card-title">
+                  Bàn phím cơ không dây Custom 75% Switch Gateron Pro Hotswap RGB
+                </a>
+                <div class="product-rating-box">
+                  <span class="stars-gold"><i class="bi bi-star-fill"></i> 4.8</span>
+                  <span class="rating-count">(128 đánh giá)</span>
+                </div>
+                <div class="product-card-footer">
+                  <div>
+                    <span class="price-current">1.850.000 ₫</span>
+                    <span class="price-original">2.150.000 ₫</span>
+                  </div>
+                  <button type="button" class="btn-quick-cart" title="Thêm vào giỏ" onclick="quickAddToCart('Bàn phím cơ không dây', 1850000, event)">
+                    <i class="bi bi-cart-plus"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- SẢN PHẨM 2: TAI NGHE BLUETOOTH ANC (TECH) -->
+          <div class="col-sm-6 col-md-4 product-item-wrapper"
+               data-id="2"
+               data-category="tech"
+               data-shop="TechZone Store"
+               data-price="2490000"
+               data-stock="8"
+               data-rating="4.9"
+               data-name="Tai nghe chụp tai Bluetooth chống ồn ANC High-Res">
+            <div class="product-card">
+              <div class="product-thumb-box">
+                <button type="button" class="btn-wishlist-float" title="Thêm vào yêu thích" onclick="toggleWishlist(this, event)">
+                  <i class="bi bi-heart"></i>
+                </button>
+                <a href="detail.html" th:href="@{/products/{id}(id=2)}">
+                  <img src="../../../static/images/demo/product-tech-wireless-headphones.jpg"
+                       th:src="@{/images/demo/product-tech-wireless-headphones.jpg}"
+                       alt="Tai nghe chụp tai Bluetooth ANC" loading="lazy" />
+                </a>
+              </div>
+              <div class="product-card-body">
+                <a href="javascript:void(0)" class="product-shop-name">
+                  <i class="bi bi-patch-check-fill" style="color: var(--color-primary, #323377);"></i> TechZone Store
+                </a>
+                <a href="detail.html" th:href="@{/products/{id}(id=2)}" class="product-card-title">
+                  Tai nghe chụp tai Bluetooth chống ồn chủ động ANC High-Res Audio Pin 40h
+                </a>
+                <div class="product-rating-box">
+                  <span class="stars-gold"><i class="bi bi-star-fill"></i> 4.9</span>
+                  <span class="rating-count">(86 đánh giá)</span>
+                </div>
+                <div class="product-card-footer">
+                  <div>
+                    <span class="price-current">2.490.000 ₫</span>
+                  </div>
+                  <button type="button" class="btn-quick-cart" title="Thêm vào giỏ" onclick="quickAddToCart('Tai nghe Bluetooth ANC', 2490000, event)">
+                    <i class="bi bi-cart-plus"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- SẢN PHẨM 3: NỒI CHIÊN KHÔNG DẦU (HOME) -->
+          <div class="col-sm-6 col-md-4 product-item-wrapper"
+               data-id="3"
+               data-category="home"
+               data-shop="ZenHome Official"
+               data-price="1450000"
+               data-stock="22"
+               data-rating="4.7"
+               data-name="Nồi chiên không dầu điện tử 6.5L Digital">
+            <div class="product-card">
+              <div class="product-thumb-box">
+                <span class="badge-discount-float">-23%</span>
+                <button type="button" class="btn-wishlist-float" title="Thêm vào yêu thích" onclick="toggleWishlist(this, event)">
+                  <i class="bi bi-heart"></i>
+                </button>
+                <a href="detail.html" th:href="@{/products/{id}(id=3)}">
+                  <img src="../../../static/images/demo/product-household-airfryer.jpg"
+                       th:src="@{/images/demo/product-household-airfryer.jpg}"
+                       alt="Nồi chiên không dầu" loading="lazy" />
+                </a>
+              </div>
+              <div class="product-card-body">
+                <a href="javascript:void(0)" class="product-shop-name">
+                  <i class="bi bi-patch-check-fill" style="color: var(--color-primary, #323377);"></i> ZenHome Official
+                </a>
+                <a href="detail.html" th:href="@{/products/{id}(id=3)}" class="product-card-title">
+                  Nồi chiên không dầu điện tử 6.5L Digital công nghệ Rapid Air giảm 85% mỡ
+                </a>
+                <div class="product-rating-box">
+                  <span class="stars-gold"><i class="bi bi-star-fill"></i> 4.7</span>
+                  <span class="rating-count">(215 đánh giá)</span>
+                </div>
+                <div class="product-card-footer">
+                  <div>
+                    <span class="price-current">1.450.000 ₫</span>
+                    <span class="price-original">1.890.000 ₫</span>
+                  </div>
+                  <button type="button" class="btn-quick-cart" title="Thêm vào giỏ" onclick="quickAddToCart('Nồi chiên không dầu 6.5L', 1450000, event)">
+                    <i class="bi bi-cart-plus"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- SẢN PHẨM 4: MÁY PHA CÀ PHÊ ESPRESSO (HOME) -->
+          <div class="col-sm-6 col-md-4 product-item-wrapper"
+               data-id="4"
+               data-category="home"
+               data-shop="ZenHome Official"
+               data-price="3290000"
+               data-stock="5"
+               data-rating="4.8"
+               data-name="Máy pha cà phê Espresso bán tự động 20 Bar">
+            <div class="product-card">
+              <div class="product-thumb-box">
+                <button type="button" class="btn-wishlist-float" title="Thêm vào yêu thích" onclick="toggleWishlist(this, event)">
+                  <i class="bi bi-heart"></i>
+                </button>
+                <a href="detail.html" th:href="@{/products/{id}(id=4)}">
+                  <img src="../../../static/images/demo/product-household-coffeemaker.jpg"
+                       th:src="@{/images/demo/product-household-coffeemaker.jpg}"
+                       alt="Máy pha cà phê Espresso" loading="lazy" />
+                </a>
+              </div>
+              <div class="product-card-body">
+                <a href="javascript:void(0)" class="product-shop-name">
+                  <i class="bi bi-patch-check-fill" style="color: var(--color-primary, #323377);"></i> ZenHome Official
+                </a>
+                <a href="detail.html" th:href="@{/products/{id}(id=4)}" class="product-card-title">
+                  Máy pha cà phê Espresso bán tự động 20 Bar tích hợp vòi đánh bọt sữa
+                </a>
+                <div class="product-rating-box">
+                  <span class="stars-gold"><i class="bi bi-star-fill"></i> 4.8</span>
+                  <span class="rating-count">(64 đánh giá)</span>
+                </div>
+                <div class="product-card-footer">
+                  <div>
+                    <span class="price-current">3.290.000 ₫</span>
+                  </div>
+                  <button type="button" class="btn-quick-cart" title="Thêm vào giỏ" onclick="quickAddToCart('Máy pha cà phê Espresso', 3290000, event)">
+                    <i class="bi bi-cart-plus"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- SẢN PHẨM 5: ÁO KHOÁC BOMBER (FASHION) -->
+          <div class="col-sm-6 col-md-4 product-item-wrapper"
+               data-id="5"
+               data-category="fashion"
+               data-shop="ZenHome Official"
+               data-price="580000"
+               data-stock="35"
+               data-rating="4.6"
+               data-name="Áo khoác Bomber phong cách Retro Minimalist">
+            <div class="product-card">
+              <div class="product-thumb-box">
+                <span class="badge-discount-float">-16%</span>
+                <button type="button" class="btn-wishlist-float" title="Thêm vào yêu thích" onclick="toggleWishlist(this, event)">
+                  <i class="bi bi-heart"></i>
+                </button>
+                <a href="detail.html" th:href="@{/products/{id}(id=5)}">
+                  <img src="../../../static/images/demo/product-fashion-bomber-jacket.jpg"
+                       th:src="@{/images/demo/product-fashion-bomber-jacket.jpg}"
+                       alt="Áo khoác Bomber" loading="lazy" />
+                </a>
+              </div>
+              <div class="product-card-body">
+                <a href="javascript:void(0)" class="product-shop-name">
+                  <i class="bi bi-patch-check-fill" style="color: var(--color-primary, #323377);"></i> ZenHome Official
+                </a>
+                <a href="detail.html" th:href="@{/products/{id}(id=5)}" class="product-card-title">
+                  Áo khoác Bomber phong cách Retro Minimalist vải dù 2 lớp chống nước
+                </a>
+                <div class="product-rating-box">
+                  <span class="stars-gold"><i class="bi bi-star-fill"></i> 4.6</span>
+                  <span class="rating-count">(94 đánh giá)</span>
+                </div>
+                <div class="product-card-footer">
+                  <div>
+                    <span class="price-current">580.000 ₫</span>
+                    <span class="price-original">690.000 ₫</span>
+                  </div>
+                  <button type="button" class="btn-quick-cart" title="Thêm vào giỏ" onclick="quickAddToCart('Áo khoác Bomber Retro', 580000, event)">
+                    <i class="bi bi-cart-plus"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- SẢN PHẨM 6: GIÀY SNEAKERS TRẮNG (FASHION) - CẢNH BÁO TỒN KHO ÍT -->
+          <div class="col-sm-6 col-md-4 product-item-wrapper"
+               data-id="6"
+               data-category="fashion"
+               data-shop="TechZone Store"
+               data-price="750000"
+               data-stock="2"
+               data-rating="4.7"
+               data-name="Giày Sneakers da PU cao cấp phong cách năng động">
+            <div class="product-card">
+              <div class="product-thumb-box">
+                <!-- Cảnh báo tồn kho ít theo BR 09 -->
+                <span class="badge-low-stock-float"><i class="bi bi-exclamation-triangle-fill"></i> Chỉ còn 2</span>
+                <button type="button" class="btn-wishlist-float" title="Thêm vào yêu thích" onclick="toggleWishlist(this, event)">
+                  <i class="bi bi-heart"></i>
+                </button>
+                <a href="detail.html" th:href="@{/products/{id}(id=6)}">
+                  <img src="../../../static/images/demo/product-fashion-white-sneakers.jpg"
+                       th:src="@{/images/demo/product-fashion-white-sneakers.jpg}"
+                       alt="Giày Sneakers da PU" loading="lazy" />
+                </a>
+              </div>
+              <div class="product-card-body">
+                <a href="javascript:void(0)" class="product-shop-name">
+                  <i class="bi bi-patch-check-fill" style="color: var(--color-primary, #323377);"></i> TechZone Store
+                </a>
+                <a href="detail.html" th:href="@{/products/{id}(id=6)}" class="product-card-title">
+                  Giày Sneakers da PU cao cấp phong cách năng động đế êm chống trượt
+                </a>
+                <div class="product-rating-box">
+                  <span class="stars-gold"><i class="bi bi-star-fill"></i> 4.7</span>
+                  <span class="rating-count">(152 đánh giá)</span>
+                </div>
+                <div class="product-card-footer">
+                  <div>
+                    <span class="price-current">750.000 ₫</span>
+                  </div>
+                  <button type="button" class="btn-quick-cart" title="Thêm vào giỏ" onclick="quickAddToCart('Giày Sneakers da PU', 750000, event)">
+                    <i class="bi bi-cart-plus"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- ===================================================================
+             EMPTY STATE (KHI TÌM KIẾM HOẶC LỌC KHÔNG CÓ KẾT QUẢ)
+             =================================================================== -->
+        <div id="catalogEmptyState" class="catalog-empty-state d-none my-4">
+          <div class="catalog-empty-icon">
+            <i class="bi bi-search"></i>
+          </div>
+          <h4 class="fw-bold text-dark mb-2">Không tìm thấy sản phẩm nào!</h4>
+          <p class="text-secondary mb-4 mx-auto" style="max-width: 450px;">
+            Rất tiếc, chúng tôi không tìm thấy kết quả phù hợp với tiêu chí lọc của bạn. Hãy thử tìm từ khóa khác hoặc xóa bớt tiêu chí lọc.
+          </p>
+          <button type="button" class="btn btn-accent px-4 py-2 rounded-3 fw-semibold shadow-sm"
+                  style="background-color: var(--color-accent, #d1588e); border-color: var(--color-accent, #d1588e); color: #ffffff;"
+                  onclick="resetFilters()">
+            <i class="bi bi-arrow-counterclockwise me-1"></i> Xóa tất cả bộ lọc
+          </button>
+        </div>
+
+        <!-- ===================================================================
+             PHÂN TRANG (PROD 09)
+             =================================================================== -->
+        <nav aria-label="Phân trang sản phẩm" class="mt-5 d-flex justify-content-center" id="paginationNav">
+          <ul class="pagination custom-pagination">
+            <li class="page-item disabled">
+              <a class="page-link" href="#" tabindex="-1" aria-disabled="true">
+                <i class="bi bi-chevron-left"></i>
+              </a>
+            </li>
+            <li class="page-item active" aria-current="page">
+              <a class="page-link" href="#">1</a>
+            </li>
+            <li class="page-item"><a class="page-link" href="#">2</a></li>
+            <li class="page-item"><a class="page-link" href="#">3</a></li>
+            <li class="page-item">
+              <a class="page-link" href="#">
+                <i class="bi bi-chevron-right"></i>
+              </a>
+            </li>
+          </ul>
+        </nav>
+
+      </section>
+    </div>
+
+  </main>
+
+  <!-- =======================================================================
+       TOAST THÔNG BÁO THÊM GIỎ HÀNG THÀNH CÔNG
+       ======================================================================= -->
+  <div class="toast-container toast-container-catalog">
+    <div id="cartToast" class="toast align-items-center text-white bg-success border-0 shadow-lg" role="alert" aria-live="assertive" aria-atomic="true">
+      <div class="d-flex">
+        <div class="toast-body d-flex align-items-center gap-2">
+          <i class="bi bi-check-circle-fill fs-5"></i>
+          <div>
+            <div class="fw-bold" id="toastProductTitle">Đã thêm vào giỏ hàng!</div>
+            <div class="small text-white-50">Sản phẩm đã được cập nhật vào giỏ của bạn.</div>
+          </div>
+        </div>
+        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+      </div>
+    </div>
+  </div>
+
+  <!-- =======================================================================
+       FOOTER FRAGMENT
+       ======================================================================= -->
+  <div th:replace="~{fragments/footer :: footer}">
+    <footer class="bg-dark text-light pt-5 pb-4 mt-5">
+      <div class="container text-center text-md-start">
+        <div class="row">
+          <div class="col-md-4 mb-4">
+            <h5 class="text-uppercase fw-bold text-warning mb-3">SENVIA MARKET</h5>
+            <p class="text-secondary small">Nền tảng thương mại điện tử đa gian hàng sinh viên.</p>
+          </div>
+          <div class="col-md-8 text-md-end">
+            <p class="text-secondary small mb-0">&copy; 2026 SENVIA MARKET. Đồ án giữa kỳ môn Mẫu thiết kế.</p>
+          </div>
+        </div>
+      </div>
+    </footer>
+  </div>
+
+  <!-- Bootstrap 5.3 JS Bundle -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+  <!-- =======================================================================
+       INTERACTIVE CLIENT-SIDE SCRIPT FOR FILTERING, SORTING & WISHLIST
+       ======================================================================= -->
+  <script>
+    // State storage for client-side demo
+    const filterState = {
+      keyword: '',
+      category: 'all',
+      priceRange: 'all',
+      minPrice: null,
+      maxPrice: null,
+      shops: [],
+      inStockOnly: false,
+      minRating: 0,
+      sortBy: 'popular',
+      viewMode: 'grid'
+    };
+
+    let cartCount = 2;
+
+    // 1. Keyword search (PROD 07)
+    function handleKeywordSearch(keyword) {
+      filterState.keyword = keyword.trim().toLowerCase();
+      applyAllFilters();
+    }
+
+    // 2. Select category (PROD 08)
+    function selectCategory(element, category) {
+      document.querySelectorAll('.filter-category-item').forEach(el => el.classList.remove('active'));
+      element.classList.add('active');
+      filterState.category = category;
+      document.getElementById('selectedCategoryInput').value = category;
+      applyAllFilters();
+    }
+
+    function filterByCategory(category) {
+      const targetItem = document.querySelector(`.filter-category-item[data-category="${category}"]`);
+      if (targetItem) {
+        selectCategory(targetItem, category);
+      }
+    }
+
+    // 3. Price ranges (PROD 08)
+    function filterPriceRange(range) {
+      filterState.priceRange = range;
+      filterState.minPrice = null;
+      filterState.maxPrice = null;
+      document.getElementById('minPriceInput').value = '';
+      document.getElementById('maxPriceInput').value = '';
+      applyAllFilters();
+    }
+
+    function applyCustomPrice() {
+      const minVal = parseFloat(document.getElementById('minPriceInput').value);
+      const maxVal = parseFloat(document.getElementById('maxPriceInput').value);
+
+      filterState.minPrice = isNaN(minVal) ? null : minVal;
+      filterState.maxPrice = isNaN(maxVal) ? null : maxVal;
+      filterState.priceRange = 'custom';
+
+      // Uncheck quick price radio
+      document.querySelectorAll('input[name="priceRange"]').forEach(r => r.checked = false);
+      applyAllFilters();
+    }
+
+    // 4. Shop filter
+    function filterByShop() {
+      const checkedShops = [];
+      document.querySelectorAll('.shop-filter-check:checked').forEach(cb => {
+        checkedShops.push(cb.value);
+      });
+      filterState.shops = checkedShops;
+      applyAllFilters();
+    }
+
+    // 5. In-stock toggle
+    function toggleInStockOnly(isChecked) {
+      filterState.inStockOnly = isChecked;
+      applyAllFilters();
+    }
+
+    // 6. Rating filter
+    function filterByRating(rating) {
+      filterState.minRating = rating;
+      applyAllFilters();
+    }
+
+    // 7. Master Filter Application
+    function applyAllFilters() {
+      const items = document.querySelectorAll('.product-item-wrapper');
+      let visibleCount = 0;
+
+      items.forEach(item => {
+        const name = item.getAttribute('data-name').toLowerCase();
+        const category = item.getAttribute('data-category');
+        const shop = item.getAttribute('data-shop');
+        const price = parseFloat(item.getAttribute('data-price'));
+        const stock = parseInt(item.getAttribute('data-stock'), 10);
+        const rating = parseFloat(item.getAttribute('data-rating'));
+
+        // Match keyword
+        const matchesKeyword = !filterState.keyword || name.includes(filterState.keyword);
+
+        // Match category
+        const matchesCategory = filterState.category === 'all' || category === filterState.category;
+
+        // Match price
+        let matchesPrice = true;
+        if (filterState.priceRange === 'under1M') {
+          matchesPrice = price < 1000000;
+        } else if (filterState.priceRange === '1Mto25M') {
+          matchesPrice = price >= 1000000 && price <= 2500000;
+        } else if (filterState.priceRange === 'above25M') {
+          matchesPrice = price > 2500000;
+        } else if (filterState.priceRange === 'custom') {
+          if (filterState.minPrice !== null && price < filterState.minPrice) matchesPrice = false;
+          if (filterState.maxPrice !== null && price > filterState.maxPrice) matchesPrice = false;
+        }
+
+        // Match shop
+        const matchesShop = filterState.shops.length === 0 || filterState.shops.includes(shop);
+
+        // Match in-stock
+        const matchesStock = !filterState.inStockOnly || stock > 0;
+
+        // Match rating
+        const matchesRating = rating >= filterState.minRating;
+
+        if (matchesKeyword && matchesCategory && matchesPrice && matchesShop && matchesStock && matchesRating) {
+          item.classList.remove('d-none');
+          visibleCount++;
+        } else {
+          item.classList.add('d-none');
+        }
+      });
+
+      // Update counters
+      document.getElementById('visibleCount').textContent = visibleCount;
+
+      // Handle empty state
+      const emptyState = document.getElementById('catalogEmptyState');
+      const paginationNav = document.getElementById('paginationNav');
+      if (visibleCount === 0) {
+        emptyState.classList.remove('d-none');
+        if (paginationNav) paginationNav.classList.add('d-none');
+      } else {
+        emptyState.classList.add('d-none');
+        if (paginationNav) paginationNav.classList.remove('d-none');
+      }
+
+      renderActiveChips();
+    }
+
+    // Render active chips in toolbar
+    function renderActiveChips() {
+      const container = document.getElementById('activeFilterChipsContainer');
+      container.innerHTML = '';
+
+      if (filterState.keyword) {
+        container.appendChild(createChip(`Từ khóa: "${filterState.keyword}"`, () => {
+          document.getElementById('keywordInput').value = '';
+          handleKeywordSearch('');
+        }));
+      }
+
+      if (filterState.category !== 'all') {
+        const catName = filterState.category === 'tech' ? 'Công nghệ' :
+                        filterState.category === 'home' ? 'Gia dụng' : 'Thời trang';
+        container.appendChild(createChip(`Danh mục: ${catName}`, () => {
+          filterByCategory('all');
+        }));
+      }
+
+      if (filterState.priceRange === 'under1M') {
+        container.appendChild(createChip('Dưới 1 triệu', () => {
+          document.getElementById('priceAll').checked = true;
+          filterPriceRange('all');
+        }));
+      } else if (filterState.priceRange === '1Mto25M') {
+        container.appendChild(createChip('1M - 2.5M', () => {
+          document.getElementById('priceAll').checked = true;
+          filterPriceRange('all');
+        }));
+      } else if (filterState.priceRange === 'above25M') {
+        container.appendChild(createChip('Trên 2.5 triệu', () => {
+          document.getElementById('priceAll').checked = true;
+          filterPriceRange('all');
+        }));
+      }
+
+      filterState.shops.forEach(shop => {
+        container.appendChild(createChip(`Shop: ${shop}`, () => {
+          document.querySelectorAll('.shop-filter-check').forEach(cb => {
+            if (cb.value === shop) cb.checked = false;
+          });
+          filterByShop();
+        }));
+      });
+    }
+
+    function createChip(text, onRemove) {
+      const chip = document.createElement('span');
+      chip.className = 'active-filter-chip';
+      chip.innerHTML = `${text} <span class="btn-close-chip"><i class="bi bi-x-circle-fill"></i></span>`;
+      chip.querySelector('.btn-close-chip').addEventListener('click', onRemove);
+      return chip;
+    }
+
+    // Reset all filters
+    function resetFilters() {
+      filterState.keyword = '';
+      filterState.category = 'all';
+      filterState.priceRange = 'all';
+      filterState.minPrice = null;
+      filterState.maxPrice = null;
+      filterState.shops = [];
+      filterState.inStockOnly = false;
+      filterState.minRating = 0;
+
+      document.getElementById('keywordInput').value = '';
+      document.getElementById('minPriceInput').value = '';
+      document.getElementById('maxPriceInput').value = '';
+      document.getElementById('priceAll').checked = true;
+      document.getElementById('inStockOnlySwitch').checked = false;
+      document.getElementById('rateAll').checked = true;
+      document.querySelectorAll('.shop-filter-check').forEach(cb => cb.checked = false);
+
+      document.querySelectorAll('.filter-category-item').forEach(el => el.classList.remove('active'));
+      document.querySelector('.filter-category-item[data-category="all"]').classList.add('active');
+
+      applyAllFilters();
+    }
+
+    // 8. Sorting Handler
+    function handleSortChange(sortType) {
+      filterState.sortBy = sortType;
+      const grid = document.getElementById('productsGridContainer');
+      const items = Array.from(grid.querySelectorAll('.product-item-wrapper'));
+
+      items.sort((a, b) => {
+        const priceA = parseFloat(a.getAttribute('data-price'));
+        const priceB = parseFloat(b.getAttribute('data-price'));
+        const ratingA = parseFloat(a.getAttribute('data-rating'));
+        const ratingB = parseFloat(b.getAttribute('data-rating'));
+        const idA = parseInt(a.getAttribute('data-id'), 10);
+        const idB = parseInt(b.getAttribute('data-id'), 10);
+
+        if (sortType === 'priceAsc') return priceA - priceB;
+        if (sortType === 'priceDesc') return priceB - priceA;
+        if (sortType === 'ratingDesc') return ratingB - ratingA;
+        if (sortType === 'newest') return idB - idA;
+        return idA - idB; // Default popular
+      });
+
+      items.forEach(item => grid.appendChild(item));
+    }
+
+    // 9. View mode toggler: Grid vs List
+    function setViewMode(mode) {
+      const gridContainer = document.getElementById('productsGridContainer');
+      const btnGrid = document.getElementById('btnViewGrid');
+      const btnList = document.getElementById('btnViewList');
+
+      if (mode === 'list') {
+        gridContainer.classList.add('product-list-view');
+        gridContainer.querySelectorAll('.product-item-wrapper').forEach(item => {
+          item.className = 'col-12 product-item-wrapper';
+        });
+        btnList.classList.add('active');
+        btnGrid.classList.remove('active');
+      } else {
+        gridContainer.classList.remove('product-list-view');
+        gridContainer.querySelectorAll('.product-item-wrapper').forEach(item => {
+          item.className = 'col-sm-6 col-md-4 product-item-wrapper';
+        });
+        btnGrid.classList.add('active');
+        btnList.classList.remove('active');
+      }
+    }
+
+    // 10. Wishlist Toggle
+    function toggleWishlist(btn, event) {
+      event.preventDefault();
+      event.stopPropagation();
+      const icon = btn.querySelector('i');
+      if (icon.classList.contains('bi-heart')) {
+        icon.classList.remove('bi-heart');
+        icon.classList.add('bi-heart-fill');
+        btn.classList.add('active');
+      } else {
+        icon.classList.remove('bi-heart-fill');
+        icon.classList.add('bi-heart');
+        btn.classList.remove('active');
+      }
+    }
+
+    // 11. Quick Add to Cart
+    function quickAddToCart(title, price, event) {
+      event.preventDefault();
+      event.stopPropagation();
+
+      cartCount++;
+      const headerCartBadge = document.getElementById('headerCartBadge');
+      if (headerCartBadge) {
+        headerCartBadge.textContent = cartCount;
+        headerCartBadge.classList.add('animate__animated', 'animate__pulse');
+      }
+
+      document.getElementById('toastProductTitle').textContent = `Đã thêm "${title}" vào giỏ hàng!`;
+      const toastEl = document.getElementById('cartToast');
+      const toast = new bootstrap.Toast(toastEl, { delay: 2500 });
+      toast.show();
+    }
+
+    // 12. Offline Link Guard: Ngăn chặn click vào "/" làm trình duyệt nhảy ra ổ đĩa D:\
+    if (window.location.protocol === 'file:') {
+      document.addEventListener('click', function (e) {
+        const link = e.target.closest('a');
+        if (!link) return;
+        const href = link.getAttribute('href');
+        if (href === '/' || href === '/products') {
+          e.preventDefault();
+          window.location.href = 'list.html';
+        }
+      });
+    }
+  </script>
+
+</body>
+</html>

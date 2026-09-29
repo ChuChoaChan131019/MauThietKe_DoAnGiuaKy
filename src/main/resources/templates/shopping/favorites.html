@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sản phẩm Yêu thích - Sàn Thương Mại Điện Tử SENVIA</title>
+
+  <!-- Bootstrap 5.3 CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <!-- Bootstrap Icons -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
+  <!-- Common Badges & Tokens -->
+  <link rel="stylesheet" th:href="@{/css/common/badges.css}" href="../../static/css/common/badges.css" />
+  <!-- Common Layout CSS -->
+  <link rel="stylesheet" th:href="@{/css/common/layout.css}" href="../../static/css/common/layout.css" />
+  <!-- Shopping Favorites CSS -->
+  <link rel="stylesheet" th:href="@{/css/modules/shopping/favorites.css}" href="../../static/css/modules/shopping/favorites.css" />
+</head>
+<body class="bg-light">
+
+  <!-- =======================================================================
+       HEADER FRAGMENT
+       ======================================================================= -->
+  <div th:replace="~{fragments/header :: header}">
+    <header class="navbar navbar-expand-lg navbar-dark bg-dark py-3 mb-4 shadow-sm">
+      <div class="container">
+        <a class="navbar-brand fw-bold d-flex align-items-center gap-2" href="/">
+          <i class="bi bi-shop-window text-warning"></i> SENVIA MARKET
+        </a>
+      </div>
+    </header>
+  </div>
+
+  <!-- =======================================================================
+       MAIN CONTAINER
+       ======================================================================= -->
+  <main class="container my-4">
+
+    <!-- Breadcrumb -->
+    <nav aria-label="breadcrumb" class="mb-3">
+      <ol class="breadcrumb mb-0">
+        <li class="breadcrumb-item"><a href="/" class="text-decoration-none text-secondary">Trang chủ</a></li>
+        <li class="breadcrumb-item"><a th:href="@{/shopping/cart}" href="cart.html" class="text-decoration-none text-secondary">Giỏ hàng</a></li>
+        <li class="breadcrumb-item active text-dark fw-medium" aria-current="page">Sản phẩm yêu thích</li>
+      </ol>
+    </nav>
+
+    <!-- Banner Đồ Án Mẫu Thiết Kế (Module Shopping Overview) -->
+    <div class="alert alert-danger border-danger-subtle d-flex align-items-center gap-3 p-3 rounded-3 mb-4 shadow-xs" role="alert">
+      <div class="fs-3 text-danger flex-shrink-0">
+        <i class="bi bi-heart-pulse-fill"></i>
+      </div>
+      <div class="flex-grow-1 small">
+        <h6 class="alert-heading fw-bold mb-1 text-danger">
+          Phân Hệ Quản Lý Yêu Thích (Module Shopping - SRS FAV 01, FAV 02, FAV 03)
+        </h6>
+        <div class="text-secondary">
+          Cho phép người dùng lưu lại các sản phẩm quan tâm để mua sắm sau. Hệ thống áp dụng ràng buộc toàn vẹn
+          <strong>UNIQUE(user_id, product_id)</strong> ngăn ngừa lưu trùng lặp (FAV 02). Người dùng có thể xóa khỏi danh sách hoặc chuyển sản phẩm trực tiếp vào giỏ hàng cá nhân để đặt hàng.
+        </div>
+      </div>
+    </div>
+
+    <!-- Header Tiêu Đề & Số Lượng -->
+    <div class="fav-header d-flex flex-column flex-sm-row justify-content-between align-items-sm-center gap-3">
+      <div>
+        <h1 class="fav-title mb-1">
+          <i class="bi bi-heart-fill text-danger"></i> Sản Phẩm Yêu Thích Của Bạn
+        </h1>
+        <p class="text-muted mb-0 small">
+          Theo dõi các sản phẩm bạn quan tâm và dễ dàng thêm vào giỏ hàng khi có ưu đãi.
+        </p>
+      </div>
+
+      <div>
+        <span class="fav-count-pill" id="favCountPill">
+          <i class="bi bi-heart-fill"></i> <span id="favCountNumber">4</span> sản phẩm đã lưu
+        </span>
+      </div>
+    </div>
+
+    <!-- Thanh Công Cụ Toolbar (Tìm kiếm, Lọc theo Shop & Thao tác) -->
+    <div class="fav-toolbar" id="favToolbar">
+      <div class="row g-3 align-items-center justify-content-between">
+
+        <!-- Tìm kiếm trong danh sách -->
+        <div class="col-md-4">
+          <div class="input-group input-group-sm">
+            <span class="input-group-text bg-light text-muted"><i class="bi bi-search"></i></span>
+            <input type="text" class="form-control" id="favSearchInput" placeholder="Tìm nhanh trong danh sách yêu thích..." />
+          </div>
+        </div>
+
+        <!-- Bộ lọc & Sắp xếp -->
+        <div class="col-md-5">
+          <div class="d-flex gap-2">
+            <select class="form-select form-select-sm" id="favShopFilter">
+              <option value="ALL">Tất cả gian hàng</option>
+              <option value="TechZone">TechZone Official Store</option>
+              <option value="ZenHome">ZenHome Smart Living</option>
+              <option value="Aura Fashion">Aura Fashion House</option>
+            </select>
+
+            <select class="form-select form-select-sm" id="favSortSelect">
+              <option value="NEWEST">Mới lưu gần đây</option>
+              <option value="PRICE_ASC">Giá tăng dần</option>
+              <option value="PRICE_DESC">Giá giảm dần</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Thao tác nhóm -->
+        <div class="col-md-3 text-md-end text-start">
+          <div class="btn-group btn-group-sm" role="group">
+            <button type="button" class="btn btn-outline-primary" id="addAllToCartBtn" title="Thêm tất cả vào giỏ hàng">
+              <i class="bi bi-cart-plus-fill"></i> Thêm tất cả vào giỏ
+            </button>
+            <button type="button" class="btn btn-outline-danger" id="clearAllFavBtn" title="Xóa toàn bộ">
+              <i class="bi bi-trash"></i> Xóa hết
+            </button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- =======================================================================
+         LƯỚI SẢN PHẨM YÊU THÍCH (PRODUCT GRID)
+         ======================================================================= -->
+    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4" id="favProductGrid">
+
+      <!-- MỤC 1: BÀN PHÍM CƠ TECHZONE -->
+      <div class="col fav-product-item" data-id="1" data-name="bàn phím cơ không dây rgb bluetooth techzone" data-shop="TechZone" data-price="1250000">
+        <div class="fav-card">
+          <div class="fav-card-img-wrapper">
+            <img src="../../static/images/demo/product-tech-mechanical-keyboard.jpg"
+                 th:src="@{/images/demo/product-tech-mechanical-keyboard.jpg}"
+                 alt="Bàn phím cơ"
+                 class="fav-card-img" />
+            <button class="fav-remove-btn" type="button" title="Xóa khỏi yêu thích" data-name="Bàn phím cơ không dây RGB TechZone">
+              <i class="bi bi-trash3-fill"></i>
+            </button>
+            <span class="fav-shop-badge">
+              <i class="bi bi-shop"></i> TechZone Official
+            </span>
+          </div>
+
+          <div class="fav-card-body">
+            <a th:href="@{/merchant/products/detail}" href="../merchant/products/detail.html" class="fav-item-title">
+              Bàn phím cơ không dây RGB Bluetooth Hotswap TechZone
+            </a>
+
+            <div class="fav-rating-box">
+              <i class="bi bi-star-fill"></i>
+              <span class="fw-semibold text-dark">4.9</span>
+              <span class="text-muted">(38 đánh giá)</span>
+            </div>
+
+            <div class="fav-price-box">
+              <div class="fav-price-val">1.250.000 ₫</div>
+              <div class="fav-stock-status">
+                <i class="bi bi-check2-circle"></i> Còn 15
+              </div>
+            </div>
+          </div>
+
+          <div class="fav-card-actions border-top">
+            <button type="button" class="btn btn-primary fav-add-cart-btn" data-name="Bàn phím cơ không dây RGB TechZone">
+              <i class="bi bi-cart-plus"></i> Thêm vào giỏ
+            </button>
+            <a th:href="@{/merchant/products/detail}" href="../merchant/products/detail.html" class="btn btn-outline-secondary btn-sm d-flex align-items-center justify-content-center px-2" title="Xem chi tiết">
+              <i class="bi bi-arrow-up-right"></i>
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- MỤC 2: NỒI CHIÊN KHÔNG DẦU ZENHOME -->
+      <div class="col fav-product-item" data-id="2" data-name="nồi chiên không dầu điện tử zenhome dung tích 6.5l" data-shop="ZenHome" data-price="1850000">
+        <div class="fav-card">
+          <div class="fav-card-img-wrapper">
+            <img src="../../static/images/demo/product-household-airfryer.jpg"
+                 th:src="@{/images/demo/product-household-airfryer.jpg}"
+                 alt="Nồi chiên không dầu"
+                 class="fav-card-img" />
+            <button class="fav-remove-btn" type="button" title="Xóa khỏi yêu thích" data-name="Nồi chiên không dầu ZenHome 6.5L">
+              <i class="bi bi-trash3-fill"></i>
+            </button>
+            <span class="fav-shop-badge">
+              <i class="bi bi-shop"></i> ZenHome Living
+            </span>
+          </div>
+
+          <div class="fav-card-body">
+            <a th:href="@{/merchant/products/detail}" href="../merchant/products/detail.html" class="fav-item-title">
+              Nồi chiên không dầu điện tử ZenHome dung tích 6.5L cảm ứng
+            </a>
+
+            <div class="fav-rating-box">
+              <i class="bi bi-star-fill"></i>
+              <span class="fw-semibold text-dark">4.8</span>
+              <span class="text-muted">(45 đánh giá)</span>
+            </div>
+
+            <div class="fav-price-box">
+              <div class="fav-price-val">1.850.000 ₫</div>
+              <div class="fav-stock-status">
+                <i class="bi bi-check2-circle"></i> Còn 8
+              </div>
+            </div>
+          </div>
+
+          <div class="fav-card-actions border-top">
+            <button type="button" class="btn btn-primary fav-add-cart-btn" data-name="Nồi chiên không dầu ZenHome 6.5L">
+              <i class="bi bi-cart-plus"></i> Thêm vào giỏ
+            </button>
+            <a th:href="@{/merchant/products/detail}" href="../merchant/products/detail.html" class="btn btn-outline-secondary btn-sm d-flex align-items-center justify-content-center px-2" title="Xem chi tiết">
+              <i class="bi bi-arrow-up-right"></i>
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- MỤC 3: TAI NGHE CHỐNG ỒN TECHZONE -->
+      <div class="col fav-product-item" data-id="3" data-name="tai nghe chống ồn không dây anc pro techzone hi-res" data-shop="TechZone" data-price="2100000">
+        <div class="fav-card">
+          <div class="fav-card-img-wrapper">
+            <img src="../../static/images/demo/product-tech-wireless-headphones.jpg"
+                 th:src="@{/images/demo/product-tech-wireless-headphones.jpg}"
+                 alt="Tai nghe không dây"
+                 class="fav-card-img" />
+            <button class="fav-remove-btn" type="button" title="Xóa khỏi yêu thích" data-name="Tai nghe không dây ANC Pro TechZone">
+              <i class="bi bi-trash3-fill"></i>
+            </button>
+            <span class="fav-shop-badge">
+              <i class="bi bi-shop"></i> TechZone Official
+            </span>
+          </div>
+
+          <div class="fav-card-body">
+            <a th:href="@{/merchant/products/detail}" href="../merchant/products/detail.html" class="fav-item-title">
+              Tai nghe chống ồn không dây ANC Pro TechZone Hi-Res Audio
+            </a>
+
+            <div class="fav-rating-box">
+              <i class="bi bi-star-fill"></i>
+              <span class="fw-semibold text-dark">5.0</span>
+              <span class="text-muted">(62 đánh giá)</span>
+            </div>
+
+            <div class="fav-price-box">
+              <div class="fav-price-val">2.100.000 ₫</div>
+              <div class="fav-stock-status">
+                <i class="bi bi-check2-circle"></i> Còn 5
+              </div>
+            </div>
+          </div>
+
+          <div class="fav-card-actions border-top">
+            <button type="button" class="btn btn-primary fav-add-cart-btn" data-name="Tai nghe không dây ANC Pro TechZone">
+              <i class="bi bi-cart-plus"></i> Thêm vào giỏ
+            </button>
+            <a th:href="@{/merchant/products/detail}" href="../merchant/products/detail.html" class="btn btn-outline-secondary btn-sm d-flex align-items-center justify-content-center px-2" title="Xem chi tiết">
+              <i class="bi bi-arrow-up-right"></i>
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- MỤC 4: ÁO KHOÁC BOMBER AURA FASHION -->
+      <div class="col fav-product-item" data-id="4" data-name="áo khoác bomber unisex aura fashion cao cấp 2 lớp" data-shop="Aura Fashion" data-price="450000">
+        <div class="fav-card">
+          <div class="fav-card-img-wrapper">
+            <img src="../../static/images/demo/product-fashion-bomber-jacket.jpg"
+                 th:src="@{/images/demo/product-fashion-bomber-jacket.jpg}"
+                 alt="Áo khoác bomber"
+                 class="fav-card-img" />
+            <button class="fav-remove-btn" type="button" title="Xóa khỏi yêu thích" data-name="Áo khoác bomber unisex Aura Fashion">
+              <i class="bi bi-trash3-fill"></i>
+            </button>
+            <span class="fav-shop-badge">
+              <i class="bi bi-shop"></i> Aura Fashion
+            </span>
+          </div>
+
+          <div class="fav-card-body">
+            <a th:href="@{/merchant/products/detail}" href="../merchant/products/detail.html" class="fav-item-title">
+              Áo khoác Bomber unisex Aura Fashion cao cấp 2 lớp chống gió
+            </a>
+
+            <div class="fav-rating-box">
+              <i class="bi bi-star-fill"></i>
+              <span class="fw-semibold text-dark">4.7</span>
+              <span class="text-muted">(19 đánh giá)</span>
+            </div>
+
+            <div class="fav-price-box">
+              <div class="fav-price-val">450.000 ₫</div>
+              <div class="fav-stock-status">
+                <i class="bi bi-check2-circle"></i> Còn 22
+              </div>
+            </div>
+          </div>
+
+          <div class="fav-card-actions border-top">
+            <button type="button" class="btn btn-primary fav-add-cart-btn" data-name="Áo khoác bomber unisex Aura Fashion">
+              <i class="bi bi-cart-plus"></i> Thêm vào giỏ
+            </button>
+            <a th:href="@{/merchant/products/detail}" href="../merchant/products/detail.html" class="btn btn-outline-secondary btn-sm d-flex align-items-center justify-content-center px-2" title="Xem chi tiết">
+              <i class="bi bi-arrow-up-right"></i>
+            </a>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+
+    <!-- =======================================================================
+         TRẠNG THÁI DANH SÁCH YÊU THÍCH TRỐNG (EMPTY STATE)
+         ======================================================================= -->
+    <div class="fav-empty-card d-none" id="favEmptyState">
+      <div class="fav-empty-icon">
+        <i class="bi bi-heartbreak"></i>
+      </div>
+      <h3 class="fav-empty-title">Danh Sách Yêu Thích Trống</h3>
+      <p class="fav-empty-desc">
+        Bạn chưa lưu sản phẩm nào vào mục yêu thích. Hãy khám phá hàng ngàn sản phẩm đa dạng trên sàn SENVIA và bấm vào biểu tượng trái tim để lưu lại nhé!
+      </p>
+      <div class="d-flex justify-content-center gap-3">
+        <a th:href="@{/merchant/products}" href="../merchant/products/list.html" class="btn btn-primary px-4 py-2 fw-semibold">
+          <i class="bi bi-bag-check-fill me-1"></i> Khám Phá Sản Phẩm Ngay
+        </a>
+        <a th:href="@{/shopping/cart}" href="cart.html" class="btn btn-outline-secondary px-4 py-2">
+          <i class="bi bi-cart3 me-1"></i> Xem Giỏ Hàng
+        </a>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- =======================================================================
+       MODAL XÁC NHẬN XÓA TOÀN BỘ YÊU THÍCH
+       ======================================================================= -->
+  <div class="modal fade" id="clearAllFavModal" tabindex="-1" aria-labelledby="clearAllFavModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content border-0 shadow">
+        <div class="modal-header border-bottom-0 pb-0">
+          <h5 class="modal-title fw-bold text-danger" id="clearAllFavModalLabel">
+            <i class="bi bi-exclamation-triangle-fill me-1"></i> Xóa Toàn Bộ Sản Phẩm Yêu Thích?
+          </h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body py-3">
+          <p class="text-secondary mb-0">
+            Bạn có chắc chắn muốn xóa toàn bộ danh sách sản phẩm đã lưu không? Thao tác này sẽ xóa tất cả các sản phẩm yêu thích hiện tại khỏi tài khoản của bạn.
+          </p>
+        </div>
+        <div class="modal-footer border-top-0 pt-0">
+          <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Hủy bỏ</button>
+          <button type="button" class="btn btn-danger px-3" id="confirmClearAllBtn">
+            <i class="bi bi-trash-fill me-1"></i> Đồng Ý Xóa Hết
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- =======================================================================
+       TOAST PHẢN HỒI THÔNG BÁO THÀNH CÔNG
+       ======================================================================= -->
+  <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 1090">
+    <div id="favActionToast" class="toast align-items-center text-bg-success border-0 shadow-lg" role="alert" aria-live="assertive" aria-atomic="true">
+      <div class="d-flex">
+        <div class="toast-body d-flex align-items-center gap-2">
+          <i class="bi bi-check-circle-fill fs-5"></i>
+          <span id="favToastMessage" class="fw-medium">Đã thêm vào giỏ hàng thành công!</span>
+        </div>
+        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+      </div>
+    </div>
+  </div>
+
+  <!-- =======================================================================
+       FOOTER FRAGMENT
+       ======================================================================= -->
+  <div th:replace="~{fragments/footer :: footer}">
+    <footer class="bg-dark text-white text-center py-4 mt-5">
+      <div class="container">
+        <p class="mb-0 small text-white-50">&copy; 2026 SENVIA E-Commerce Platform. Nhóm 2 - Đồ án giữa kỳ Mẫu Thiết Kế.</p>
+      </div>
+    </footer>
+  </div>
+
+  <!-- Bootstrap 5.3 JS Bundle -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+  <!-- Script Tương Tác: Tìm kiếm, Lọc theo Shop, Thêm Giỏ hàng & Xóa Mục -->
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      const grid = document.getElementById("favProductGrid");
+      const emptyState = document.getElementById("favEmptyState");
+      const toolbar = document.getElementById("favToolbar");
+      const countPill = document.getElementById("favCountPill");
+      const countNumber = document.getElementById("favCountNumber");
+      const searchInput = document.getElementById("favSearchInput");
+      const shopFilter = document.getElementById("favShopFilter");
+      const sortSelect = document.getElementById("favSortSelect");
+
+      // Cập nhật số lượng item
+      function updateItemCount() {
+        const remainingItems = document.querySelectorAll(".fav-product-item:not(.d-none)").length;
+        const totalItems = document.querySelectorAll(".fav-product-item").length;
+
+        countNumber.textContent = totalItems;
+
+        if (totalItems === 0) {
+          grid.classList.add("d-none");
+          toolbar.classList.add("d-none");
+          countPill.classList.add("d-none");
+          emptyState.classList.remove("d-none");
+        } else {
+          grid.classList.remove("d-none");
+          toolbar.classList.remove("d-none");
+          countPill.classList.remove("d-none");
+          emptyState.classList.add("d-none");
+        }
+      }
+
+      // Xóa 1 sản phẩm khỏi yêu thích (FAV 01)
+      grid.addEventListener("click", function (e) {
+        const removeBtn = e.target.closest(".fav-remove-btn");
+        if (removeBtn) {
+          const item = removeBtn.closest(".fav-product-item");
+          const prodName = removeBtn.getAttribute("data-name") || "Sản phẩm";
+
+          item.style.transition = "all 0.3s ease";
+          item.style.opacity = "0";
+          item.style.transform = "scale(0.8)";
+
+          setTimeout(() => {
+            item.remove();
+            updateItemCount();
+            showToast(`Đã xóa "${prodName}" khỏi danh sách yêu thích.`);
+          }, 300);
+        }
+
+        // Thêm vào giỏ hàng
+        const addCartBtn = e.target.closest(".fav-add-cart-btn");
+        if (addCartBtn) {
+          const prodName = addCartBtn.getAttribute("data-name") || "Sản phẩm";
+          addCartBtn.disabled = true;
+          addCartBtn.innerHTML = `<span class="spinner-border spinner-border-sm me-1" role="status"></span>Đã thêm`;
+
+          setTimeout(() => {
+            addCartBtn.disabled = false;
+            addCartBtn.innerHTML = `<i class="bi bi-cart-check-fill"></i> Thêm tiếp`;
+            showToast(`Đã thêm "${prodName}" vào giỏ hàng thành công!`);
+          }, 600);
+        }
+      });
+
+      // Thêm tất cả vào giỏ hàng
+      document.getElementById("addAllToCartBtn").addEventListener("click", function () {
+        const visibleItems = document.querySelectorAll(".fav-product-item:not(.d-none)");
+        if (visibleItems.length === 0) return;
+
+        this.disabled = true;
+        this.innerHTML = `<span class="spinner-border spinner-border-sm me-1" role="status"></span>Đang xử lý...`;
+
+        setTimeout(() => {
+          this.disabled = false;
+          this.innerHTML = `<i class="bi bi-check2-all"></i> Đã thêm tất cả`;
+          showToast(`Đã chuyển toàn bộ ${visibleItems.length} sản phẩm vào giỏ hàng!`);
+        }, 800);
+      });
+
+      // Xóa tất cả (Modal confirmation)
+      const clearModal = new bootstrap.Modal(document.getElementById("clearAllFavModal"));
+      document.getElementById("clearAllFavBtn").addEventListener("click", function () {
+        clearModal.show();
+      });
+
+      document.getElementById("confirmClearAllBtn").addEventListener("click", function () {
+        clearModal.hide();
+        const allItems = document.querySelectorAll(".fav-product-item");
+        allItems.forEach(item => item.remove());
+        updateItemCount();
+        showToast("Đã xóa sạch toàn bộ danh sách sản phẩm yêu thích.");
+      });
+
+      // Tìm kiếm theo từ khóa
+      function filterItems() {
+        const query = searchInput.value.toLowerCase().trim();
+        const selectedShop = shopFilter.value;
+        const items = document.querySelectorAll(".fav-product-item");
+
+        items.forEach(item => {
+          const name = item.getAttribute("data-name") || "";
+          const shop = item.getAttribute("data-shop") || "";
+
+          const matchName = name.includes(query);
+          const matchShop = (selectedShop === "ALL" || shop === selectedShop);
+
+          if (matchName && matchShop) {
+            item.classList.remove("d-none");
+          } else {
+            item.classList.add("d-none");
+          }
+        });
+      }
+
+      searchInput.addEventListener("input", filterItems);
+      shopFilter.addEventListener("change", filterItems);
+
+      // Sắp xếp
+      sortSelect.addEventListener("change", function () {
+        const val = this.value;
+        const items = Array.from(document.querySelectorAll(".fav-product-item"));
+
+        if (val === "PRICE_ASC") {
+          items.sort((a, b) => parseInt(a.getAttribute("data-price")) - parseInt(b.getAttribute("data-price")));
+        } else if (val === "PRICE_DESC") {
+          items.sort((a, b) => parseInt(b.getAttribute("data-price")) - parseInt(a.getAttribute("data-price")));
+        } else {
+          items.sort((a, b) => parseInt(a.getAttribute("data-id")) - parseInt(b.getAttribute("data-id")));
+        }
+
+        items.forEach(item => grid.appendChild(item));
+      });
+
+      // Toast helper
+      function showToast(msg) {
+        const toastEl = document.getElementById("favActionToast");
+        document.getElementById("favToastMessage").textContent = msg;
+        const toast = new bootstrap.Toast(toastEl, { delay: 3000 });
+        toast.show();
+      }
+    });
+  </script>
+
+</body>
+</html>

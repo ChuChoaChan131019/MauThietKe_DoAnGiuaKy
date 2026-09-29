@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Giỏ hàng đa gian hàng - Sàn Thương Mại Điện Tử SENVIA</title>
+
+  <!-- Bootstrap 5.3 CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <!-- Bootstrap Icons -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
+  <!-- Core Design Tokens & Theme (Soft Editorial & Bento) -->
+  <link rel="stylesheet" th:href="@{/css/common/theme.css}" href="../../static/css/common/theme.css" />
+  <!-- Common Badges & Tokens -->
+  <link rel="stylesheet" th:href="@{/css/common/badges.css}" href="../../static/css/common/badges.css" />
+  <!-- Common Layout CSS -->
+  <link rel="stylesheet" th:href="@{/css/common/layout.css}" href="../../static/css/common/layout.css" />
+  <!-- Shopping Module Cart CSS -->
+  <link rel="stylesheet" th:href="@{/css/modules/shopping/cart.css}" href="../../static/css/modules/shopping/cart.css" />
+</head>
+<body style="background-color: var(--color-bg-canvas, #f2f3f4); min-height: 100vh;">
+
+  <!-- =======================================================================
+       HEADER FRAGMENT
+       ======================================================================= -->
+  <div th:replace="~{fragments/header :: header}">
+    <header class="navbar navbar-expand-lg navbar-dark py-3 mb-4 shadow-sm" style="background-color: var(--color-primary, #323377);">
+      <div class="container">
+        <a class="navbar-brand fw-bold d-flex align-items-center gap-2 text-white" href="/">
+          <i class="bi bi-shop-window text-warning"></i> SENVIA MARKET
+        </a>
+        <div class="d-flex align-items-center gap-3">
+          <a th:href="@{/products}" href="../merchant/products/list.html" class="btn btn-outline-light btn-sm rounded-pill px-3">
+            <i class="bi bi-arrow-left"></i> Tiếp tục mua sắm
+          </a>
+        </div>
+      </div>
+    </header>
+  </div>
+
+  <!-- =======================================================================
+       MAIN CONTAINER (BENTO GRID & EDITORIAL STYLING)
+       ======================================================================= -->
+  <main class="container mb-5">
+
+    <!-- Breadcrumb điều hướng -->
+    <nav aria-label="breadcrumb" class="mb-3">
+      <ol class="breadcrumb mb-0 small">
+        <li class="breadcrumb-item"><a href="/" class="text-decoration-none text-secondary">Trang chủ</a></li>
+        <li class="breadcrumb-item active text-dark fw-semibold" aria-current="page">Giỏ hàng</li>
+      </ol>
+    </nav>
+
+    <!-- Page Title & Header Bar (Bento Editorial Style) -->
+    <div class="card-modern d-flex align-items-center justify-content-between flex-wrap gap-3 p-3 p-md-4 mb-4">
+      <div class="d-flex align-items-center gap-3">
+        <div class="d-flex align-items-center justify-content-center rounded-4 flex-shrink-0"
+             style="width: 48px; height: 48px; background: rgba(50, 51, 119, 0.1); color: var(--color-primary, #323377); font-size: 1.5rem;">
+          <i class="bi bi-bag-check-fill"></i>
+        </div>
+        <div>
+          <h1 class="cart-page-title mb-0 d-flex align-items-center gap-2" style="font-size: 1.5rem; font-weight: 800; color: var(--color-primary, #323377);">
+            Giỏ hàng của bạn
+            <span class="badge-soft badge-soft-accent"
+                  th:text="${totalItemCount != null ? totalItemCount + ' món' : '0 món'}">0 món</span>
+          </h1>
+          <span class="text-muted small">
+            <i class="bi bi-info-circle text-primary"></i> Sản phẩm từ nhiều Shop sẽ được tạo thành các đơn hàng riêng biệt
+          </span>
+        </div>
+      </div>
+      <a th:href="@{/products}" href="../merchant/products/list.html" class="btn btn-outline-secondary btn-sm py-1 px-3 rounded-pill fw-medium">
+        <i class="bi bi-arrow-left"></i> Tiếp tục mua sắm
+      </a>
+    </div>
+
+    <!-- Flash Messages (Alerts) -->
+    <div th:if="${successMessage}" class="alert alert-success alert-dismissible fade show d-flex align-items-center gap-2 border-0 shadow-xs rounded-3 mb-4" role="alert">
+      <i class="bi bi-check-circle-fill text-success fs-5"></i>
+      <div th:text="${successMessage}">Cập nhật giỏ hàng thành công!</div>
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    <div th:if="${errorMessage}" class="alert alert-danger alert-dismissible fade show d-flex align-items-center gap-2 border-0 shadow-xs rounded-3 mb-4" role="alert">
+      <i class="bi bi-exclamation-triangle-fill text-danger fs-5"></i>
+      <div th:text="${errorMessage}">Đã xảy ra lỗi, vui lòng kiểm tra lại giỏ hàng!</div>
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+
+    <!-- =======================================================================
+         TRƯỜNG HỢP 1: EMPTY STATE (GIỎ HÀNG TRỐNG)
+         ======================================================================= -->
+    <section class="card-modern cart-empty-state" th:if="${cart == null || #lists.isEmpty(cart.shopGroups)}">
+      <div class="empty-cart-icon" style="color: var(--color-accent, #d1588e); opacity: 0.85;">
+        <i class="bi bi-cart-x"></i>
+      </div>
+      <h2 class="empty-cart-title fw-bold" style="color: var(--color-primary, #323377);">Giỏ hàng của bạn đang trống</h2>
+      <p class="empty-cart-desc text-muted">
+        Bạn chưa thêm bất kỳ sản phẩm nào vào giỏ hàng. Hãy khám phá hàng ngàn sản phẩm đa dạng từ các nhà bán hàng uy tín trên sàn nhé!
+      </p>
+      <div class="d-flex justify-content-center gap-3 flex-wrap">
+        <a th:href="@{/products}" href="../merchant/products/list.html" class="btn btn-brand-accent px-4 py-2 fw-semibold">
+          <i class="bi bi-bag-plus me-1"></i> Khám phá sản phẩm ngay
+        </a>
+        <a th:href="@{/shopping/favorites}" href="favorites.html" class="btn btn-outline-secondary px-4 py-2 fw-semibold rounded-3">
+          <i class="bi bi-heart me-1"></i> Danh sách yêu thích
+        </a>
+      </div>
+    </section>
+
+    <!-- =======================================================================
+         TRƯỜNG HỢP 2: POPULATED STATE (CÓ SẢN PHẨM TRONG GIỎ - BỐ CỤC 2 CỘT)
+         ======================================================================= -->
+    <form th:action="@{/ordering/checkout}" action="../../ordering/checkout.html" method="get" id="cartForm"
+          th:unless="${cart == null || #lists.isEmpty(cart.shopGroups)}">
+
+      <div class="row g-4">
+
+        <!-- ===================================================================
+             CỘT CHÍNH (8 COLS): DANH SÁCH SẢN PHẨM THEO GIAN HÀNG
+             =================================================================== -->
+        <div class="col-lg-8">
+
+          <!-- Thanh công cụ chọn tất cả (Bento Bar) -->
+          <div class="card-modern mb-3 p-3 d-flex align-items-center justify-content-between flex-wrap gap-2">
+            <div class="form-check mb-0 d-flex align-items-center gap-2">
+              <input class="form-check-input" type="checkbox" id="selectAllCart" checked style="cursor: pointer;" />
+              <label class="form-check-label fw-semibold text-secondary" for="selectAllCart" style="cursor: pointer;">
+                Chọn tất cả sản phẩm hợp lệ trong giỏ
+              </label>
+            </div>
+            <button type="button" class="btn btn-link text-danger text-decoration-none btn-sm p-0 d-flex align-items-center gap-1 fw-medium" id="btnRemoveSelected">
+              <i class="bi bi-trash3"></i> Xóa các mục đã chọn
+            </button>
+          </div>
+
+          <!-- Danh sách các nhóm gian hàng (Shop Groups Bento Cards) -->
+          <div class="shop-groups-container">
+            <div th:each="shopGroup : ${cart.shopGroups}" class="card-modern shop-cart-card mb-4" th:attr="data-shop-id=${shopGroup.shopId}">
+
+              <!-- Shop Header -->
+              <div class="shop-cart-header">
+                <div class="shop-title-wrapper">
+                  <div class="form-check mb-0">
+                    <input class="form-check-input select-shop-items" type="checkbox"
+                           th:id="'shopCheck_' + ${shopGroup.shopId}"
+                           th:attr="data-shop-id=${shopGroup.shopId}" checked style="cursor: pointer;" />
+                  </div>
+                  <i class="bi bi-shop text-primary fs-5"></i>
+                  <a th:href="@{'/shops/' + ${shopGroup.shopId}}" th:text="${shopGroup.shopName}" class="fw-bold text-dark text-decoration-none">
+                    Tên Gian Hàng
+                  </a>
+                  <span class="badge-soft badge-soft-sage">
+                    <i class="bi bi-patch-check-fill"></i> Đã xác thực
+                  </span>
+                </div>
+                <div class="text-muted small d-none d-sm-block">
+                  <i class="bi bi-geo-alt text-secondary"></i> <span th:text="${shopGroup.shopAddress}">Hà Nội</span>
+                </div>
+              </div>
+
+              <!-- Shop Items List -->
+              <div class="shop-cart-body">
+                <div th:each="item : ${shopGroup.items}"
+                     class="cart-item-row"
+                     th:classappend="${item.stockQuantity == 0 || !item.active} ? 'is-disabled' : ''"
+                     th:id="'itemRow_' + ${item.id}">
+
+                  <!-- 1. Checkbox chọn món -->
+                  <div class="cart-item-check form-check mb-0">
+                    <input class="form-check-input item-checkbox"
+                           type="checkbox"
+                           name="selectedItemIds"
+                           th:value="${item.id}"
+                           th:attr="data-shop-id=${shopGroup.shopId},data-price=${item.price},data-qty=${item.quantity}"
+                           th:disabled="${item.stockQuantity == 0 || !item.active}"
+                           th:checked="${item.stockQuantity > 0 && item.active}"
+                           style="cursor: pointer;" />
+                  </div>
+
+                  <!-- 2. Ảnh Thumbnail bo mềm -->
+                  <img th:src="${item.imageUrl != null ? item.imageUrl : '/images/demo/product-tech-mechanical-keyboard.jpg'}"
+                       src="../../static/images/demo/product-tech-mechanical-keyboard.jpg"
+                       alt="Thumbnail"
+                       class="cart-item-thumb rounded-3 border" />
+
+                  <!-- 3. Thông tin sản phẩm & Cảnh báo trạng thái -->
+                  <div class="cart-item-info">
+                    <a th:href="@{'/products/' + ${item.productId}}" class="cart-item-name fw-semibold text-dark text-decoration-none" th:text="${item.productName}">
+                      Tên sản phẩm thương mại điện tử chất lượng cao
+                    </a>
+                    <div class="cart-item-unit-price small text-muted">
+                      Đơn giá: <span class="fw-semibold text-dark" th:text="${#numbers.formatDecimal(item.price, 0, 'COMMA', 0, 'POINT')} + ' đ'">150,000 đ</span>
+                    </div>
+
+                    <!-- CẢNH BÁO 1: SẢN PHẨM BỊ ẨN HOẶC NGỪNG BÁN -->
+                    <div th:if="${!item.active}" class="mt-1">
+                      <span class="badge-soft badge-soft-danger">
+                        <i class="bi bi-slash-circle-fill"></i> Ngừng kinh doanh
+                      </span>
+                      <small class="text-danger d-block mt-1">Sản phẩm này tạm ngừng bán, vui lòng xóa khỏi giỏ để tiếp tục.</small>
+                    </div>
+
+                    <!-- CẢNH BÁO 2: SẢN PHẨM HẾT HÀNG -->
+                    <div th:if="${item.active && item.stockQuantity == 0}" class="mt-1">
+                      <span class="badge-soft badge-soft-danger">
+                        <i class="bi bi-exclamation-octagon-fill"></i> Hết hàng
+                      </span>
+                      <small class="text-danger d-block mt-1">Sản phẩm vừa hết hàng. Không thể tiến hành đặt mua.</small>
+                    </div>
+
+                    <!-- CẢNH BÁO 3: SỐ LƯỢNG VƯỢT TỒN KHO -->
+                    <div th:if="${item.active && item.stockQuantity > 0 && item.quantity > item.stockQuantity}" class="mt-1">
+                      <span class="badge-soft badge-soft-warning">
+                        <i class="bi bi-exclamation-triangle-fill"></i> Vượt tồn kho
+                      </span>
+                      <small class="text-warning-emphasis d-block mt-1">
+                        Hiện chỉ còn <strong th:text="${item.stockQuantity}">5</strong> sản phẩm trong kho. Vui lòng giảm số lượng.
+                      </small>
+                    </div>
+                  </div>
+
+                  <!-- 4. Bộ điều khiển số lượng (Quantity Controller) -->
+                  <div class="quantity-controller">
+                    <button type="button" class="quantity-btn btn-qty-minus"
+                            th:disabled="${item.quantity <= 1 || item.stockQuantity == 0 || !item.active}">
+                      <i class="bi bi-dash"></i>
+                    </button>
+                    <input type="number" class="quantity-input"
+                           th:value="${item.quantity}"
+                           th:attr="data-item-id=${item.id},data-max=${item.stockQuantity}"
+                           min="1"
+                           th:max="${item.stockQuantity}"
+                           th:disabled="${item.stockQuantity == 0 || !item.active}" />
+                    <button type="button" class="quantity-btn btn-qty-plus"
+                            th:disabled="${item.quantity >= item.stockQuantity || item.stockQuantity == 0 || !item.active}">
+                      <i class="bi bi-plus"></i>
+                    </button>
+                  </div>
+
+                  <!-- 5. Thành tiền (Subtotal) -->
+                  <div class="cart-item-subtotal d-none d-md-block">
+                    <span th:id="'subtotal_' + ${item.id}"
+                          style="color: var(--color-accent, #d1588e); font-weight: 700;"
+                          th:text="${#numbers.formatDecimal(item.subtotal, 0, 'COMMA', 0, 'POINT')} + ' đ'">
+                      300,000 đ
+                    </span>
+                  </div>
+
+                  <!-- 6. Nút xóa món -->
+                  <div class="cart-item-action">
+                    <button type="button" class="btn-remove" title="Xóa khỏi giỏ hàng"
+                            th:attr="data-item-id=${item.id},data-item-name=${item.productName}">
+                      <i class="bi bi-trash3"></i>
+                    </button>
+                  </div>
+
+                  <!-- Mobile Subtotal & Action Bar -->
+                  <div class="cart-subtotal-actions-mobile d-md-none">
+                    <span class="text-muted small">Thành tiền:</span>
+                    <span class="fw-bold" style="color: var(--color-accent, #d1588e);" th:text="${#numbers.formatDecimal(item.subtotal, 0, 'COMMA', 0, 'POINT')} + ' đ'">
+                      300,000 đ
+                    </span>
+                  </div>
+
+                </div>
+              </div>
+
+              <!-- Shop Footer: Tạm tính theo Shop -->
+              <div class="shop-cart-footer bg-light bg-opacity-50">
+                <span class="text-secondary small">Tạm tính cho gian hàng này:</span>
+                <span class="shop-subtotal-val"
+                      style="color: var(--color-primary, #323377); font-weight: 700;"
+                      th:id="'shopSubtotal_' + ${shopGroup.shopId}"
+                      th:text="${#numbers.formatDecimal(shopGroup.shopTotal, 0, 'COMMA', 0, 'POINT')} + ' đ'">
+                  300,000 đ
+                </span>
+              </div>
+
+            </div>
+          </div>
+
+        </div>
+
+        <!-- ===================================================================
+             CỘT PHỤ (4 COLS): CARD TÓM TẮT THANH TOÁN (STICKY BENTO)
+             =================================================================== -->
+        <div class="col-lg-4">
+          <div class="card-modern order-summary-card">
+
+            <h2 class="summary-title mb-3">
+              <i class="bi bi-receipt-cutoff" style="color: var(--color-primary, #323377);"></i> Tóm tắt đơn hàng
+            </h2>
+
+            <!-- Thông tin quy tắc tách đơn theo Shop -->
+            <div class="p-3 rounded-3 mb-3 small d-flex gap-2 align-items-start"
+                 style="background: rgba(50, 51, 119, 0.06); border: 1px solid rgba(50, 51, 119, 0.12); color: var(--color-primary, #323377);">
+              <i class="bi bi-diagram-3-fill fs-5 mt-0 flex-shrink-0"></i>
+              <div>
+                Đơn hàng sẽ được tự động chia thành <strong th:text="${cart.shopGroups.size()}">2</strong> đơn riêng biệt cho từng gian hàng xử lý.
+              </div>
+            </div>
+
+            <!-- Dòng số lượng món được chọn -->
+            <div class="summary-row">
+              <span>Món hàng đã chọn:</span>
+              <span class="fw-semibold text-dark" id="selectedItemsCount">0 món</span>
+            </div>
+
+            <!-- Dòng tổng tiền hàng tạm tính -->
+            <div class="summary-row">
+              <span>Tiền hàng tạm tính:</span>
+              <span class="fw-semibold text-dark" id="summarySubtotal"
+                    th:text="${#numbers.formatDecimal(cart.totalAmount, 0, 'COMMA', 0, 'POINT')} + ' đ'">
+                0 đ
+              </span>
+            </div>
+
+            <!-- Dòng ước tính phí vận chuyển -->
+            <div class="summary-row">
+              <span>Phí vận chuyển dự kiến:</span>
+              <span class="badge-soft badge-soft-sage small">Tính tại Checkout</span>
+            </div>
+
+            <!-- Phân cách -->
+            <div class="summary-row total-row">
+              <span class="fw-bold text-dark">Tổng thanh toán:</span>
+              <div class="text-end">
+                <div class="summary-total-price bento-stat-number" id="summaryFinalTotal"
+                     th:text="${#numbers.formatDecimal(cart.totalAmount, 0, 'COMMA', 0, 'POINT')} + ' đ'">
+                  0 đ
+                </div>
+                <small class="text-muted fw-normal d-block" style="font-size: 0.775rem;">(Đã bao gồm VAT nếu có)</small>
+              </div>
+            </div>
+
+            <!-- Nút CTA Đặt hàng -->
+            <div class="mt-4">
+              <button type="submit" class="btn btn-brand-accent checkout-btn w-100 fw-bold d-flex align-items-center justify-content-center gap-2 shadow-xs" id="btnCheckout">
+                <span>Tiến hành đặt hàng</span>
+                <i class="bi bi-arrow-right"></i>
+              </button>
+              <div class="text-danger small mt-2 d-none" id="checkoutWarning">
+                <i class="bi bi-exclamation-circle"></i> Vui lòng bỏ chọn hoặc xóa các sản phẩm hết hàng/ngừng bán trước khi đặt.
+              </div>
+            </div>
+
+            <!-- Lời hứa dịch vụ & An tâm mua sắm -->
+            <div class="mt-4 pt-3 border-top">
+              <div class="d-flex align-items-center gap-2 text-muted small mb-2">
+                <i class="bi bi-shield-check text-success fs-5"></i>
+                <span>Giao dịch an toàn & Bảo mật 100%</span>
+              </div>
+              <div class="d-flex align-items-center gap-2 text-muted small">
+                <i class="bi bi-arrow-repeat text-primary fs-5"></i>
+                <span>Hỗ trợ hủy đơn & Hoàn kho tự động</span>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+    </form>
+
+  </main>
+
+  <!-- Footer Fragment -->
+  <div th:replace="~{fragments/footer :: footer}"></div>
+
+  <!-- Modal xác nhận xóa sản phẩm khỏi giỏ hàng -->
+  <div class="modal fade" id="confirmDeleteModal" tabindex="-1" aria-labelledby="confirmDeleteLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content card-modern p-2">
+        <div class="modal-header border-0 pb-0">
+          <h5 class="modal-title fw-bold text-dark" id="confirmDeleteLabel">Xác nhận xóa sản phẩm</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body py-3">
+          Bạn có chắc chắn muốn xóa sản phẩm <strong id="deleteProductName" style="color: var(--color-accent, #d1588e);"></strong> ra khỏi giỏ hàng không?
+        </div>
+        <div class="modal-footer border-0 pt-0">
+          <button type="button" class="btn btn-outline-secondary px-3 rounded-pill" data-bs-dismiss="modal">Hủy</button>
+          <form id="deleteForm" th:action="@{/shopping/cart/remove}" method="post">
+            <input type="hidden" name="cartItemId" id="deleteCartItemId" />
+            <button type="submit" class="btn btn-brand-accent px-4 py-2">Xác nhận xóa</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bootstrap 5.3 JS Bundle -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+  <!-- Cart Interactive Logic Script -->
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const selectAllCart = document.getElementById('selectAllCart');
+      const itemCheckboxes = document.querySelectorAll('.item-checkbox:not(:disabled)');
+      const shopCheckboxes = document.querySelectorAll('.select-shop-items');
+      const selectedCountEl = document.getElementById('selectedItemsCount');
+      const summarySubtotal = document.getElementById('summarySubtotal');
+      const summaryFinalTotal = document.getElementById('summaryFinalTotal');
+      const btnCheckout = document.getElementById('btnCheckout');
+      const checkoutWarning = document.getElementById('checkoutWarning');
+
+      // Hàm format tiền tệ VNĐ
+      function formatVND(amount) {
+        return new Intl.NumberFormat('vi-VN').format(amount) + ' đ';
+      }
+
+      // Hàm tính toán lại tổng tiền khi chọn/bỏ chọn checkbox
+      function recalculateTotals() {
+        let total = 0;
+        let count = 0;
+        let hasInvalidItems = false;
+
+        document.querySelectorAll('.item-checkbox').forEach(cb => {
+          if (cb.checked && !cb.disabled) {
+            const price = parseFloat(cb.getAttribute('data-price')) || 0;
+            const qty = parseInt(cb.getAttribute('data-qty')) || 1;
+            total += price * qty;
+            count++;
+          }
+        });
+
+        // Kiểm tra xem có mục nào bị disabled mà vẫn trong giỏ không
+        const disabledChecked = document.querySelectorAll('.item-checkbox:disabled');
+        if (disabledChecked.length > 0) {
+          hasInvalidItems = true;
+        }
+
+        if (selectedCountEl) selectedCountEl.textContent = count + ' món';
+        if (summarySubtotal) summarySubtotal.textContent = formatVND(total);
+        if (summaryFinalTotal) summaryFinalTotal.textContent = formatVND(total);
+
+        // Vô hiệu hóa nút checkout nếu không có mục nào được chọn
+        if (btnCheckout) {
+          if (count === 0) {
+            btnCheckout.disabled = true;
+            btnCheckout.innerText = 'Vui lòng chọn sản phẩm';
+          } else {
+            btnCheckout.disabled = false;
+            btnCheckout.innerHTML = '<span>Tiến hành đặt hàng (' + count + ')</span> <i class="bi bi-arrow-right"></i>';
+          }
+        }
+      }
+
+      // Checkbox Chọn tất cả
+      if (selectAllCart) {
+        selectAllCart.addEventListener('change', function () {
+          const isChecked = this.checked;
+          itemCheckboxes.forEach(cb => cb.checked = isChecked);
+          shopCheckboxes.forEach(cb => cb.checked = isChecked);
+          recalculateTotals();
+        });
+      }
+
+      // Checkbox Chọn theo Shop
+      shopCheckboxes.forEach(shopCb => {
+        shopCb.addEventListener('change', function () {
+          const shopId = this.getAttribute('data-shop-id');
+          const isChecked = this.checked;
+          document.querySelectorAll(`.item-checkbox[data-shop-id="${shopId}"]:not(:disabled)`).forEach(cb => {
+            cb.checked = isChecked;
+          });
+          recalculateTotals();
+        });
+      });
+
+      // Checkbox từng món
+      itemCheckboxes.forEach(cb => {
+        cb.addEventListener('change', function () {
+          recalculateTotals();
+        });
+      });
+
+      // Modal xóa sản phẩm
+      const deleteModal = document.getElementById('confirmDeleteModal');
+      if (deleteModal) {
+        deleteModal.addEventListener('show.bs.modal', function (event) {
+          const button = event.relatedTarget;
+          const itemId = button.getAttribute('data-item-id');
+          const itemName = button.getAttribute('data-item-name');
+
+          document.getElementById('deleteCartItemId').value = itemId;
+          document.getElementById('deleteProductName').textContent = itemName;
+        });
+      }
+
+      // Khởi tạo tính toán ban đầu
+      recalculateTotals();
+    });
+  </script>
+</body>
+</html>

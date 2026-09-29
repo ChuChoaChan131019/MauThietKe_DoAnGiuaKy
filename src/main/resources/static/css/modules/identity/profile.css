@@ -1,0 +1,303 @@
+/**
+ * ==============================================================================
+ * IDENTITY MODULE - USER PROFILE & SECURITY STYLESHEET
+ * ==============================================================================
+ * File: src/main/resources/static/css/modules/identity/profile.css
+ * Tuân thủ: ARCHITECTURE.md, IDENTITY_GUIDE.md, SRS AUTH 05, AUTH 06
+ * ==============================================================================
+ */
+
+/* --- 1. PROFILE HEADER CARD --- */
+.profile-header-card {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 1rem;
+  overflow: hidden;
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.04);
+  margin-bottom: 2rem;
+}
+
+.profile-cover {
+  height: 140px;
+  background: linear-gradient(135deg, #1e293b 0%, #0f172a 50%, #2563eb 100%);
+  position: relative;
+}
+
+.profile-header-body {
+  padding: 0 2rem 1.5rem;
+  position: relative;
+}
+
+.profile-avatar-row {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: -60px;
+  margin-bottom: 1rem;
+}
+
+@media (min-width: 768px) {
+  .profile-avatar-row {
+    flex-direction: row;
+    align-items: flex-end;
+    gap: 1.5rem;
+  }
+}
+
+.profile-avatar-wrapper {
+  position: relative;
+  width: 120px;
+  height: 120px;
+  flex-shrink: 0;
+}
+
+.profile-avatar-img {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 4px solid #ffffff;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.12);
+  background-color: #ffffff;
+}
+
+.avatar-upload-btn {
+  position: absolute;
+  bottom: 4px;
+  right: 4px;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: #2563eb;
+  color: #ffffff;
+  border: 2px solid #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+  transition: all 0.2s ease;
+}
+
+.avatar-upload-btn:hover {
+  background: #1d4ed8;
+  transform: scale(1.08);
+}
+
+.profile-name-meta {
+  text-align: center;
+  margin-top: 0.5rem;
+}
+
+@media (min-width: 768px) {
+  .profile-name-meta {
+    text-align: left;
+    margin-top: 0;
+    padding-bottom: 0.25rem;
+  }
+}
+
+.profile-fullname {
+  font-size: 1.45rem;
+  font-weight: 700;
+  color: #0f172a;
+  margin-bottom: 0.25rem;
+}
+
+.profile-email-badge {
+  font-size: 0.875rem;
+  color: #64748b;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+@media (min-width: 768px) {
+  .profile-email-badge {
+    justify-content: flex-start;
+  }
+}
+
+/* --- 2. SIDEBAR NAV PILLS --- */
+.profile-sidebar-card {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 1rem;
+  padding: 1.25rem;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.03);
+}
+
+.profile-nav .nav-link {
+  color: #475569;
+  font-weight: 600;
+  font-size: 0.925rem;
+  padding: 0.75rem 1rem;
+  border-radius: 0.65rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  transition: all 0.15s ease;
+  margin-bottom: 0.35rem;
+}
+
+.profile-nav .nav-link:hover {
+  background-color: #f8fafc;
+  color: #1e293b;
+}
+
+.profile-nav .nav-link.active {
+  background-color: #2563eb;
+  color: #ffffff;
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25);
+}
+
+.profile-nav .nav-link.active i {
+  color: #ffffff !important;
+}
+
+/* --- 3. PROFILE CONTENT CARDS --- */
+.profile-content-card {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 1rem;
+  padding: 2rem;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
+}
+
+.profile-card-title {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #0f172a;
+  margin-bottom: 0.35rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.profile-card-subtitle {
+  font-size: 0.875rem;
+  color: #64748b;
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+/* --- 4. FORM ELEMENTS --- */
+.profile-label {
+  font-weight: 600;
+  font-size: 0.875rem;
+  color: #334155;
+  margin-bottom: 0.4rem;
+}
+
+.profile-input-group .input-group-text {
+  background-color: #f8fafc;
+  border-color: #cbd5e1;
+  color: #64748b;
+}
+
+/* Preset Avatar Selector */
+.preset-avatar-btn {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 2px solid #e2e8f0;
+  padding: 2px;
+  cursor: pointer;
+  background: #ffffff;
+  transition: all 0.2s ease;
+}
+
+.preset-avatar-btn:hover,
+.preset-avatar-btn.active {
+  border-color: #2563eb;
+  transform: scale(1.1);
+  box-shadow: 0 2px 8px rgba(37, 99, 235, 0.2);
+}
+
+.preset-avatar-btn img {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+/* --- 5. PASSWORD STRENGTH METER --- */
+.password-strength-container {
+  margin-top: 0.5rem;
+}
+
+.strength-meter-bar {
+  height: 5px;
+  border-radius: 3px;
+  background-color: #e2e8f0;
+  overflow: hidden;
+  margin-bottom: 0.35rem;
+}
+
+.strength-meter-fill {
+  height: 100%;
+  width: 0%;
+  transition: width 0.3s ease, background-color 0.3s ease;
+}
+
+.strength-text {
+  font-size: 0.775rem;
+  font-weight: 600;
+}
+
+/* Password Toggle Icon */
+.pwd-toggle-btn {
+  border-top-right-radius: 0.375rem !important;
+  border-bottom-right-radius: 0.375rem !important;
+  cursor: pointer;
+  border-color: #cbd5e1;
+  background-color: #ffffff;
+  color: #64748b;
+}
+
+.pwd-toggle-btn:hover {
+  background-color: #f8fafc;
+  color: #1e293b;
+}
+
+/* --- 6. SUMMARY STATS MINI CARDS --- */
+.summary-stat-mini {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 0.75rem;
+  padding: 1.15rem 1rem;
+  text-align: center;
+  transition: transform 0.15s ease, border-color 0.15s ease;
+}
+
+.summary-stat-mini:hover {
+  transform: translateY(-2px);
+  border-color: #cbd5e1;
+  background: #ffffff;
+}
+
+.stat-mini-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+  margin-bottom: 0.5rem;
+}
+
+.stat-mini-number {
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: #0f172a;
+  line-height: 1.2;
+}
+
+.stat-mini-label {
+  font-size: 0.775rem;
+  color: #64748b;
+  margin-top: 0.25rem;
+}

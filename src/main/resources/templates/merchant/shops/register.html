@@ -1,0 +1,626 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Đăng ký Mở Gian Hàng - Sàn Thương Mại Điện Tử SENVIA</title>
+
+  <!-- Bootstrap 5.3 CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <!-- Bootstrap Icons -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
+  <!-- Common Badges & Tokens -->
+  <link rel="stylesheet" th:href="@{/css/common/badges.css}" href="../../../static/css/common/badges.css" />
+  <!-- Common Layout CSS -->
+  <link rel="stylesheet" th:href="@{/css/common/layout.css}" href="../../../static/css/common/layout.css" />
+  <!-- Merchant Shop Register CSS -->
+  <link rel="stylesheet" th:href="@{/css/modules/merchant/shop-register.css}" href="../../../static/css/modules/merchant/shop-register.css" />
+</head>
+<body class="bg-light">
+
+  <!-- =======================================================================
+       HEADER FRAGMENT
+       ======================================================================= -->
+  <div th:replace="~{fragments/header :: header}">
+    <header class="navbar navbar-expand-lg navbar-dark bg-dark py-3 mb-4 shadow-sm">
+      <div class="container">
+        <a class="navbar-brand fw-bold d-flex align-items-center gap-2" href="/">
+          <i class="bi bi-shop-window text-warning"></i> SENVIA MARKET
+        </a>
+      </div>
+    </header>
+  </div>
+
+  <!-- =======================================================================
+       MAIN CONTAINER
+       ======================================================================= -->
+  <main class="container my-4">
+
+    <!-- Breadcrumb -->
+    <nav aria-label="breadcrumb" class="mb-3">
+      <ol class="breadcrumb mb-0">
+        <li class="breadcrumb-item"><a href="/" class="text-decoration-none text-secondary">Trang chủ</a></li>
+        <li class="breadcrumb-item"><a href="#" class="text-decoration-none text-secondary">Kênh người bán</a></li>
+        <li class="breadcrumb-item active text-dark fw-medium" aria-current="page">Đăng ký mở gian hàng</li>
+      </ol>
+    </nav>
+
+    <!-- Banner Đồ Án Mẫu Thiết Kế (State Pattern Callout) -->
+    <div class="alert alert-primary border-primary-subtle d-flex align-items-center gap-3 p-3 rounded-3 mb-4 shadow-xs" role="alert">
+      <div class="fs-3 text-primary flex-shrink-0">
+        <i class="bi bi-diagram-3-fill"></i>
+      </div>
+      <div class="flex-grow-1 small">
+        <h6 class="alert-heading fw-bold mb-1 text-primary">
+          Mẫu Thiết Kế State Pattern: Khởi tạo Vòng đời Gian hàng (SRS SHOP 01, SHOP 02, BR 02)
+        </h6>
+        <div class="text-secondary">
+          Khi nộp form này, Gian hàng của bạn được khởi tạo với trạng thái ban đầu là
+          <span class="badge bg-warning text-dark"><i class="bi bi-hourglass-split"></i> PENDING</span> (Chờ duyệt).
+          Admin sẽ thẩm định để chuyển đổi trạng thái thành
+          <span class="badge bg-success"><i class="bi bi-check-circle"></i> APPROVED</span> (được phép đăng sản phẩm) hoặc
+          <span class="badge bg-danger"><i class="bi bi-x-circle"></i> REJECTED</span> (từ chối kèm lý do phản hồi).
+        </div>
+      </div>
+    </div>
+
+    <!-- Hero Promo Banner -->
+    <div class="register-hero-card">
+      <div class="row align-items-center">
+        <div class="col-lg-8">
+          <span class="badge bg-warning text-dark fw-semibold mb-2 px-3 py-1 rounded-pill">
+            <i class="bi bi-stars"></i> Cơ hội kinh doanh cùng SENVIA
+          </span>
+          <h1 class="h2 fw-bold mb-2">Trở thành Đối tác Bán Hàng SENVIA</h1>
+          <p class="text-white-50 mb-3 fs-6">
+            Gia nhập hệ sinh thái sàn thương mại điện tử đa ngành uy tín, kết nối với hàng vạn khách hàng tiềm năng mỗi ngày cùng các giải pháp quản lý bán hàng thông minh.
+          </p>
+          <div class="d-flex flex-wrap gap-2">
+            <div class="benefit-pill">
+              <i class="bi bi-percent text-warning fs-5"></i>
+              <span>Phí hoa hồng 0% trong 6 tháng đầu</span>
+            </div>
+            <div class="benefit-pill">
+              <i class="bi bi-shield-check text-info fs-5"></i>
+              <span>Chứng nhận gian hàng chính hãng</span>
+            </div>
+            <div class="benefit-pill">
+              <i class="bi bi-headset text-success fs-5"></i>
+              <span>Hỗ trợ kỹ thuật & vận hành 24/7</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Layout 2 Cột: Form Đăng ký (8 cột) & Sidebar Xem trước / Tiến trình (4 cột) -->
+    <div class="row g-4">
+
+      <!-- CỘT TRÁI: FORM ĐĂNG KÝ CHI TIẾT (8 CỘT) -->
+      <div class="col-lg-8">
+        <div class="register-form-card">
+
+          <form id="shopRegisterForm" th:action="@{/merchant/shops/register}" th:object="${shopRegisterRequest}" method="POST" novalidate>
+
+            <!-- NHÓM 1: THÔNG TIN GIAN HÀNG -->
+            <div class="mb-4">
+              <div class="form-section-title">
+                <i class="bi bi-shop text-primary"></i> 1. Thông tin Nhận diện Gian Hàng
+              </div>
+
+              <!-- Tên Gian Hàng -->
+              <div class="mb-3">
+                <label for="shopNameInput" class="form-label fw-semibold">
+                  Tên Gian hàng <span class="text-danger">*</span>
+                </label>
+                <div class="input-group">
+                  <span class="input-group-text bg-light text-muted"><i class="bi bi-tag-fill"></i></span>
+                  <input type="text"
+                         class="form-control"
+                         id="shopNameInput"
+                         name="name"
+                         placeholder="VD: TechZone Official Store, ZenHome Smart Living..."
+                         required
+                         minlength="3"
+                         maxlength="100" />
+                  <div class="invalid-feedback">
+                    Vui lòng nhập tên gian hàng (từ 3 đến 100 ký tự, không được trùng lặp).
+                  </div>
+                </div>
+                <div class="form-text small text-muted">
+                  Tên hiển thị công khai trên toàn sàn. Tên này là định danh duy nhất và không trùng với các shop khác (SRS SHOP 02).
+                </div>
+              </div>
+
+              <!-- Giới thiệu / Mô tả Gian Hàng -->
+              <div class="mb-3">
+                <div class="d-flex justify-content-between align-items-center mb-1">
+                  <label for="shopDescInput" class="form-label fw-semibold mb-0">
+                    Giới thiệu ngắn về Gian hàng <span class="text-danger">*</span>
+                  </label>
+                  <span class="small text-muted" id="charCount">0/500 ký tự</span>
+                </div>
+                <textarea class="form-control"
+                          id="shopDescInput"
+                          name="description"
+                          rows="3"
+                          maxlength="500"
+                          placeholder="Mô tả phong cách, dòng sản phẩm thế mạnh, cam kết chất lượng của shop..."
+                          required></textarea>
+                <div class="invalid-feedback">
+                  Vui lòng nhập phần mô tả ngắn gọn về gian hàng (tối đa 500 ký tự).
+                </div>
+              </div>
+            </div>
+
+            <!-- NHÓM 2: LOGO NHẬN DIỆN THƯƠNG HIỆU (CLOUDINARY) -->
+            <div class="mb-4">
+              <div class="form-section-title">
+                <i class="bi bi-image text-primary"></i> 2. Logo Gian Hàng (Lưu trữ Cloudinary CDN)
+              </div>
+
+              <div class="row align-items-center g-3">
+                <div class="col-md-4 text-center">
+                  <img id="logoPreviewImg"
+                       src="../../../static/images/demo/logo-techzone.png"
+                       th:src="@{/images/demo/logo-techzone.png}"
+                       alt="Logo Preview"
+                       class="logo-preview-avatar" />
+                  <div class="small text-muted fw-semibold">Ảnh xem trước (Tỉ lệ 1:1)</div>
+                </div>
+
+                <div class="col-md-8">
+                  <!-- Khung kéo thả mô phỏng upload Cloudinary -->
+                  <div class="logo-upload-box" id="logoUploadDropzone">
+                    <i class="bi bi-cloud-arrow-up-fill fs-2 text-primary"></i>
+                    <h6 class="fw-semibold mb-1 mt-2">Kéo thả ảnh logo vào đây hoặc bấm tải lên</h6>
+                    <p class="small text-muted mb-2">Hỗ trợ JPG, PNG, WEBP tối đa 5MB (Chuẩn vuông khuyến nghị 500x500px)</p>
+                    <button type="button" class="btn btn-outline-primary btn-sm px-3" id="chooseFileBtn">
+                      <i class="bi bi-folder2-open"></i> Duyệt tệp ảnh
+                    </button>
+                    <input type="file" id="logoFileInput" accept="image/*" class="d-none" />
+                  </div>
+
+                  <!-- Chọn nhanh preset logo mẫu phục vụ demo đồ án -->
+                  <div class="mt-3">
+                    <span class="small text-muted fw-semibold d-block mb-1">
+                      <i class="bi bi-lightning-charge-fill text-warning"></i> Chọn nhanh Logo mẫu có sẵn để demo:
+                    </span>
+                    <div class="d-flex flex-wrap gap-2">
+                      <button type="button"
+                              class="preset-logo-pill active"
+                              data-logo="../../../static/images/demo/logo-techzone.png"
+                              data-th-logo="/images/demo/logo-techzone.png"
+                              data-default-name="TechZone Official Store"
+                              data-default-desc="Chuyên phân phối phụ kiện công nghệ, bàn phím cơ, tai nghe chính hãng với chế độ bảo hành 1 đổi 1 trong 12 tháng.">
+                        <img src="../../../static/images/demo/logo-techzone.png" th:src="@{/images/demo/logo-techzone.png}" alt="TechZone" />
+                        TechZone
+                      </button>
+
+                      <button type="button"
+                              class="preset-logo-pill"
+                              data-logo="../../../static/images/demo/logo-zenhome.png"
+                              data-th-logo="/images/demo/logo-zenhome.png"
+                              data-default-name="ZenHome Decor & Life"
+                              data-default-desc="Không gian nội thất tối giản, đồ gia dụng thông minh tiện nghi giúp nâng tầm chất lượng cuộc sống cho tổ ấm của bạn.">
+                        <img src="../../../static/images/demo/logo-zenhome.png" th:src="@{/images/demo/logo-zenhome.png}" alt="ZenHome" />
+                        ZenHome
+                      </button>
+
+                      <button type="button"
+                              class="preset-logo-pill"
+                              data-logo="https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=200&auto=format&fit=crop&q=80"
+                              data-th-logo="https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=200&auto=format&fit=crop&q=80"
+                              data-default-name="Aura Fashion House"
+                              data-default-desc="Bộ sưu tập thời trang đường phố trẻ trung hiện đại, phong cách năng động cho giới trẻ đam mê sáng tạo.">
+                        <i class="bi bi-gem text-danger"></i>
+                        Aura Fashion
+                      </button>
+                    </div>
+                  </div>
+
+                  <!-- Input ẩn chứa URL Logo lưu vào Database -->
+                  <input type="hidden" id="logoUrlInput" name="logoUrl" value="/images/demo/logo-techzone.png" />
+                </div>
+              </div>
+            </div>
+
+            <!-- NHÓM 3: THÔNG TIN LIÊN HỆ & ĐỊA CHỈ KHO HÀNG -->
+            <div class="mb-4">
+              <div class="form-section-title">
+                <i class="bi bi-geo-alt text-primary"></i> 3. Thông tin Liên hệ & Địa chỉ Gửi hàng
+              </div>
+
+              <div class="row g-3">
+                <!-- Số điện thoại Hotline -->
+                <div class="col-md-6">
+                  <label for="shopPhoneInput" class="form-label fw-semibold">
+                    Số điện thoại Hotline <span class="text-danger">*</span>
+                  </label>
+                  <div class="input-group">
+                    <span class="input-group-text bg-light text-muted"><i class="bi bi-telephone-fill"></i></span>
+                    <input type="tel"
+                           class="form-control"
+                           id="shopPhoneInput"
+                           name="phone"
+                           placeholder="0912 345 678"
+                           pattern="^0[0-9]{9,10}$"
+                           required />
+                    <div class="invalid-feedback">
+                      Vui lòng nhập số điện thoại hợp lệ (10 chữ số, bắt đầu bằng 0).
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Email kinh doanh -->
+                <div class="col-md-6">
+                  <label for="shopEmailInput" class="form-label fw-semibold">
+                    Email nhận thông báo nghiệp vụ
+                  </label>
+                  <div class="input-group">
+                    <span class="input-group-text bg-light text-muted"><i class="bi bi-envelope-fill"></i></span>
+                    <input type="email"
+                           class="form-control"
+                           id="shopEmailInput"
+                           name="email"
+                           value="nguyenvana@gmail.com"
+                           readonly />
+                  </div>
+                  <div class="form-text small text-muted">Được liên kết tự động từ tài khoản đăng nhập của bạn.</div>
+                </div>
+
+                <!-- Địa chỉ kho xuất hàng -->
+                <div class="col-12">
+                  <label for="shopAddressInput" class="form-label fw-semibold">
+                    Địa chỉ kho lấy hàng / gửi hàng <span class="text-danger">*</span>
+                  </label>
+                  <div class="input-group">
+                    <span class="input-group-text bg-light text-muted"><i class="bi bi-house-door-fill"></i></span>
+                    <input type="text"
+                           class="form-control"
+                           id="shopAddressInput"
+                           name="address"
+                           placeholder="Số 123 đường Nguyễn Huệ, Phường Bến Nghé, Quận 1, TP. Hồ Chí Minh"
+                           required />
+                    <div class="invalid-feedback">
+                      Vui lòng nhập địa chỉ kho xuất hàng cụ thể để shipper đến nhận hàng.
+                    </div>
+                  </div>
+                  <div class="form-text small text-muted">
+                    Địa chỉ này được bàn giao cho đơn vị vận chuyển khi bạn xác nhận đơn hàng (ORDER 04).
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- NHÓM 4: ĐIỀU KHOẢN & CAM KẾT HOẠT ĐỘNG -->
+            <div class="mb-4">
+              <div class="form-section-title">
+                <i class="bi bi-shield-lock text-primary"></i> 4. Điều khoản & Cam kết Người bán SENVIA
+              </div>
+
+              <div class="terms-card mb-3">
+                <h6 class="fw-bold text-dark mb-2"><i class="bi bi-journal-text text-primary"></i> Quy chế & Tiêu chuẩn vận hành Sàn:</h6>
+                <ul class="mb-0 ps-3">
+                  <li class="mb-1"><strong>Hàng chính hãng:</strong> Cam kết 100% sản phẩm có nguồn gốc xuất xứ rõ ràng, không kinh doanh hàng giả, hàng vi phạm sở hữu trí tuệ hoặc hàng cấm.</li>
+                  <li class="mb-1"><strong>Xử lý đơn đúng hạn:</strong> Xác nhận đơn và đóng gói bàn giao cho đơn vị vận chuyển trong tối đa 48 giờ kể từ khi đơn hàng được tạo.</li>
+                  <li class="mb-1"><strong>Thẩm quyền quản trị:</strong> Ban Quản trị sàn có quyền từ chối hồ sơ (REJECTED) hoặc khóa gian hàng (LOCKED) nếu phát hiện hành vi gian lận hoặc vi phạm quy chế (BR 05, SHOP 06, SHOP 08).</li>
+                </ul>
+              </div>
+
+              <!-- Checkbox cam kết -->
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="agreeTermsCheck" required />
+                <label class="form-check-label small fw-medium text-dark" for="agreeTermsCheck">
+                  Tôi đã đọc kỹ và cam kết tuân thủ đầy đủ Quy chế hoạt động & Tiêu chuẩn cộng đồng Người bán SENVIA. <span class="text-danger">*</span>
+                </label>
+                <div class="invalid-feedback">
+                  Bạn cần đồng ý với các điều khoản hoạt động trước khi gửi hồ sơ.
+                </div>
+              </div>
+            </div>
+
+            <!-- NÚT HÀNH ĐỘNG GỬI HỒ SƠ -->
+            <div class="d-flex flex-column flex-sm-row justify-content-between align-items-center gap-3 pt-3 border-top">
+              <a href="/" class="btn btn-outline-secondary px-4 w-100 w-sm-auto">
+                <i class="bi bi-arrow-left"></i> Quay lại Trang chủ
+              </a>
+              <button type="submit" class="btn btn-primary px-4 py-2 fw-semibold w-100 w-sm-auto shadow-sm" id="submitRegisterBtn">
+                <i class="bi bi-send-check-fill me-1"></i> Gửi Hồ Sơ Xét Duyệt
+              </button>
+            </div>
+
+          </form>
+
+        </div>
+      </div>
+
+
+      <!-- CỘT PHẢI: LIVE PREVIEW & STATE LIFECYCLE INFO (4 CỘT) -->
+      <div class="col-lg-4">
+
+        <!-- THẺ XEM TRƯỚC GIAN HÀNG THỜI GIAN THỰC (LIVE PREVIEW) -->
+        <div class="shop-live-preview-card mb-4">
+          <div class="shop-preview-banner">
+            <div class="d-flex justify-content-between align-items-center px-3 pt-2">
+              <span class="badge bg-white text-dark small fw-semibold">
+                <i class="bi bi-eye"></i> Xem trước diện mạo
+              </span>
+              <span class="badge bg-warning text-dark small fw-semibold" id="previewStateBadge">
+                <i class="bi bi-hourglass-split"></i> PENDING
+              </span>
+            </div>
+          </div>
+
+          <div class="shop-preview-body">
+            <img id="livePreviewAvatar"
+                 src="../../../static/images/demo/logo-techzone.png"
+                 th:src="@{/images/demo/logo-techzone.png}"
+                 alt="Preview Logo"
+                 class="shop-preview-avatar" />
+
+            <h5 class="shop-preview-name" id="livePreviewName">TechZone Official Store</h5>
+            <p class="shop-preview-desc" id="livePreviewDesc">
+              Chuyên phân phối phụ kiện công nghệ, bàn phím cơ, tai nghe chính hãng với chế độ bảo hành 1 đổi 1 trong 12 tháng.
+            </p>
+
+            <div class="shop-preview-meta mb-3">
+              <div class="mb-1 text-truncate" id="livePreviewPhone">
+                <i class="bi bi-telephone text-primary me-1"></i> Hotline: <span class="fw-medium">0912 345 678</span>
+              </div>
+              <div class="text-truncate" id="livePreviewAddress">
+                <i class="bi bi-geo-alt text-primary me-1"></i> Kho: <span class="fw-medium">Quận 1, TP. HCM</span>
+              </div>
+            </div>
+
+            <div class="d-grid gap-2">
+              <button class="btn btn-outline-primary btn-sm disabled" type="button">
+                <i class="bi bi-plus-circle"></i> Theo dõi Gian hàng
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- THẺ MINH HỌA VÒNG ĐỜI STATE PATTERN -->
+        <div class="state-flow-card mb-4">
+          <h6 class="fw-bold text-dark mb-3 d-flex align-items-center gap-2">
+            <i class="bi bi-diagram-2 text-primary"></i> Tiến trình Xét duyệt Gian hàng
+          </h6>
+
+          <div class="flow-step-item active">
+            <div class="flow-step-icon">1</div>
+            <div class="flow-step-content">
+              <div class="flow-step-title text-primary">Gửi hồ sơ đăng ký</div>
+              <div class="flow-step-sub">Người bán điền thông tin và nộp đơn (bước hiện tại).</div>
+            </div>
+          </div>
+
+          <div class="flow-step-item">
+            <div class="flow-step-icon">2</div>
+            <div class="flow-step-content">
+              <div class="flow-step-title">Chờ Admin thẩm định (PENDING)</div>
+              <div class="flow-step-sub">Admin duyệt (APPROVED) hoặc từ chối (REJECTED) trong 24h.</div>
+            </div>
+          </div>
+
+          <div class="flow-step-item">
+            <div class="flow-step-icon">3</div>
+            <div class="flow-step-content">
+              <div class="flow-step-title">Mở khóa Kênh Người Bán</div>
+              <div class="flow-step-sub">Đăng sản phẩm, quản lý tồn kho và vận hành đơn bán.</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- THẺ LƯU Ý QUY TẮC NGHIỆP VỤ (BUSINESS RULES) -->
+        <div class="card border-0 bg-white shadow-xs rounded-3 p-3">
+          <h6 class="fw-bold text-secondary mb-2 small text-uppercase">
+            <i class="bi bi-info-circle-fill text-info"></i> Quy tắc Nghiệp vụ (BR 02)
+          </h6>
+          <p class="small text-muted mb-0">
+            Mỗi tài khoản người dùng chỉ được sở hữu tối đa <strong>01 gian hàng</strong> trên sàn. Nếu đã có gian hàng ở trạng thái <code>PENDING</code>, <code>APPROVED</code> hoặc <code>LOCKED</code>, bạn sẽ được tự động chuyển hướng đến màn hình theo dõi trạng thái tương ứng.
+          </p>
+        </div>
+
+      </div>
+
+    </div>
+
+  </main>
+
+  <!-- =======================================================================
+       TOAST THÔNG BÁO GỬI HỒ SƠ THÀNH CÔNG
+       ======================================================================= -->
+  <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 1090">
+    <div id="registerSuccessToast" class="toast align-items-center text-bg-success border-0 shadow-lg" role="alert" aria-live="assertive" aria-atomic="true">
+      <div class="d-flex">
+        <div class="toast-body d-flex align-items-center gap-2">
+          <i class="bi bi-check-circle-fill fs-5"></i>
+          <div>
+            <div class="fw-bold">Gửi hồ sơ đăng ký thành công!</div>
+            <div class="small">Gian hàng chuyển sang trạng thái <strong>PENDING</strong>. Đang chuyển hướng...</div>
+          </div>
+        </div>
+        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+      </div>
+    </div>
+  </div>
+
+  <!-- =======================================================================
+       FOOTER FRAGMENT
+       ======================================================================= -->
+  <div th:replace="~{fragments/footer :: footer}">
+    <footer class="bg-dark text-white text-center py-4 mt-5">
+      <div class="container">
+        <p class="mb-0 small text-white-50">&copy; 2026 SENVIA E-Commerce Platform. Dự án giữa kỳ Mẫu Thiết Kế Nhóm 2.</p>
+      </div>
+    </footer>
+  </div>
+
+  <!-- Bootstrap 5.3 JS Bundle -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+  <!-- Script Tương tác: Validation & Live Preview Binding -->
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      const form = document.getElementById("shopRegisterForm");
+      const nameInput = document.getElementById("shopNameInput");
+      const descInput = document.getElementById("shopDescInput");
+      const phoneInput = document.getElementById("shopPhoneInput");
+      const addressInput = document.getElementById("shopAddressInput");
+      const logoUrlInput = document.getElementById("logoUrlInput");
+      const logoPreviewImg = document.getElementById("logoPreviewImg");
+      const charCount = document.getElementById("charCount");
+
+      // Live Preview Elements
+      const liveName = document.getElementById("livePreviewName");
+      const liveDesc = document.getElementById("livePreviewDesc");
+      const livePhone = document.getElementById("livePreviewPhone");
+      const liveAddress = document.getElementById("livePreviewAddress");
+      const liveAvatar = document.getElementById("livePreviewAvatar");
+
+      // File upload & Drag Drop
+      const dropzone = document.getElementById("logoUploadDropzone");
+      const fileInput = document.getElementById("logoFileInput");
+      const chooseFileBtn = document.getElementById("chooseFileBtn");
+      const presetButtons = document.querySelectorAll(".preset-logo-pill");
+
+      // 1. Khởi tạo dữ liệu mẫu mặc định
+      nameInput.value = "TechZone Official Store";
+      descInput.value = "Chuyên phân phối phụ kiện công nghệ, bàn phím cơ, tai nghe chính hãng với chế độ bảo hành 1 đổi 1 trong 12 tháng.";
+      phoneInput.value = "0912345678";
+      addressInput.value = "Số 123 đường Nguyễn Huệ, Phường Bến Nghé, Quận 1, TP. Hồ Chí Minh";
+      updateCharCount();
+      syncLivePreview();
+
+      // 2. Đồng bộ dữ liệu Live Preview
+      function syncLivePreview() {
+        liveName.textContent = nameInput.value.trim() || "Tên Gian hàng của bạn";
+        liveDesc.textContent = descInput.value.trim() || "Mô tả ngắn gọn về sản phẩm và cam kết của gian hàng sẽ xuất hiện ở đây...";
+
+        const phone = phoneInput.value.trim();
+        livePhone.innerHTML = `<i class="bi bi-telephone text-primary me-1"></i> Hotline: <span class="fw-medium">${phone || "Chưa nhập"}</span>`;
+
+        const addr = addressInput.value.trim();
+        liveAddress.innerHTML = `<i class="bi bi-geo-alt text-primary me-1"></i> Kho: <span class="fw-medium">${addr || "Chưa nhập"}</span>`;
+      }
+
+      function updateCharCount() {
+        const len = descInput.value.length;
+        charCount.textContent = `${len}/500 ký tự`;
+      }
+
+      nameInput.addEventListener("input", syncLivePreview);
+      descInput.addEventListener("input", function () {
+        updateCharCount();
+        syncLivePreview();
+      });
+      phoneInput.addEventListener("input", syncLivePreview);
+      addressInput.addEventListener("input", syncLivePreview);
+
+      // 3. Preset Logo Buttons
+      presetButtons.forEach(btn => {
+        btn.addEventListener("click", function () {
+          presetButtons.forEach(b => b.classList.remove("active"));
+          this.classList.add("active");
+
+          const logoSrc = this.getAttribute("data-logo");
+          const defaultName = this.getAttribute("data-default-name");
+          const defaultDesc = this.getAttribute("data-default-desc");
+
+          logoPreviewImg.src = logoSrc;
+          liveAvatar.src = logoSrc;
+          logoUrlInput.value = this.getAttribute("data-th-logo") || logoSrc;
+
+          if (defaultName) nameInput.value = defaultName;
+          if (defaultDesc) descInput.value = defaultDesc;
+
+          updateCharCount();
+          syncLivePreview();
+        });
+      });
+
+      // 4. File Upload (Duyệt tệp máy tính)
+      chooseFileBtn.addEventListener("click", () => fileInput.click());
+      dropzone.addEventListener("click", (e) => {
+        if (e.target !== chooseFileBtn) fileInput.click();
+      });
+
+      fileInput.addEventListener("change", function () {
+        if (this.files && this.files[0]) {
+          const file = this.files[0];
+          const reader = new FileReader();
+          reader.onload = function (e) {
+            logoPreviewImg.src = e.target.result;
+            liveAvatar.src = e.target.result;
+            logoUrlInput.value = e.target.result;
+            presetButtons.forEach(b => b.classList.remove("active"));
+          };
+          reader.readAsDataURL(file);
+        }
+      });
+
+      // Kéo thả ảnh vào Dropzone
+      ['dragenter', 'dragover'].forEach(eventName => {
+        dropzone.addEventListener(eventName, (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          dropzone.classList.add('border-primary', 'bg-light');
+        });
+      });
+
+      ['dragleave', 'drop'].forEach(eventName => {
+        dropzone.addEventListener(eventName, (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          dropzone.classList.remove('border-primary', 'bg-light');
+        });
+      });
+
+      dropzone.addEventListener('drop', (e) => {
+        const dt = e.dataTransfer;
+        const files = dt.files;
+        if (files && files[0]) {
+          fileInput.files = files;
+          const reader = new FileReader();
+          reader.onload = function (evt) {
+            logoPreviewImg.src = evt.target.result;
+            liveAvatar.src = evt.target.result;
+            logoUrlInput.value = evt.target.result;
+            presetButtons.forEach(b => b.classList.remove("active"));
+          };
+          reader.readAsDataURL(files[0]);
+        }
+      });
+
+      // 5. Form Validation & Xử lý Submit mô phỏng
+      form.addEventListener("submit", function (e) {
+        e.preventDefault();
+
+        if (!form.checkValidity()) {
+          e.stopPropagation();
+          form.classList.add("was-validated");
+          return;
+        }
+
+        form.classList.add("was-validated");
+
+        const submitBtn = document.getElementById("submitRegisterBtn");
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = `<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>Đang xử lý hồ sơ...`;
+
+        // Kích hoạt Toast thông báo
+        const toastEl = document.getElementById("registerSuccessToast");
+        const toast = new bootstrap.Toast(toastEl, { delay: 3000 });
+        toast.show();
+
+        // Chuyển hướng sang trang theo dõi trạng thái status.html sau 1.5s
+        setTimeout(function () {
+          window.location.href = "status.html";
+        }, 1500);
+      });
+    });
+  </script>
+
+</body>
+</html>

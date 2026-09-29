@@ -1,0 +1,237 @@
+/**
+ * ==============================================================================
+ * MERCHANT MODULE - SHOP STATUS & STATE PATTERN STYLESHEET
+ * ==============================================================================
+ * File: src/main/resources/static/css/modules/merchant/shop-status.css
+ * Bố cục theo dõi vòng đời xét duyệt Gian hàng (PENDING, APPROVED, REJECTED, LOCKED)
+ * ==============================================================================
+ */
+
+/* 1. Header & Stepper */
+.shop-status-header {
+  margin-bottom: 2rem;
+}
+
+.shop-status-title {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: #1e293b;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.shop-lifecycle-stepper {
+  background-color: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 0.75rem;
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+}
+
+.stepper-track {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: relative;
+}
+
+.stepper-node {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  z-index: 2;
+  text-align: center;
+  max-width: 160px;
+}
+
+.node-circle {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.15rem;
+  font-weight: 700;
+  margin-bottom: 0.6rem;
+  transition: all 0.2s ease;
+  background-color: #f1f5f9;
+  color: #64748b;
+  border: 2px solid #cbd5e1;
+}
+
+.stepper-node.active .node-circle {
+  background-color: #2563eb;
+  color: #ffffff;
+  border-color: #2563eb;
+  box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.2);
+}
+
+.stepper-node.completed .node-circle {
+  background-color: #16a34a;
+  color: #ffffff;
+  border-color: #16a34a;
+}
+
+.stepper-node.rejected .node-circle {
+  background-color: #dc2626;
+  color: #ffffff;
+  border-color: #dc2626;
+  box-shadow: 0 0 0 4px rgba(220, 38, 38, 0.2);
+}
+
+.node-label {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #1e293b;
+  margin-bottom: 0.2rem;
+}
+
+.node-desc {
+  font-size: 0.775rem;
+  color: #64748b;
+  line-height: 1.35;
+}
+
+.stepper-connector {
+  flex-grow: 1;
+  height: 3px;
+  background-color: #e2e8f0;
+  margin: 0 0.75rem;
+  position: relative;
+  top: -18px;
+  z-index: 1;
+}
+
+.stepper-connector.completed {
+  background-color: #16a34a;
+}
+
+/* 2. State Hero Cards */
+.state-hero-card {
+  background-color: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 0.75rem;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+  padding: 2rem;
+  margin-bottom: 2rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.state-badge-floating {
+  position: absolute;
+  top: 1.5rem;
+  right: 1.5rem;
+}
+
+/* Rejection Callout Details */
+.rejection-box {
+  background-color: #fef2f2;
+  border: 1px solid #fecaca;
+  border-left: 5px solid #dc2626;
+  border-radius: 0.5rem;
+  padding: 1.25rem 1.5rem;
+  margin-top: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.rejection-title {
+  color: #991b1b;
+  font-weight: 700;
+  font-size: 1.05rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.rejection-text {
+  color: #7f1d1d;
+  font-size: 0.95rem;
+  line-height: 1.5;
+  margin-bottom: 0;
+}
+
+/* Lock Callout Details */
+.lock-box {
+  background-color: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-left: 5px solid #475569;
+  border-radius: 0.5rem;
+  padding: 1.25rem 1.5rem;
+  margin-top: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+/* 3. Shop Info Summary Card */
+.shop-summary-block {
+  display: flex;
+  align-items: flex-start;
+  gap: 1.5rem;
+  margin-top: 1.5rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid #f1f5f9;
+}
+
+.shop-logo-preview {
+  width: 96px;
+  height: 96px;
+  border-radius: 0.75rem;
+  object-fit: cover;
+  border: 1px solid #e2e8f0;
+  background-color: #f8fafc;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.shop-meta-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #475569;
+  font-size: 0.9rem;
+  margin-bottom: 0.4rem;
+}
+
+.shop-meta-item i {
+  color: #94a3b8;
+}
+
+/* 4. State Action Bar */
+.state-action-bar {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+  margin-top: 1.5rem;
+}
+
+/* 5. Mobile Responsive */
+@media (max-width: 768px) {
+  .stepper-track {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1.5rem;
+  }
+  .stepper-node {
+    flex-direction: row;
+    align-items: center;
+    text-align: left;
+    gap: 1rem;
+    max-width: 100%;
+  }
+  .stepper-connector {
+    display: none;
+  }
+  .node-circle {
+    margin-bottom: 0;
+  }
+  .shop-summary-block {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+}

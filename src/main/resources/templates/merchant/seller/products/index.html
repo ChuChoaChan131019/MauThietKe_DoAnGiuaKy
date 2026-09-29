@@ -1,0 +1,881 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Quản lý sản phẩm - Kênh Người Bán - SENVIA MARKET</title>
+
+  <!-- Bootstrap 5.3 CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <!-- Bootstrap Icons -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
+  <!-- Core Design Tokens & Theme (Soft Editorial & Bento) -->
+  <link rel="stylesheet" th:href="@{/css/common/theme.css}" href="../../../../static/css/common/theme.css" />
+  <!-- Common Badges & Tokens -->
+  <link rel="stylesheet" th:href="@{/css/common/badges.css}" href="../../../../static/css/common/badges.css" />
+  <!-- Common Layout CSS -->
+  <link rel="stylesheet" th:href="@{/css/common/layout.css}" href="../../../../static/css/common/layout.css" />
+  <!-- Seller Products CSS -->
+  <link rel="stylesheet" th:href="@{/css/modules/merchant/seller-products.css}" href="../../../../static/css/modules/merchant/seller-products.css" />
+</head>
+<body style="background-color: var(--color-bg-canvas, #f2f3f4); min-height: 100vh;">
+
+  <!-- =======================================================================
+       HEADER FRAGMENT
+       ======================================================================= -->
+  <div th:replace="~{fragments/header :: header}">
+    <header class="navbar navbar-expand-lg navbar-dark py-3 mb-3 shadow-sm" style="background-color: var(--color-primary, #323377);">
+      <div class="container">
+        <a class="navbar-brand fw-bold d-flex align-items-center gap-2 text-white" href="/">
+          <i class="bi bi-shop-window text-warning"></i> SENVIA MARKET
+        </a>
+        <div class="d-flex align-items-center gap-3">
+          <span class="badge-soft badge-soft-sage px-3 py-2">
+            <i class="bi bi-patch-check-fill me-1"></i> Gian hàng: TechZone Store (APPROVED)
+          </span>
+          <a href="../../../merchant/products/list.html" class="btn btn-outline-light btn-sm rounded-pill px-3">Xem sàn</a>
+        </div>
+      </div>
+    </header>
+  </div>
+
+  <!-- Main Container -->
+  <main class="container my-4">
+
+    <!-- Breadcrumb điều hướng -->
+    <nav aria-label="breadcrumb" class="mb-3">
+      <ol class="breadcrumb mb-0 small">
+        <li class="breadcrumb-item"><a href="/" th:href="@{/}" class="text-decoration-none text-secondary">Trang chủ</a></li>
+        <li class="breadcrumb-item"><a href="../status.html" class="text-decoration-none text-secondary">Kênh người bán</a></li>
+        <li class="breadcrumb-item active text-dark fw-semibold" aria-current="page">Quản lý sản phẩm</li>
+      </ol>
+    </nav>
+
+    <!-- Page Header (Bento Editorial Bar) -->
+    <div class="card-modern d-flex align-items-center justify-content-between mb-4 flex-wrap gap-3 p-3 p-md-4">
+      <div>
+        <div class="d-flex align-items-center gap-2 mb-1">
+          <h1 class="h3 fw-bold mb-0" style="color: var(--color-primary, #323377);">Quản Lý Sản Phẩm Gian Hàng</h1>
+          <span class="badge-soft badge-soft-sage">Shop APPROVED</span>
+        </div>
+        <p class="text-muted small mb-0">
+          Thêm mới, theo dõi tồn kho, cập nhật giá bán và quản lý trạng thái hiển thị của các sản phẩm thuộc shop.
+        </p>
+      </div>
+
+      <div class="d-flex align-items-center gap-2">
+        <a href="../../../ordering/seller/orders.html" th:href="@{/ordering/seller/orders}" class="btn btn-brand-primary btn-sm">
+          <i class="bi bi-receipt"></i>
+          <span>Xử lý đơn bán</span>
+        </a>
+        <button type="button" class="btn btn-brand-accent btn-sm shadow-xs"
+                data-bs-toggle="modal" data-bs-target="#createProductModal">
+          <i class="bi bi-plus-circle-fill"></i>
+          <span>Thêm sản phẩm mới</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- =======================================================================
+         PHẦN 1: BENTO KPI STATS CARDS (TỔNG HỢP HÀNG HÓA & TỒN KHO)
+         ======================================================================= -->
+    <div class="row g-3 g-xl-4 mb-4">
+
+      <div class="col-6 col-lg-3">
+        <div class="card-modern seller-stat-card">
+          <div class="seller-stat-icon" style="background: rgba(50, 51, 119, 0.12); color: var(--color-primary, #323377);">
+            <i class="bi bi-box-seam-fill"></i>
+          </div>
+          <div class="seller-stat-val bento-stat-number" id="kpiTotal">4</div>
+          <div class="seller-stat-label bento-stat-label">Tổng sản phẩm</div>
+        </div>
+      </div>
+
+      <div class="col-6 col-lg-3">
+        <div class="card-modern seller-stat-card">
+          <div class="seller-stat-icon" style="background: rgba(140, 195, 178, 0.22); color: #1b6852;">
+            <i class="bi bi-check-circle-fill"></i>
+          </div>
+          <div class="seller-stat-val bento-stat-number" id="kpiActive">3</div>
+          <div class="seller-stat-label bento-stat-label">Đang mở bán</div>
+        </div>
+      </div>
+
+      <div class="col-6 col-lg-3">
+        <div class="card-modern seller-stat-card">
+          <div class="seller-stat-icon" style="background: #fef3c7; color: #b45309;">
+            <i class="bi bi-exclamation-triangle-fill"></i>
+          </div>
+          <div class="seller-stat-val bento-stat-number" id="kpiLowStock">1</div>
+          <div class="seller-stat-label bento-stat-label">Sắp hết hàng (&le; 5)</div>
+        </div>
+      </div>
+
+      <div class="col-6 col-lg-3">
+        <div class="card-modern seller-stat-card">
+          <div class="seller-stat-icon" style="background: #fee2e2; color: #b91c1c;">
+            <i class="bi bi-slash-circle-fill"></i>
+          </div>
+          <div class="seller-stat-val bento-stat-number" id="kpiOutOfStock">0</div>
+          <div class="seller-stat-label bento-stat-label">Hết hàng (Tồn = 0)</div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- =======================================================================
+         PHẦN 2: BỘ LỌC TÌM KIẾM & PHÂN LOẠI
+         ======================================================================= -->
+    <div class="card-modern seller-toolbar-card">
+      <div class="row g-3 align-items-center justify-content-between">
+
+        <!-- Filter Tabs -->
+        <div class="col-12 col-md-auto">
+          <ul class="nav seller-filter-tabs" id="sellerFilterTabs">
+            <li class="nav-item">
+              <button class="nav-link active" onclick="filterTableByTab('ALL')">Tất cả (4)</button>
+            </li>
+            <li class="nav-item">
+              <button class="nav-link" onclick="filterTableByTab('ACTIVE')">Đang bán (3)</button>
+            </li>
+            <li class="nav-item">
+              <button class="nav-link" onclick="filterTableByTab('HIDDEN')">Đã ẩn (1)</button>
+            </li>
+            <li class="nav-item">
+              <button class="nav-link" onclick="filterTableByTab('LOW_STOCK')">Tồn ít / Hết hàng</button>
+            </li>
+          </ul>
+        </div>
+
+        <!-- Search & Category Filter -->
+        <div class="col-12 col-md-auto">
+          <div class="d-flex align-items-center gap-2 flex-wrap">
+            <div class="input-group input-group-sm" style="width: 220px;">
+              <span class="input-group-text bg-white border-end-0"><i class="bi bi-search text-muted"></i></span>
+              <input type="text" id="sellerSearchInput" class="form-control border-start-0" placeholder="Tìm tên hoặc SKU..." oninput="handleTableSearch(this.value)" />
+            </div>
+
+            <select id="sellerCategorySelect" class="form-select form-select-sm" style="width: 170px;" onchange="handleCategoryFilter(this.value)">
+              <option value="ALL" selected>Tất cả danh mục</option>
+              <option value="Công nghệ">Thiết bị công nghệ</option>
+              <option value="Gia dụng">Gia dụng thông minh</option>
+              <option value="Thời trang">Thời trang nam nữ</option>
+            </select>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- =======================================================================
+         PHẦN 3: BẢNG DỮ LIỆU SẢN PHẨM (PROD 01-10)
+         Thymeleaf Integration: th:each="product : ${products}"
+         ======================================================================= -->
+    <div class="card-modern seller-table-card">
+      <div class="table-responsive">
+        <table class="table seller-table" id="sellerProductsTable">
+          <thead>
+            <tr>
+              <th style="width: 40px;"><input class="form-check-input" type="checkbox" id="checkAll" onclick="toggleCheckAll(this)" /></th>
+              <th>Sản phẩm</th>
+              <th style="width: 140px;">Danh mục</th>
+              <th style="width: 150px;">Giá bán (VNĐ)</th>
+              <th style="width: 130px;">Tồn kho</th>
+              <th style="width: 120px;">Trạng thái</th>
+              <th style="width: 130px;">Đã bán / Đánh giá</th>
+              <th style="width: 100px;" class="text-end">Thao tác</th>
+            </tr>
+          </thead>
+          <tbody id="sellerTableBody">
+
+            <!-- ROW 1: BÀN PHÍM CƠ -->
+            <tr data-status="ACTIVE" data-category="Công nghệ" data-stock="15" data-name="Bàn phím cơ không dây Custom 75%" data-sku="SKU-TECH-001">
+              <td><input class="form-check-input row-check" type="checkbox" /></td>
+              <td>
+                <div class="d-flex align-items-center gap-3">
+                  <img src="../../../../static/images/demo/product-tech-mechanical-keyboard.jpg" alt="Thumb" class="table-product-thumb" />
+                  <div>
+                    <a href="../../products/detail.html" class="table-product-name" title="Bàn phím cơ không dây Custom 75%">
+                      Bàn phím cơ không dây Custom 75% Switch Gateron Pro Hotswap RGB
+                    </a>
+                    <div class="table-product-sku">SKU: SKU-TECH-001</div>
+                  </div>
+                </div>
+              </td>
+              <td>
+                <span class="badge bg-light text-secondary border">Công nghệ</span>
+              </td>
+              <td>
+                <span class="fw-bold text-dark btn-quick-edit-trigger" title="Nhấp để sửa giá" onclick="openQuickEdit('SKU-TECH-001', 'Bàn phím cơ Custom 75%', 1850000, 15)">
+                  1.850.000 ₫ <i class="bi bi-pencil-fill small text-muted ms-1"></i>
+                </span>
+              </td>
+              <td>
+                <span class="stock-badge-high btn-quick-edit-trigger" title="Nhấp để sửa kho" onclick="openQuickEdit('SKU-TECH-001', 'Bàn phím cơ Custom 75%', 1850000, 15)">
+                  <i class="bi bi-check-circle-fill"></i> Còn 15
+                </span>
+              </td>
+              <td>
+                <div class="form-check form-switch">
+                  <input class="form-check-input" type="checkbox" checked onchange="toggleProductStatus(this, 'Bàn phím cơ Custom 75%')" title="Đang bán / Đã ẩn" />
+                  <label class="form-check-label small fw-semibold text-success status-label">Đang bán</label>
+                </div>
+              </td>
+              <td>
+                <div class="small fw-semibold text-dark">128 đã bán</div>
+                <div class="small text-warning"><i class="bi bi-star-fill"></i> 4.8</div>
+              </td>
+              <td class="text-end">
+                <div class="d-flex align-items-center justify-content-end gap-1">
+                  <button type="button" class="btn-action-icon" title="Sửa chi tiết" onclick="openQuickEdit('SKU-TECH-001', 'Bàn phím cơ Custom 75%', 1850000, 15)">
+                    <i class="bi bi-pencil-square"></i>
+                  </button>
+                  <a href="../../products/detail.html" class="btn-action-icon" title="Xem trên sàn" target="_blank">
+                    <i class="bi bi-box-arrow-up-right"></i>
+                  </a>
+                  <button type="button" class="btn-action-icon text-danger" title="Xóa sản phẩm" onclick="deleteProductRow(this, 'Bàn phím cơ Custom 75%')">
+                    <i class="bi bi-trash3"></i>
+                  </button>
+                </div>
+              </td>
+            </tr>
+
+            <!-- ROW 2: TAI NGHE BLUETOOTH ANC -->
+            <tr data-status="ACTIVE" data-category="Công nghệ" data-stock="8" data-name="Tai nghe chụp tai Bluetooth ANC" data-sku="SKU-TECH-002">
+              <td><input class="form-check-input row-check" type="checkbox" /></td>
+              <td>
+                <div class="d-flex align-items-center gap-3">
+                  <img src="../../../../static/images/demo/product-tech-wireless-headphones.jpg" alt="Thumb" class="table-product-thumb" />
+                  <div>
+                    <a href="../../products/detail.html" class="table-product-name" title="Tai nghe chụp tai Bluetooth ANC">
+                      Tai nghe chụp tai Bluetooth chống ồn chủ động ANC High-Res Audio Pin 40h
+                    </a>
+                    <div class="table-product-sku">SKU: SKU-TECH-002</div>
+                  </div>
+                </div>
+              </td>
+              <td>
+                <span class="badge bg-light text-secondary border">Công nghệ</span>
+              </td>
+              <td>
+                <span class="fw-bold text-dark btn-quick-edit-trigger" onclick="openQuickEdit('SKU-TECH-002', 'Tai nghe Bluetooth ANC', 2490000, 8)">
+                  2.490.000 ₫ <i class="bi bi-pencil-fill small text-muted ms-1"></i>
+                </span>
+              </td>
+              <td>
+                <span class="stock-badge-high btn-quick-edit-trigger" onclick="openQuickEdit('SKU-TECH-002', 'Tai nghe Bluetooth ANC', 2490000, 8)">
+                  <i class="bi bi-check-circle-fill"></i> Còn 8
+                </span>
+              </td>
+              <td>
+                <div class="form-check form-switch">
+                  <input class="form-check-input" type="checkbox" checked onchange="toggleProductStatus(this, 'Tai nghe Bluetooth ANC')" />
+                  <label class="form-check-label small fw-semibold text-success status-label">Đang bán</label>
+                </div>
+              </td>
+              <td>
+                <div class="small fw-semibold text-dark">86 đã bán</div>
+                <div class="small text-warning"><i class="bi bi-star-fill"></i> 4.9</div>
+              </td>
+              <td class="text-end">
+                <div class="d-flex align-items-center justify-content-end gap-1">
+                  <button type="button" class="btn-action-icon" onclick="openQuickEdit('SKU-TECH-002', 'Tai nghe Bluetooth ANC', 2490000, 8)">
+                    <i class="bi bi-pencil-square"></i>
+                  </button>
+                  <a href="../../products/detail.html" class="btn-action-icon" title="Xem trên sàn" target="_blank">
+                    <i class="bi bi-box-arrow-up-right"></i>
+                  </a>
+                  <button type="button" class="btn-action-icon text-danger" onclick="deleteProductRow(this, 'Tai nghe Bluetooth ANC')">
+                    <i class="bi bi-trash3"></i>
+                  </button>
+                </div>
+              </td>
+            </tr>
+
+            <!-- ROW 3: GIÀY SNEAKERS (TỒN KHO ÍT <= 5 - CẢNH BÁO VÀNG) -->
+            <tr data-status="ACTIVE" data-category="Thời trang" data-stock="2" data-name="Giày Sneakers da PU cao cấp" data-sku="SKU-FASH-003">
+              <td><input class="form-check-input row-check" type="checkbox" /></td>
+              <td>
+                <div class="d-flex align-items-center gap-3">
+                  <img src="../../../../static/images/demo/product-fashion-white-sneakers.jpg" alt="Thumb" class="table-product-thumb" />
+                  <div>
+                    <a href="../../products/detail.html" class="table-product-name" title="Giày Sneakers da PU cao cấp">
+                      Giày Sneakers da PU cao cấp phong cách năng động đế êm chống trượt
+                    </a>
+                    <div class="table-product-sku">SKU: SKU-FASH-003</div>
+                  </div>
+                </div>
+              </td>
+              <td>
+                <span class="badge bg-light text-secondary border">Thời trang</span>
+              </td>
+              <td>
+                <span class="fw-bold text-dark btn-quick-edit-trigger" onclick="openQuickEdit('SKU-FASH-003', 'Giày Sneakers da PU', 750000, 2)">
+                  750.000 ₫ <i class="bi bi-pencil-fill small text-muted ms-1"></i>
+                </span>
+              </td>
+              <td>
+                <span class="stock-badge-low btn-quick-edit-trigger" onclick="openQuickEdit('SKU-FASH-003', 'Giày Sneakers da PU', 750000, 2)">
+                  <i class="bi bi-exclamation-triangle-fill"></i> Chỉ còn 2
+                </span>
+              </td>
+              <td>
+                <div class="form-check form-switch">
+                  <input class="form-check-input" type="checkbox" checked onchange="toggleProductStatus(this, 'Giày Sneakers da PU')" />
+                  <label class="form-check-label small fw-semibold text-success status-label">Đang bán</label>
+                </div>
+              </td>
+              <td>
+                <div class="small fw-semibold text-dark">152 đã bán</div>
+                <div class="small text-warning"><i class="bi bi-star-fill"></i> 4.7</div>
+              </td>
+              <td class="text-end">
+                <div class="d-flex align-items-center justify-content-end gap-1">
+                  <button type="button" class="btn-action-icon" onclick="openQuickEdit('SKU-FASH-003', 'Giày Sneakers da PU', 750000, 2)">
+                    <i class="bi bi-pencil-square"></i>
+                  </button>
+                  <a href="../../products/detail.html" class="btn-action-icon" title="Xem trên sàn" target="_blank">
+                    <i class="bi bi-box-arrow-up-right"></i>
+                  </a>
+                  <button type="button" class="btn-action-icon text-danger" onclick="deleteProductRow(this, 'Giày Sneakers da PU')">
+                    <i class="bi bi-trash3"></i>
+                  </button>
+                </div>
+              </td>
+            </tr>
+
+            <!-- ROW 4: SẢN PHẨM ĐÃ ẨN (HIDDEN) -->
+            <tr data-status="HIDDEN" data-category="Công nghệ" data-stock="0" data-name="Chuột không dây Silent Ergonomic" data-sku="SKU-TECH-004">
+              <td><input class="form-check-input row-check" type="checkbox" /></td>
+              <td>
+                <div class="d-flex align-items-center gap-3 opacity-75">
+                  <div class="table-product-thumb d-flex align-items-center justify-content-center text-muted fs-4">
+                    <i class="bi bi-mouse"></i>
+                  </div>
+                  <div>
+                    <span class="table-product-name text-muted" title="Chuột không dây Silent Ergonomic">
+                      Chuột máy tính không dây Silent Ergonomic pin sạc Type-C 4000 DPI
+                    </span>
+                    <div class="table-product-sku">SKU: SKU-TECH-004</div>
+                  </div>
+                </div>
+              </td>
+              <td>
+                <span class="badge bg-light text-secondary border">Công nghệ</span>
+              </td>
+              <td>
+                <span class="fw-bold text-secondary btn-quick-edit-trigger" onclick="openQuickEdit('SKU-TECH-004', 'Chuột không dây Silent', 450000, 0)">
+                  450.000 ₫ <i class="bi bi-pencil-fill small text-muted ms-1"></i>
+                </span>
+              </td>
+              <td>
+                <span class="stock-badge-out btn-quick-edit-trigger" onclick="openQuickEdit('SKU-TECH-004', 'Chuột không dây Silent', 450000, 0)">
+                  <i class="bi bi-x-circle-fill"></i> Hết hàng (0)
+                </span>
+              </td>
+              <td>
+                <div class="form-check form-switch">
+                  <input class="form-check-input" type="checkbox" onchange="toggleProductStatus(this, 'Chuột không dây Silent')" />
+                  <label class="form-check-label small fw-semibold text-secondary status-label">Đã ẩn</label>
+                </div>
+              </td>
+              <td>
+                <div class="small fw-semibold text-dark">45 đã bán</div>
+                <div class="small text-warning"><i class="bi bi-star-fill"></i> 4.5</div>
+              </td>
+              <td class="text-end">
+                <div class="d-flex align-items-center justify-content-end gap-1">
+                  <button type="button" class="btn-action-icon" onclick="openQuickEdit('SKU-TECH-004', 'Chuột không dây Silent', 450000, 0)">
+                    <i class="bi bi-pencil-square"></i>
+                  </button>
+                  <button type="button" class="btn-action-icon text-danger" onclick="deleteProductRow(this, 'Chuột không dây Silent')">
+                    <i class="bi bi-trash3"></i>
+                  </button>
+                </div>
+              </td>
+            </tr>
+
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Table Empty State (when search doesn't match) -->
+      <div id="tableEmptyState" class="p-5 text-center d-none">
+        <i class="bi bi-search text-secondary fs-1 d-block mb-2"></i>
+        <h5 class="fw-bold text-dark">Không tìm thấy sản phẩm nào!</h5>
+        <p class="text-secondary small mb-0">Hãy thử nhập từ khóa khác hoặc điều chỉnh bộ lọc.</p>
+      </div>
+
+      <!-- Table Footer / Pagination -->
+      <div class="p-3 bg-light border-top d-flex align-items-center justify-content-between flex-wrap gap-2">
+        <div class="small text-muted" id="showingCountText">Hiển thị 4 trên 4 sản phẩm</div>
+        <nav aria-label="Page navigation">
+          <ul class="pagination pagination-sm mb-0">
+            <li class="page-item disabled"><a class="page-link" href="#"><i class="bi bi-chevron-left"></i></a></li>
+            <li class="page-item active"><a class="page-link" href="#">1</a></li>
+            <li class="page-item disabled"><a class="page-link" href="#"><i class="bi bi-chevron-right"></i></a></li>
+          </ul>
+        </nav>
+      </div>
+
+    </div>
+
+  </main>
+
+  <!-- =======================================================================
+       MODAL 1: THÊM MỚI SẢN PHẨM (PROD 02, PROD 03, PROD 05, PROD 10)
+       ======================================================================= -->
+  <div class="modal fade" id="createProductModal" tabindex="-1" aria-labelledby="createProductModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+      <div class="modal-content card-modern p-2">
+        <div class="modal-header border-bottom">
+          <h5 class="modal-title fw-bold" id="createProductModalLabel" style="color: var(--color-primary, #323377);">
+            <i class="bi bi-plus-circle me-2"></i>Thêm sản phẩm mới vào gian hàng
+          </h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <form id="createProductForm" onsubmit="handleCreateProductSubmit(event)">
+          <div class="modal-body py-4">
+
+            <div class="row g-3">
+
+              <!-- 1. Tên sản phẩm -->
+              <div class="col-12">
+                <label for="newProductName" class="form-label fw-semibold text-dark small">
+                  Tên sản phẩm <span class="text-danger">*</span>
+                </label>
+                <input type="text" class="form-control" id="newProductName" required minlength="5" maxlength="200"
+                       placeholder="Ví dụ: Tai nghe chụp tai không dây chống ồn cao cấp..." />
+                <div class="form-text small text-muted">Tên rõ ràng giúp khách hàng dễ tìm kiếm trên sàn.</div>
+              </div>
+
+              <!-- 2. Danh mục sản phẩm -->
+              <div class="col-md-6">
+                <label for="newProductCategory" class="form-label fw-semibold text-dark small">
+                  Danh mục hàng hóa <span class="text-danger">*</span>
+                </label>
+                <select class="form-select" id="newProductCategory" required>
+                  <option value="" disabled selected>-- Chọn danh mục --</option>
+                  <option value="Công nghệ">Thiết bị công nghệ</option>
+                  <option value="Gia dụng">Gia dụng thông minh</option>
+                  <option value="Thời trang">Thời trang nam nữ</option>
+                </select>
+              </div>
+
+              <!-- 3. Mã SKU -->
+              <div class="col-md-6">
+                <label for="newProductSku" class="form-label fw-semibold text-dark small">Mã SKU phân loại</label>
+                <input type="text" class="form-control" id="newProductSku" placeholder="Tự sinh nếu để trống..." />
+              </div>
+
+              <!-- 4. Giá bán (PROD 05: Giá > 0) -->
+              <div class="col-md-6">
+                <label for="newProductPrice" class="form-label fw-semibold text-dark small">
+                  Giá bán (VNĐ) <span class="text-danger">*</span>
+                </label>
+                <div class="input-group">
+                  <input type="number" class="form-control" id="newProductPrice" required min="1000" step="1000"
+                         placeholder="Nhập giá bán > 0..." />
+                  <span class="input-group-text">₫</span>
+                </div>
+                <div class="form-text small text-muted">Giá bán phải lớn hơn 0 theo quy tắc BR 07.</div>
+              </div>
+
+              <!-- 5. Tồn kho ban đầu (PROD 05: Tồn kho >= 0) -->
+              <div class="col-md-6">
+                <label for="newProductStock" class="form-label fw-semibold text-dark small">
+                  Số lượng tồn kho ban đầu <span class="text-danger">*</span>
+                </label>
+                <input type="number" class="form-control" id="newProductStock" required min="0" value="10" />
+                <div class="form-text small text-muted">Tồn kho không được âm theo quy tắc BR 07.</div>
+              </div>
+
+              <!-- 6. Upload ảnh Cloudinary (PROD 10) -->
+              <div class="col-12">
+                <label class="form-label fw-semibold text-dark small">
+                  Hình ảnh sản phẩm (Cloudinary Storage) <span class="text-danger">*</span>
+                </label>
+
+                <div class="cloudinary-upload-zone" onclick="document.getElementById('cloudImgInput').click()">
+                  <div class="upload-icon-circle">
+                    <i class="bi bi-cloud-arrow-up-fill"></i>
+                  </div>
+                  <div class="fw-bold text-dark">Kéo thả ảnh vào đây hoặc nhấp để chọn tệp</div>
+                  <div class="text-muted small mt-1">Định dạng JPG, PNG, WebP (Tối đa 5MB). Ít nhất 1 ảnh đại diện.</div>
+                  <input type="file" id="cloudImgInput" class="d-none" accept="image/*" onchange="handlePreviewImage(this)" />
+                </div>
+
+                <!-- Preview container -->
+                <div class="uploaded-preview-container" id="uploadedPreviewContainer">
+                  <div class="preview-thumb-box" id="demoThumbBox">
+                    <img src="../../../../static/images/demo/product-tech-mechanical-keyboard.jpg" alt="Preview default" />
+                    <span class="badge bg-primary position-absolute bottom-0 start-0 m-1" style="font-size: 0.6rem;">Ảnh bìa</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- 7. Mô tả sản phẩm -->
+              <div class="col-12">
+                <label for="newProductDesc" class="form-label fw-semibold text-dark small">Mô tả chi tiết sản phẩm</label>
+                <textarea class="form-control" id="newProductDesc" rows="3"
+                          placeholder="Mô tả thông số kỹ thuật, chất liệu, hướng dẫn sử dụng và chính sách bảo hành..."></textarea>
+              </div>
+
+            </div>
+
+          </div>
+          <div class="modal-footer border-top bg-light">
+            <button type="button" class="btn btn-outline-secondary px-3 rounded-pill" data-bs-dismiss="modal">Hủy bỏ</button>
+            <button type="submit" class="btn btn-brand-accent px-4 fw-semibold shadow-xs">
+              <i class="bi bi-check-lg me-1"></i> Lưu &amp; Đăng bán
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- =======================================================================
+       MODAL 2: SỬA TỒN KHO & GIÁ NHANH (INLINE QUICK EDIT)
+       ======================================================================= -->
+  <div class="modal fade" id="quickEditModal" tabindex="-1" aria-labelledby="quickEditModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-sm">
+      <div class="modal-content card-modern p-2">
+        <div class="modal-header border-bottom py-2">
+          <h6 class="modal-title fw-bold" id="quickEditModalLabel" style="color: var(--color-primary, #323377);">
+            <i class="bi bi-pencil-square me-1"></i> Cập nhật nhanh
+          </h6>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <form id="quickEditForm" onsubmit="handleQuickEditSubmit(event)">
+          <div class="modal-body py-3">
+            <div class="fw-bold text-dark small mb-3 text-truncate" id="quickEditTitle">Tên sản phẩm</div>
+
+            <div class="mb-3">
+              <label for="quickEditPriceInput" class="form-label fw-semibold text-dark small mb-1">Giá bán (₫)</label>
+              <input type="number" class="form-control form-control-sm rounded-3" id="quickEditPriceInput" required min="1000" step="1000" />
+            </div>
+
+            <div class="mb-2">
+              <label for="quickEditStockInput" class="form-label fw-semibold text-dark small mb-1">Tồn kho</label>
+              <input type="number" class="form-control form-control-sm rounded-3" id="quickEditStockInput" required min="0" />
+              <div class="form-text small text-muted">Đặt = 0 để báo hết hàng.</div>
+            </div>
+
+            <input type="hidden" id="quickEditSkuTarget" />
+          </div>
+          <div class="modal-footer border-top bg-light py-2">
+            <button type="button" class="btn btn-outline-secondary btn-sm rounded-pill" data-bs-dismiss="modal">Hủy</button>
+            <button type="submit" class="btn btn-brand-accent btn-sm px-3 shadow-xs">Lưu thay đổi</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- =======================================================================
+       TOAST FEEDBACK
+       ======================================================================= -->
+  <div class="toast-container position-fixed bottom-0 end-0 p-3" style="z-index: 1080;">
+    <div id="sellerToast" class="toast align-items-center text-white bg-success border-0 shadow-lg" role="alert" aria-live="assertive" aria-atomic="true">
+      <div class="d-flex">
+        <div class="toast-body d-flex align-items-center gap-2">
+          <i class="bi bi-check-circle-fill fs-5"></i>
+          <div>
+            <div class="fw-bold" id="sellerToastTitle">Thành công!</div>
+            <div class="small text-white-50" id="sellerToastMsg">Dữ liệu sản phẩm đã được cập nhật.</div>
+          </div>
+        </div>
+        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+      </div>
+    </div>
+  </div>
+
+  <!-- =======================================================================
+       FOOTER FRAGMENT
+       ======================================================================= -->
+  <div th:replace="~{fragments/footer :: footer}">
+    <footer class="bg-dark text-light pt-4 pb-3 mt-5">
+      <div class="container text-center small text-secondary">
+        &copy; 2026 SENVIA MARKET. Kênh Người Bán - Đồ án giữa kỳ môn Mẫu thiết kế.
+      </div>
+    </footer>
+  </div>
+
+  <!-- Bootstrap 5.3 JS Bundle -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+  <!-- =======================================================================
+       INTERACTIVE CLIENT-SIDE JAVASCRIPT
+       ======================================================================= -->
+  <script>
+    let activeTab = 'ALL';
+    let searchTerm = '';
+    let categoryFilter = 'ALL';
+
+    // 1. Tab filtering
+    function filterTableByTab(tab) {
+      activeTab = tab;
+      document.querySelectorAll('#sellerFilterTabs .nav-link').forEach(btn => btn.classList.remove('active'));
+      event.target.classList.add('active');
+      applyAllFilters();
+    }
+
+    // 2. Search
+    function handleTableSearch(term) {
+      searchTerm = term.trim().toLowerCase();
+      applyAllFilters();
+    }
+
+    // 3. Category Filter
+    function handleCategoryFilter(cat) {
+      categoryFilter = cat;
+      applyAllFilters();
+    }
+
+    // 4. Apply all table filters
+    function applyAllFilters() {
+      const rows = document.querySelectorAll('#sellerTableBody tr');
+      let visible = 0;
+
+      rows.forEach(row => {
+        const status = row.getAttribute('data-status');
+        const cat = row.getAttribute('data-category');
+        const stock = parseInt(row.getAttribute('data-stock'), 10);
+        const name = row.getAttribute('data-name').toLowerCase();
+        const sku = row.getAttribute('data-sku').toLowerCase();
+
+        // Match Tab
+        let matchTab = true;
+        if (activeTab === 'ACTIVE') matchTab = (status === 'ACTIVE');
+        else if (activeTab === 'HIDDEN') matchTab = (status === 'HIDDEN');
+        else if (activeTab === 'LOW_STOCK') matchTab = (stock <= 5);
+
+        // Match Category
+        const matchCat = (categoryFilter === 'ALL') || (cat === categoryFilter);
+
+        // Match Search
+        const matchSearch = !searchTerm || name.includes(searchTerm) || sku.includes(searchTerm);
+
+        if (matchTab && matchCat && matchSearch) {
+          row.classList.remove('d-none');
+          visible++;
+        } else {
+          row.classList.add('d-none');
+        }
+      });
+
+      const emptyState = document.getElementById('tableEmptyState');
+      if (visible === 0) {
+        emptyState.classList.remove('d-none');
+      } else {
+        emptyState.classList.add('d-none');
+      }
+
+      document.getElementById('showingCountText').textContent = `Hiển thị ${visible} trên ${rows.length} sản phẩm`;
+    }
+
+    // 5. Toggle Product Status (Đang bán / Đã ẩn)
+    function toggleProductStatus(checkbox, productName) {
+      const row = checkbox.closest('tr');
+      const label = row.querySelector('.status-label');
+
+      if (checkbox.checked) {
+        row.setAttribute('data-status', 'ACTIVE');
+        label.textContent = 'Đang bán';
+        label.className = 'form-check-label small fw-semibold text-success status-label';
+        row.querySelector('.table-product-name').classList.remove('text-muted');
+        showToast('Đã mở bán', `Sản phẩm "${productName}" đã được kích hoạt hiển thị ngoài sàn.`);
+      } else {
+        row.setAttribute('data-status', 'HIDDEN');
+        label.textContent = 'Đã ẩn';
+        label.className = 'form-check-label small fw-semibold text-secondary status-label';
+        row.querySelector('.table-product-name').classList.add('text-muted');
+        showToast('Đã ẩn sản phẩm', `Sản phẩm "${productName}" đã được ẩn khỏi danh mục tìm kiếm.`, 'warning');
+      }
+      recalculateKPIs();
+    }
+
+    // 6. Quick Edit Stock / Price
+    function openQuickEdit(sku, title, price, stock) {
+      document.getElementById('quickEditTitle').textContent = title;
+      document.getElementById('quickEditPriceInput').value = price;
+      document.getElementById('quickEditStockInput').value = stock;
+      document.getElementById('quickEditSkuTarget').value = sku;
+
+      const modal = new bootstrap.Modal(document.getElementById('quickEditModal'));
+      modal.show();
+    }
+
+    function handleQuickEditSubmit(e) {
+      e.preventDefault();
+      const sku = document.getElementById('quickEditSkuTarget').value;
+      const newPrice = parseFloat(document.getElementById('quickEditPriceInput').value);
+      const newStock = parseInt(document.getElementById('quickEditStockInput').value, 10);
+
+      const row = document.querySelector(`#sellerTableBody tr[data-sku="${sku}"]`);
+      if (row) {
+        row.setAttribute('data-stock', newStock);
+
+        // Update Price cell
+        const priceCell = row.children[3];
+        priceCell.innerHTML = `<span class="fw-bold text-dark btn-quick-edit-trigger" onclick="openQuickEdit('${sku}', '${row.getAttribute('data-name')}', ${newPrice}, ${newStock})">
+          ${new Intl.NumberFormat('vi-VN').format(newPrice)} ₫ <i class="bi bi-pencil-fill small text-muted ms-1"></i>
+        </span>`;
+
+        // Update Stock cell
+        const stockCell = row.children[4];
+        if (newStock === 0) {
+          stockCell.innerHTML = `<span class="stock-badge-out btn-quick-edit-trigger" onclick="openQuickEdit('${sku}', '${row.getAttribute('data-name')}', ${newPrice}, ${newStock})"><i class="bi bi-x-circle-fill"></i> Hết hàng (0)</span>`;
+        } else if (newStock <= 5) {
+          stockCell.innerHTML = `<span class="stock-badge-low btn-quick-edit-trigger" onclick="openQuickEdit('${sku}', '${row.getAttribute('data-name')}', ${newPrice}, ${newStock})"><i class="bi bi-exclamation-triangle-fill"></i> Chỉ còn ${newStock}</span>`;
+        } else {
+          stockCell.innerHTML = `<span class="stock-badge-high btn-quick-edit-trigger" onclick="openQuickEdit('${sku}', '${row.getAttribute('data-name')}', ${newPrice}, ${newStock})"><i class="bi bi-check-circle-fill"></i> Còn ${newStock}</span>`;
+        }
+      }
+
+      const modalEl = document.getElementById('quickEditModal');
+      bootstrap.Modal.getInstance(modalEl).hide();
+
+      showToast('Cập nhật thành công', `Đã cập nhật tồn kho = ${newStock} và giá = ${new Intl.NumberFormat('vi-VN').format(newPrice)} ₫.`);
+      recalculateKPIs();
+    }
+
+    // 7. Delete Row
+    function deleteProductRow(btn, productName) {
+      if (confirm(`Bạn có chắc chắn muốn xóa sản phẩm "${productName}" khỏi gian hàng? Thao tác này không thể hoàn tác.`)) {
+        const row = btn.closest('tr');
+        row.remove();
+        showToast('Đã xóa', `Đã xóa sản phẩm "${productName}".`, 'danger');
+        recalculateKPIs();
+      }
+    }
+
+    // 8. Create Product Submit
+    function handleCreateProductSubmit(e) {
+      e.preventDefault();
+      const name = document.getElementById('newProductName').value;
+      const cat = document.getElementById('newProductCategory').value;
+      const price = parseFloat(document.getElementById('newProductPrice').value);
+      const stock = parseInt(document.getElementById('newProductStock').value, 10);
+      const sku = document.getElementById('newProductSku').value || `SKU-${Date.now().toString().slice(-4)}`;
+
+      // Append row to table
+      const tbody = document.getElementById('sellerTableBody');
+      const tr = document.createElement('tr');
+      tr.setAttribute('data-status', 'ACTIVE');
+      tr.setAttribute('data-category', cat);
+      tr.setAttribute('data-stock', stock);
+      tr.setAttribute('data-name', name);
+      tr.setAttribute('data-sku', sku);
+
+      tr.innerHTML = `
+        <td><input class="form-check-input row-check" type="checkbox" /></td>
+        <td>
+          <div class="d-flex align-items-center gap-3">
+            <img src="../../../../static/images/demo/product-tech-mechanical-keyboard.jpg" alt="Thumb" class="table-product-thumb" />
+            <div>
+              <a href="../../products/detail.html" class="table-product-name" title="${name}">${name}</a>
+              <div class="table-product-sku">SKU: ${sku}</div>
+            </div>
+          </div>
+        </td>
+        <td><span class="badge bg-light text-secondary border">${cat}</span></td>
+        <td>
+          <span class="fw-bold text-dark btn-quick-edit-trigger" onclick="openQuickEdit('${sku}', '${name}', ${price}, ${stock})">
+            ${new Intl.NumberFormat('vi-VN').format(price)} ₫ <i class="bi bi-pencil-fill small text-muted ms-1"></i>
+          </span>
+        </td>
+        <td>
+          <span class="${stock <= 5 ? 'stock-badge-low' : 'stock-badge-high'} btn-quick-edit-trigger" onclick="openQuickEdit('${sku}', '${name}', ${price}, ${stock})">
+            <i class="bi ${stock <= 5 ? 'bi-exclamation-triangle-fill' : 'bi-check-circle-fill'}"></i> Còn ${stock}
+          </span>
+        </td>
+        <td>
+          <div class="form-check form-switch">
+            <input class="form-check-input" type="checkbox" checked onchange="toggleProductStatus(this, '${name}')" />
+            <label class="form-check-label small fw-semibold text-success status-label">Đang bán</label>
+          </div>
+        </td>
+        <td>
+          <div class="small fw-semibold text-dark">0 đã bán</div>
+          <div class="small text-muted">Mới đăng</div>
+        </td>
+        <td class="text-end">
+          <div class="d-flex align-items-center justify-content-end gap-1">
+            <button type="button" class="btn-action-icon" onclick="openQuickEdit('${sku}', '${name}', ${price}, ${stock})">
+              <i class="bi bi-pencil-square"></i>
+            </button>
+            <button type="button" class="btn-action-icon text-danger" onclick="deleteProductRow(this, '${name}')">
+              <i class="bi bi-trash3"></i>
+            </button>
+          </div>
+        </td>
+      `;
+
+      tbody.prepend(tr);
+
+      // Close modal & reset form
+      const modalEl = document.getElementById('createProductModal');
+      bootstrap.Modal.getInstance(modalEl).hide();
+      document.getElementById('createProductForm').reset();
+
+      showToast('Đăng bán thành công!', `Sản phẩm "${name}" đã được thêm vào gian hàng của bạn.`);
+      recalculateKPIs();
+    }
+
+    // 9. Recalculate KPIs
+    function recalculateKPIs() {
+      const rows = document.querySelectorAll('#sellerTableBody tr');
+      let active = 0, low = 0, out = 0;
+
+      rows.forEach(r => {
+        const status = r.getAttribute('data-status');
+        const stock = parseInt(r.getAttribute('data-stock'), 10);
+        if (status === 'ACTIVE') active++;
+        if (stock === 0) out++;
+        else if (stock <= 5) low++;
+      });
+
+      document.getElementById('kpiTotal').textContent = rows.length;
+      document.getElementById('kpiActive').textContent = active;
+      document.getElementById('kpiLowStock').textContent = low;
+      document.getElementById('kpiOutOfStock').textContent = out;
+      applyAllFilters();
+    }
+
+    // 10. Check all checkbox
+    function toggleCheckAll(master) {
+      document.querySelectorAll('.row-check').forEach(cb => cb.checked = master.checked);
+    }
+
+    // 11. Image preview
+    function handlePreviewImage(input) {
+      if (input.files && input.files[0]) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          const container = document.getElementById('uploadedPreviewContainer');
+          container.innerHTML = `
+            <div class="preview-thumb-box">
+              <img src="${e.target.result}" alt="Uploaded preview" />
+              <span class="badge bg-success position-absolute bottom-0 start-0 m-1" style="font-size: 0.6rem;">Cloudinary OK</span>
+            </div>
+          `;
+        };
+        reader.readAsDataURL(input.files[0]);
+      }
+    }
+
+    // 12. Toast helper
+    function showToast(title, msg, type = 'success') {
+      const toastEl = document.getElementById('sellerToast');
+      document.getElementById('sellerToastTitle').textContent = title;
+      document.getElementById('sellerToastMsg').textContent = msg;
+
+      toastEl.className = `toast align-items-center text-white bg-${type} border-0 shadow-lg`;
+      new bootstrap.Toast(toastEl, { delay: 3000 }).show();
+    }
+  </script>
+
+</body>
+</html>

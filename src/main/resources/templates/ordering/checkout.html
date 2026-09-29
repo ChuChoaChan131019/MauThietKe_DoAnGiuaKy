@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Thanh toán đơn hàng - Sàn Thương Mại Điện Tử SENVIA</title>
+
+  <!-- Bootstrap 5.3 CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <!-- Bootstrap Icons -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
+  <!-- Core Design Tokens & Theme (Soft Editorial & Bento) -->
+  <link rel="stylesheet" th:href="@{/css/common/theme.css}" href="../../static/css/common/theme.css" />
+  <!-- Common Badges & Tokens -->
+  <link rel="stylesheet" th:href="@{/css/common/badges.css}" href="../../static/css/common/badges.css" />
+  <!-- Common Layout CSS -->
+  <link rel="stylesheet" th:href="@{/css/common/layout.css}" href="../../static/css/common/layout.css" />
+  <!-- Ordering Module Checkout CSS -->
+  <link rel="stylesheet" th:href="@{/css/modules/ordering/checkout.css}" href="../../static/css/modules/ordering/checkout.css" />
+</head>
+<body style="background-color: var(--color-bg-canvas, #f2f3f4); min-height: 100vh;">
+
+  <!-- =======================================================================
+       HEADER FRAGMENT
+       ======================================================================= -->
+  <div th:replace="~{fragments/header :: header}">
+    <header class="navbar navbar-expand-lg navbar-dark py-3 mb-4 shadow-sm" style="background-color: var(--color-primary, #323377);">
+      <div class="container">
+        <a class="navbar-brand fw-bold d-flex align-items-center gap-2 text-white" href="/">
+          <i class="bi bi-shop-window text-warning"></i> SENVIA MARKET
+        </a>
+        <div class="d-flex align-items-center gap-3">
+          <a href="/shopping/cart" class="btn btn-outline-light btn-sm rounded-pill px-3 d-flex align-items-center gap-1">
+            <i class="bi bi-arrow-left"></i> Quay lại giỏ hàng
+          </a>
+        </div>
+      </div>
+    </header>
+  </div>
+
+  <!-- =======================================================================
+       MAIN CONTAINER (BENTO EDITORIAL LAYOUT)
+       ======================================================================= -->
+  <main class="container mb-5">
+
+    <!-- Breadcrumb điều hướng -->
+    <nav aria-label="breadcrumb" class="mb-3">
+      <ol class="breadcrumb mb-0 small">
+        <li class="breadcrumb-item"><a href="/" class="text-decoration-none text-secondary">Trang chủ</a></li>
+        <li class="breadcrumb-item"><a href="/shopping/cart" class="text-decoration-none text-secondary">Giỏ hàng</a></li>
+        <li class="breadcrumb-item active text-dark fw-semibold" aria-current="page">Thanh toán</li>
+      </ol>
+    </nav>
+
+    <!-- Page Title & Checkout Stepper Bar (Bento Style) -->
+    <div class="card-modern checkout-header d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 p-3 p-md-4 mb-4">
+      <div>
+        <h1 class="checkout-title mb-1" style="font-size: 1.5rem; font-weight: 800; color: var(--color-primary, #323377);">
+          <i class="bi bi-credit-card"></i> Tiến hành đặt hàng & Thanh toán
+        </h1>
+        <p class="text-muted mb-0 small">
+          Vui lòng kiểm tra kỹ thông tin người nhận và lựa chọn phương thức thanh toán phù hợp
+        </p>
+      </div>
+
+      <!-- Stepper Indicator Bento -->
+      <div class="checkout-stepper p-2 rounded-3 bg-light border">
+        <div class="step-item completed">
+          <span class="step-number" style="background-color: var(--color-sage, #8cc3b2); color: #ffffff;"><i class="bi bi-check-lg"></i></span>
+          <span class="fw-semibold">1. Giỏ hàng</span>
+        </div>
+        <div class="step-divider" style="width: 32px; height: 2px; background-color: var(--color-primary, #323377);"></div>
+        <div class="step-item active">
+          <span class="step-number" style="background-color: var(--color-primary, #323377); color: #ffffff;">2</span>
+          <span class="fw-bold" style="color: var(--color-primary, #323377);">2. Đặt hàng</span>
+        </div>
+        <div class="step-divider" style="width: 32px; height: 2px; background-color: #e2e8f0;"></div>
+        <div class="step-item">
+          <span class="step-number" style="background-color: #e2e8f0; color: #64748b;">3</span>
+          <span class="text-muted">3. Hoàn tất</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Global Alert / Server Validation Feedback -->
+    <div th:if="${errorMessage}" class="alert alert-danger alert-dismissible fade show d-flex align-items-center gap-2 border-0 shadow-xs rounded-3 mb-4" role="alert">
+      <i class="bi bi-exclamation-triangle-fill fs-5 text-danger"></i>
+      <div>
+        <strong>Không thể hoàn tất đơn hàng:</strong>
+        <span th:text="${errorMessage}">Vui lòng kiểm tra lại thông tin nhận hàng và thử lại.</span>
+      </div>
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+
+    <!-- Form Checkout chính -->
+    <form th:action="@{/ordering/checkout/place-order}" method="post" id="checkoutForm">
+
+      <div class="row g-4">
+
+        <!-- ===================================================================
+             CỘT CHÍNH (8 COLS): THÔNG TIN NHẬN HÀNG, SẢN PHẨM & STRATEGY THANH TOÁN
+             =================================================================== -->
+        <div class="col-lg-8">
+
+          <!-- PHẦN 1: FORM NHẬP THÔNG TIN NHẬN HÀNG (Bento Card) -->
+          <section class="card-modern checkout-card">
+            <div class="checkout-card-header">
+              <i class="bi bi-geo-alt-fill text-danger fs-5"></i>
+              <h2 class="checkout-card-title">1. Thông tin giao nhận hàng</h2>
+            </div>
+            <div class="checkout-card-body">
+              <div class="row g-3">
+
+                <!-- Họ và tên người nhận -->
+                <div class="col-md-6">
+                  <label for="receiverName" class="form-label fw-semibold text-dark">
+                    Họ và tên người nhận <span class="text-danger">*</span>
+                  </label>
+                  <input type="text"
+                         class="form-control rounded-3"
+                         id="receiverName"
+                         name="receiverName"
+                         placeholder="Nguyễn Văn A"
+                         required
+                         maxlength="100"
+                         value="Nguyễn Văn A"
+                         th:value="${checkoutForm != null ? checkoutForm.receiverName : ''}"
+                         th:classappend="${#fields != null && #fields.hasErrors('checkoutForm.receiverName')} ? 'is-invalid' : ''" />
+                  <div class="invalid-feedback">Họ tên người nhận không được để trống.</div>
+                </div>
+
+                <!-- Số điện thoại người nhận -->
+                <div class="col-md-6">
+                  <label for="receiverPhone" class="form-label fw-semibold text-dark">
+                    Số điện thoại nhận hàng <span class="text-danger">*</span>
+                  </label>
+                  <div class="input-group">
+                    <span class="input-group-text bg-light border-end-0 rounded-start-3"><i class="bi bi-telephone text-secondary"></i></span>
+                    <input type="tel"
+                           class="form-control rounded-end-3 border-start-0"
+                           id="receiverPhone"
+                           name="receiverPhone"
+                           placeholder="0912345678"
+                           pattern="^(0|\+84)[3|5|7|8|9][0-9]{8}$"
+                           required
+                           value="0912345678"
+                           th:value="${checkoutForm != null ? checkoutForm.receiverPhone : ''}"
+                           th:classappend="${#fields != null && #fields.hasErrors('checkoutForm.receiverPhone')} ? 'is-invalid' : ''" />
+                  </div>
+                  <div class="invalid-feedback">Số điện thoại không hợp lệ (10 số, đầu số VN).</div>
+                </div>
+
+                <!-- Địa chỉ giao hàng chi tiết -->
+                <div class="col-12">
+                  <label for="shippingAddress" class="form-label fw-semibold text-dark">
+                    Địa chỉ nhận hàng chi tiết <span class="text-danger">*</span>
+                  </label>
+                  <textarea class="form-control rounded-3"
+                            id="shippingAddress"
+                            name="shippingAddress"
+                            rows="2"
+                            placeholder="Số nhà, ngõ/ngách, tên đường, Phường/Xã, Quận/Huyện, Tỉnh/Thành phố..."
+                            required
+                            th:text="${checkoutForm != null ? checkoutForm.shippingAddress : ''}"
+                            th:classappend="${#fields != null && #fields.hasErrors('checkoutForm.shippingAddress')} ? 'is-invalid' : ''">Số 123 Đường Cầu Giấy, Phường Dịch Vọng, Quận Cầu Giấy, Hà Nội</textarea>
+                  <div class="invalid-feedback">Địa chỉ giao hàng không được để trống.</div>
+                </div>
+
+                <!-- Ghi chú giao hàng -->
+                <div class="col-12">
+                  <label for="note" class="form-label fw-semibold text-secondary">
+                    Ghi chú đơn hàng <span class="small fw-normal text-muted">(Tùy chọn)</span>
+                  </label>
+                  <input type="text"
+                         class="form-control rounded-3"
+                         id="note"
+                         name="note"
+                         placeholder="Ví dụ: Giao hàng vào giờ hành chính, gọi trước khi giao..."
+                         maxlength="255"
+                         th:value="${checkoutForm != null ? checkoutForm.note : ''}" />
+                </div>
+
+              </div>
+            </div>
+          </section>
+
+
+          <!-- PHẦN 2: BẢNG TÓM TẮT SẢN PHẨM PHÂN THEO SHOP KÈM ĐƠN GIÁ SNAPSHOT (Bento Card) -->
+          <section class="card-modern checkout-card">
+            <div class="checkout-card-header justify-content-between">
+              <div class="d-flex align-items-center gap-2">
+                <i class="bi bi-box-seam-fill fs-5" style="color: var(--color-primary, #323377);"></i>
+                <h2 class="checkout-card-title">2. Danh sách kiện hàng theo Gian hàng</h2>
+              </div>
+              <span class="badge-soft badge-soft-primary">
+                Snapshot Đơn giá & Tách đơn (BR 08)
+              </span>
+            </div>
+
+            <div class="checkout-card-body p-3 p-md-4">
+              <p class="text-muted small mb-3">
+                <i class="bi bi-info-circle text-primary"></i> Đơn giá và tên sản phẩm được <strong>chụp lại (snapshot)</strong> tại thời điểm này để không thay đổi khi người bán cập nhật catalog sau này (Quy tắc BR 08).
+              </p>
+
+              <!-- DANH SÁCH CÁC GIAN HÀNG THAM GIA ĐƠN HÀNG -->
+              <div class="checkout-shop-block" id="shopGroup_1">
+
+                <!-- Tiêu đề Shop -->
+                <div class="checkout-shop-header bg-light bg-opacity-75">
+                  <div class="d-flex align-items-center gap-2">
+                    <i class="bi bi-shop text-primary"></i>
+                    <span class="fw-bold text-dark">Cửa Hàng Công Nghệ Số 1</span>
+                    <span class="badge-soft badge-soft-sage">Đã duyệt</span>
+                  </div>
+                  <span class="text-muted small d-none d-sm-inline">Kiện hàng 1</span>
+                </div>
+
+                <!-- Danh sách sản phẩm của Shop này -->
+                <div class="checkout-shop-items">
+
+                  <!-- Dòng sản phẩm 1 -->
+                  <div class="checkout-product-row">
+                    <img src="../../static/images/demo/product-tech-mechanical-keyboard.jpg"
+                         th:src="${item != null && item.imageUrl != null ? item.imageUrl : '/images/demo/product-tech-mechanical-keyboard.jpg'}"
+                         alt="Thumbnail"
+                         class="checkout-product-thumb rounded-3" />
+
+                    <div class="checkout-product-info">
+                      <div class="checkout-product-name fw-semibold text-dark">Bàn phím cơ không dây Bluetooth RGB cao cấp</div>
+                      <div class="checkout-product-meta small text-muted">
+                        Đơn giá snapshot:
+                        <span class="fw-semibold text-secondary">450.000 đ</span>
+                        <span class="mx-1">×</span>
+                        Số lượng:
+                        <strong class="text-dark">1</strong>
+                      </div>
+                    </div>
+
+                    <!-- Thành tiền dòng hàng -->
+                    <div class="checkout-product-subtotal" style="color: var(--color-accent, #d1588e); font-weight: 700;">
+                      450.000 đ
+                    </div>
+                  </div>
+
+                  <!-- Dòng sản phẩm 2 -->
+                  <div class="checkout-product-row">
+                    <img src="../../static/images/demo/product-tech-wireless-headphones.jpg"
+                         alt="Thumbnail"
+                         class="checkout-product-thumb rounded-3" />
+
+                    <div class="checkout-product-info">
+                      <div class="checkout-product-name fw-semibold text-dark">Tai nghe chụp tai chống ồn không dây Bass Boost</div>
+                      <div class="checkout-product-meta small text-muted">
+                        Đơn giá snapshot: <span class="fw-semibold text-secondary">200.000 đ</span>
+                        <span class="mx-1">×</span>
+                        Số lượng: <strong class="text-dark">2</strong>
+                      </div>
+                    </div>
+
+                    <div class="checkout-product-subtotal" style="color: var(--color-accent, #d1588e); font-weight: 700;">
+                      400.000 đ
+                    </div>
+                  </div>
+
+                </div>
+
+                <!-- Footer Shop: Tạm tính của Shop này -->
+                <div class="checkout-shop-footer bg-light bg-opacity-50">
+                  <span class="text-muted small">Tổng tiền kiện hàng 1:</span>
+                  <strong class="fs-6" style="color: var(--color-primary, #323377);">850.000 đ</strong>
+                </div>
+
+              </div>
+
+              <!-- KIỆN HÀNG THỨ 2 (Minh họa đa gian hàng tách đơn) -->
+              <div class="checkout-shop-block" id="shopGroup_2">
+                <div class="checkout-shop-header bg-light bg-opacity-75">
+                  <div class="d-flex align-items-center gap-2">
+                    <i class="bi bi-shop text-primary"></i>
+                    <span class="fw-bold text-dark">Gia Dụng Thông Minh ZenLife</span>
+                    <span class="badge-soft badge-soft-sage">Đã duyệt</span>
+                  </div>
+                  <span class="text-muted small d-none d-sm-inline">Kiện hàng 2</span>
+                </div>
+
+                <div class="checkout-shop-items">
+                  <div class="checkout-product-row">
+                    <img src="../../static/images/demo/product-household-coffeemaker.jpg" alt="Thumbnail" class="checkout-product-thumb rounded-3" />
+                    <div class="checkout-product-info">
+                      <div class="checkout-product-name fw-semibold text-dark">Bình giữ nhiệt Inox 316 hiển thị nhiệt độ thông minh</div>
+                      <div class="checkout-product-meta small text-muted">
+                        Đơn giá snapshot: <span class="fw-semibold text-secondary">150.000 đ</span>
+                        <span class="mx-1">×</span>
+                        Số lượng: <strong class="text-dark">1</strong>
+                      </div>
+                    </div>
+                    <div class="checkout-product-subtotal" style="color: var(--color-accent, #d1588e); font-weight: 700;">
+                      150.000 đ
+                    </div>
+                  </div>
+                </div>
+
+                <div class="checkout-shop-footer bg-light bg-opacity-50">
+                  <span class="text-muted small">Tổng tiền kiện hàng 2:</span>
+                  <strong class="fs-6" style="color: var(--color-primary, #323377);">150.000 đ</strong>
+                </div>
+              </div>
+
+            </div>
+          </section>
+
+
+          <!-- PHẦN 3: BỘ CHỌN PHƯƠNG THỨC THANH TOÁN (STRATEGY PATTERN - Bento Card) -->
+          <section class="card-modern checkout-card">
+            <div class="checkout-card-header justify-content-between">
+              <div class="d-flex align-items-center gap-2">
+                <i class="bi bi-wallet2 text-success fs-5"></i>
+                <h2 class="checkout-card-title">3. Phương thức thanh toán (Strategy Pattern)</h2>
+              </div>
+              <span class="badge-soft badge-soft-warning">
+                Mô phỏng thanh toán
+              </span>
+            </div>
+
+            <div class="checkout-card-body p-3 p-md-4">
+              <p class="text-muted small mb-3">
+                Hệ thống áp dụng <strong>Payment Strategy</strong> tương ứng để xử lý thanh toán mô phỏng (không kết nối ngân hàng thật - SRS PAY 04 & PAY 05).
+              </p>
+
+              <!-- STRATEGY 1: COD (Thanh toán khi nhận hàng) -->
+              <label class="payment-strategy-option" for="paymentCOD">
+                <input type="radio"
+                       name="paymentMethod"
+                       id="paymentCOD"
+                       value="COD"
+                       class="form-check-input"
+                       checked />
+                <div class="payment-card">
+                  <i class="bi bi-cash-stack payment-icon"></i>
+                  <div>
+                    <div class="payment-title d-flex align-items-center gap-2">
+                      Thanh toán khi nhận hàng (COD)
+                      <span class="badge-soft badge-soft-sage">Khuyên dùng</span>
+                    </div>
+                    <p class="payment-desc">
+                      Quý khách thanh toán tiền mặt trực tiếp cho bưu tá khi nhận được cả 2 kiện hàng. Không phát sinh phụ phí.
+                    </p>
+                  </div>
+                </div>
+              </label>
+
+              <!-- STRATEGY 2: BANK_TRANSFER (Chuyển khoản ngân hàng mô phỏng) -->
+              <label class="payment-strategy-option" for="paymentBank">
+                <input type="radio"
+                       name="paymentMethod"
+                       id="paymentBank"
+                       value="BANK_TRANSFER"
+                       class="form-check-input" />
+                <div class="payment-card">
+                  <i class="bi bi-qr-code-scan payment-icon"></i>
+                  <div>
+                    <div class="payment-title d-flex align-items-center gap-2">
+                      Chuyển khoản ngân hàng (Mô phỏng)
+                      <span class="badge-soft badge-soft-accent">Quét mã QR</span>
+                    </div>
+                    <p class="payment-desc">
+                      Chuyển tiền qua tài khoản ngân hàng hoặc quét mã VietQR mô phỏng. Mã tham chiếu giao dịch sẽ được tạo tự động.
+                    </p>
+                  </div>
+                </div>
+              </label>
+
+              <!-- KHỐI THÔNG TIN GIẢ LẬP KHI CHỌN BANK TRANSFER (Hiển thị bằng JS) -->
+              <div class="bank-transfer-simulation-box d-none" id="bankTransferSimulationBox">
+                <div class="d-flex align-items-center gap-2 fw-bold mb-1">
+                  <i class="bi bi-info-circle-fill" style="color: var(--color-primary, #323377);"></i>
+                  <span>Thông tin chuyển khoản ngân hàng giả lập (BankTransferStrategy)</span>
+                </div>
+                <div class="small text-muted mb-2">
+                  Sau khi bấm đặt hàng, quý khách có thể thực hiện thanh toán với cú pháp mô phỏng như sau:
+                </div>
+
+                <div class="bank-info-grid">
+                  <div>
+                    <div class="bank-info-label">Ngân hàng thụ hưởng</div>
+                    <div class="bank-info-value">Vietcombank (Demo)</div>
+                  </div>
+                  <div>
+                    <div class="bank-info-label">Số tài khoản</div>
+                    <div class="bank-info-value text-primary font-monospace">1900 8888 9999</div>
+                  </div>
+                  <div>
+                    <div class="bank-info-label">Tên chủ tài khoản</div>
+                    <div class="bank-info-value">SAN TMDT SENVIA</div>
+                  </div>
+                  <div>
+                    <div class="bank-info-label">Cú pháp nội dung</div>
+                    <div class="bank-info-value font-monospace" style="color: var(--color-accent, #d1588e);">ECOM_CHECKOUT</div>
+                  </div>
+                </div>
+
+                <small class="text-secondary d-block mt-2 fst-italic">
+                  * Lưu ý: Đây là hệ thống thanh toán giả lập học thuật, không trừ tiền từ tài khoản thật của quý khách.
+                </small>
+              </div>
+
+            </div>
+          </section>
+
+        </div>
+
+
+        <!-- ===================================================================
+             CỘT PHỤ (4 COLS): CARD TÓM TẮT THANH TOÁN (STICKY BENTO)
+             =================================================================== -->
+        <div class="col-lg-4">
+          <div class="card-modern checkout-summary-card">
+
+            <h3 class="checkout-summary-title">
+              <i class="bi bi-receipt" style="color: var(--color-primary, #323377);"></i> Tóm tắt thanh toán
+            </h3>
+
+            <!-- Thông báo số lượng đơn tạo ra -->
+            <div class="p-3 rounded-3 mb-3 small"
+                 style="background: rgba(50, 51, 119, 0.05); border: 1px solid rgba(50, 51, 119, 0.12);">
+              <div class="d-flex align-items-center gap-2 fw-semibold" style="color: var(--color-primary, #323377);">
+                <i class="bi bi-boxes"></i>
+                <span>Tách làm <span id="summaryShopCount">2</span> đơn hàng</span>
+              </div>
+              <div class="text-muted small mt-1">
+                Mỗi gian hàng sẽ nhận và xử lý độc lập một đơn hàng tương ứng.
+              </div>
+            </div>
+
+            <!-- Tổng tiền hàng -->
+            <div class="checkout-summary-row">
+              <span>Tổng tiền hàng:</span>
+              <span class="fw-semibold text-dark" id="summaryProductsTotal">1.000.000 đ</span>
+            </div>
+
+            <!-- Phí vận chuyển tạm tính -->
+            <div class="checkout-summary-row">
+              <span>Phí vận chuyển:</span>
+              <span class="badge-soft badge-soft-sage">Miễn phí giao hàng</span>
+            </div>
+
+            <!-- Phương thức đã chọn -->
+            <div class="checkout-summary-row">
+              <span>Phương thức chọn:</span>
+              <span class="fw-bold" style="color: var(--color-primary, #323377);" id="selectedStrategyDisplay">COD</span>
+            </div>
+
+            <!-- Tổng thanh toán cuối cùng -->
+            <div class="checkout-summary-total">
+              <div>
+                <span class="fw-bold text-dark d-block">Tổng thanh toán:</span>
+                <small class="text-muted" style="font-size: 0.775rem;">(Đã gồm thuế & phí)</small>
+              </div>
+              <div class="total-amount-display bento-stat-number" id="finalTotalAmount">
+                1.000.000 đ
+              </div>
+            </div>
+
+            <!-- Nút Submit Đặt hàng -->
+            <div class="mt-4">
+              <button type="submit"
+                      class="btn btn-brand-accent btn-place-order w-100 py-3 d-flex align-items-center justify-content-center gap-2 shadow-xs"
+                      id="btnSubmitOrder">
+                <span id="btnSubmitText">Xác nhận đặt hàng COD</span>
+                <i class="bi bi-shield-lock-fill" id="btnSubmitIcon"></i>
+                <span class="spinner-border spinner-border-sm d-none" id="submitSpinner" role="status" aria-hidden="true"></span>
+              </button>
+            </div>
+
+            <!-- Cam kết mua sắm & Bảo mật -->
+            <div class="mt-4 pt-3 border-top small text-muted">
+              <div class="d-flex align-items-center gap-2 mb-2">
+                <i class="bi bi-shield-check text-success fs-5"></i>
+                <span>Thông tin cá nhân & thanh toán được bảo mật</span>
+              </div>
+              <div class="d-flex align-items-center gap-2">
+                <i class="bi bi-arrow-counterclockwise text-primary fs-5"></i>
+                <span>Trừ tồn kho chính xác & hoàn kho nếu hủy đơn</span>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+
+    </form>
+
+  </main>
+
+  <!-- Footer Fragment -->
+  <div th:replace="~{fragments/footer :: footer}"></div>
+
+  <!-- Bootstrap 5.3 JS Bundle -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+  <!-- Interactive JavaScript: Payment Strategy Selection & Anti-Double Submit -->
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const radioCOD = document.getElementById('paymentCOD');
+      const radioBank = document.getElementById('paymentBank');
+      const bankSimulationBox = document.getElementById('bankTransferSimulationBox');
+      const selectedStrategyDisplay = document.getElementById('selectedStrategyDisplay');
+      const btnSubmitText = document.getElementById('btnSubmitText');
+      const btnSubmitOrder = document.getElementById('btnSubmitOrder');
+      const submitSpinner = document.getElementById('submitSpinner');
+      const btnSubmitIcon = document.getElementById('btnSubmitIcon');
+      const checkoutForm = document.getElementById('checkoutForm');
+
+      // Hàm cập nhật trạng thái giao diện theo Strategy được chọn
+      function updatePaymentStrategyUI() {
+        if (radioBank && radioBank.checked) {
+          // Bật khung mô phỏng chuyển khoản
+          bankSimulationBox.classList.remove('d-none');
+          selectedStrategyDisplay.textContent = 'Chuyển khoản (Mô phỏng)';
+          btnSubmitText.textContent = 'Tiến hành chuyển khoản & Đặt hàng';
+        } else {
+          // Trở về COD
+          bankSimulationBox.classList.add('d-none');
+          selectedStrategyDisplay.textContent = 'COD (Tiền mặt)';
+          btnSubmitText.textContent = 'Xác nhận đặt hàng COD';
+        }
+      }
+
+      // Lắng nghe sự kiện chuyển đổi giữa các Strategy
+      if (radioCOD) {
+        radioCOD.addEventListener('change', updatePaymentStrategyUI);
+      }
+      if (radioBank) {
+        radioBank.addEventListener('change', updatePaymentStrategyUI);
+      }
+
+      // Anti Double-Submit: Khi form submit, vô hiệu hóa nút và hiện spinner
+      if (checkoutForm) {
+        checkoutForm.addEventListener('submit', function (e) {
+          if (checkoutForm.checkValidity()) {
+            btnSubmitOrder.disabled = true;
+            btnSubmitText.textContent = 'Đang xử lý tạo đơn hàng...';
+            btnSubmitIcon.classList.add('d-none');
+            submitSpinner.classList.remove('d-none');
+
+            // Static preview fallback: tự động điều hướng sang trang Đơn mua của tôi
+            if (window.location.protocol === 'file:' || window.location.pathname.endsWith('.html')) {
+              e.preventDefault();
+              setTimeout(function () {
+                window.location.href = 'buyer/orders.html';
+              }, 800);
+            }
+          }
+        });
+      }
+
+      // Khởi tạo ban đầu
+      updatePaymentStrategyUI();
+    });
+  </script>
+</body>
+</html>

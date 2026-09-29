@@ -1,0 +1,718 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dashboard Thống kê Quản trị Sàn - SENVIA E-Commerce</title>
+
+  <!-- Bootstrap 5.3 CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <!-- Bootstrap Icons -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
+  <!-- Core Design Tokens & Theme (Soft Editorial & Bento) -->
+  <link rel="stylesheet" th:href="@{/css/common/theme.css}" href="../../../static/css/common/theme.css" />
+  <!-- Common Badges & Tokens -->
+  <link rel="stylesheet" th:href="@{/css/common/badges.css}" href="../../../static/css/common/badges.css" />
+  <!-- Common Layout CSS -->
+  <link rel="stylesheet" th:href="@{/css/common/layout.css}" href="../../../static/css/common/layout.css" />
+  <!-- Admin Dashboard CSS -->
+  <link rel="stylesheet" th:href="@{/css/modules/engagement/admin-dashboard.css}" href="../../../static/css/modules/engagement/admin-dashboard.css" />
+</head>
+<body style="background-color: var(--color-bg-canvas, #f2f3f4); min-height: 100vh;">
+
+  <!-- =======================================================================
+       HEADER FRAGMENT
+       ======================================================================= -->
+  <div th:replace="~{fragments/header :: header}">
+    <header class="navbar navbar-expand-lg navbar-dark py-3 mb-4 shadow-sm" style="background-color: var(--color-primary, #323377);">
+      <div class="container">
+        <a class="navbar-brand fw-bold d-flex align-items-center gap-2 text-white" href="/">
+          <i class="bi bi-shop-window text-warning"></i> SENVIA MARKET
+        </a>
+      </div>
+    </header>
+  </div>
+
+  <!-- =======================================================================
+       MAIN CONTAINER (BENTO GRID ARCHITECTURE)
+       ======================================================================= -->
+  <main class="container my-4">
+
+    <!-- Breadcrumb điều hướng -->
+    <nav aria-label="breadcrumb" class="mb-3">
+      <ol class="breadcrumb mb-0 small">
+        <li class="breadcrumb-item"><a href="/" class="text-decoration-none text-secondary">Trang chủ</a></li>
+        <li class="breadcrumb-item"><a href="#" class="text-decoration-none text-secondary">Khu vực Quản trị</a></li>
+        <li class="breadcrumb-item active text-dark fw-semibold" aria-current="page">Dashboard Thống kê Sàn</li>
+      </ol>
+    </nav>
+
+    <!-- Banner Kiến Trúc Đồ Án (Soft Editorial Insight Banner - SRS STAT 05) -->
+    <div class="card-modern d-flex flex-column flex-md-row align-items-md-center gap-3 p-3 p-md-4 mb-4"
+         style="background: linear-gradient(135deg, rgba(50, 51, 119, 0.05) 0%, rgba(140, 195, 178, 0.12) 100%); border-left: 5px solid var(--color-primary, #323377);">
+      <div class="d-flex align-items-center justify-content-center rounded-4 flex-shrink-0"
+           style="width: 52px; height: 52px; background: rgba(50, 51, 119, 0.12); color: var(--color-primary, #323377); font-size: 1.6rem;">
+        <i class="bi bi-cpu-fill"></i>
+      </div>
+      <div class="flex-grow-1 small">
+        <div class="d-flex flex-wrap align-items-center gap-2 mb-1">
+          <h6 class="fw-bold mb-0 text-dark">
+            Trung Tâm Tổng Hợp Quản Trị Hệ Thống (Module Engagement - SRS STAT 05)
+          </h6>
+          <span class="badge-soft badge-soft-primary">Modular Monolith</span>
+          <span class="badge-soft badge-soft-sage">Observer Pattern</span>
+        </div>
+        <div class="text-secondary leading-relaxed">
+          Màn hình Dashboard đóng vai trò tổng hợp số liệu toàn sàn bằng cách giao tiếp thông qua <strong>Public API / Contract</strong> của các module
+          <code>merchant.api</code>, <code>ordering.api</code> và <code>identity.api</code>. Không import Entity hoặc Repository nội bộ chéo module, đảm bảo tính đóng gói tuyệt đối của kiến trúc Modular Monolith.
+        </div>
+      </div>
+    </div>
+
+    <!-- Header Dashboard & Bộ Lọc Thời Gian (Bento Editorial Bar) -->
+    <div class="card-modern admin-dash-header d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 p-4 mb-4">
+      <div>
+        <div class="d-flex align-items-center gap-2 mb-1">
+          <h1 class="admin-dash-title mb-0">
+            <i class="bi bi-speedometer2" style="color: var(--color-primary, #323377);"></i> Tổng Quan Sàn Thương Mại Điện Tử
+          </h1>
+          <span class="badge-soft badge-soft-danger">ADMIN CONSOLE</span>
+        </div>
+        <p class="text-muted small mb-0">
+          Số liệu kinh doanh, trạng thái vòng đời gian hàng và phân tích mẫu thiết kế toàn sàn SENVIA.
+        </p>
+      </div>
+
+      <!-- Toolbar điều khiển thời gian -->
+      <div class="d-flex flex-wrap align-items-center gap-2">
+        <div class="btn-group btn-group-sm p-1 rounded-3 bg-white border" role="group" id="dateFilterGroup" style="box-shadow: 0 1px 3px rgba(0,0,0,0.04);">
+          <button type="button" class="btn btn-sm btn-link text-secondary text-decoration-none fw-medium py-1 px-3 rounded-2" data-range="today">Hôm nay</button>
+          <button type="button" class="btn btn-sm btn-link text-secondary text-decoration-none fw-medium py-1 px-3 rounded-2" data-range="7days">7 ngày qua</button>
+          <button type="button" class="btn btn-sm btn-brand-primary py-1 px-3 active shadow-xs" data-range="month">Tháng 9/2026</button>
+        </div>
+
+        <button type="button" class="btn btn-outline-secondary btn-sm p-2 rounded-3" id="refreshBtn" title="Làm mới số liệu">
+          <i class="bi bi-arrow-clockwise fs-6"></i>
+        </button>
+
+        <button type="button" class="btn btn-brand-accent btn-sm shadow-xs" id="exportBtn">
+          <i class="bi bi-file-earmark-excel-fill"></i> Xuất Báo Cáo
+        </button>
+      </div>
+    </div>
+
+
+    <!-- =======================================================================
+         BENTO GRID: 4 THẺ CHỈ SỐ KPI CHÍNH (KEY PERFORMANCE INDICATORS)
+         ======================================================================= -->
+    <div class="row g-3 g-xl-4 mb-4">
+
+      <!-- Bento KPI 1: Doanh Thu Toàn Sàn (GMV) - Sage Accent Highlight -->
+      <div class="col-12 col-sm-6 col-lg-3">
+        <div class="card-modern kpi-card">
+          <div class="kpi-card-header">
+            <span class="kpi-title bento-stat-label">Tổng Doanh Thu Sàn</span>
+            <div class="kpi-icon-badge" style="background: rgba(140, 195, 178, 0.22); color: #1b6852;">
+              <i class="bi bi-currency-dollar"></i>
+            </div>
+          </div>
+          <div class="kpi-number bento-stat-number" id="kpiGmv">248.500.000 ₫</div>
+          <div class="d-flex justify-content-between align-items-center mt-2">
+            <span class="badge-soft badge-soft-sage">
+              <i class="bi bi-arrow-up-right"></i> +18.5%
+            </span>
+            <span class="small text-muted" title="Doanh thu chỉ tính từ đơn COMPLETED (BR 14)">Chỉ tính COMPLETED</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Bento KPI 2: Tổng Đơn Hàng - Rose Accent Highlight -->
+      <div class="col-12 col-sm-6 col-lg-3">
+        <div class="card-modern kpi-card">
+          <div class="kpi-card-header">
+            <span class="kpi-title bento-stat-label">Tổng Số Đơn Hàng</span>
+            <div class="kpi-icon-badge" style="background: rgba(209, 88, 142, 0.16); color: #d1588e;">
+              <i class="bi bi-bag-check-fill"></i>
+            </div>
+          </div>
+          <div class="kpi-number bento-stat-number" id="kpiOrders">1.428</div>
+          <div class="d-flex justify-content-between align-items-center mt-2">
+            <span class="badge-soft badge-soft-accent">
+              <i class="bi bi-arrow-up-right"></i> +12.3%
+            </span>
+            <span class="small text-muted">1.250 đơn hoàn tất</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Bento KPI 3: Hồ Sơ Gian Hàng - Deep Indigo Primary Highlight -->
+      <div class="col-12 col-sm-6 col-lg-3">
+        <div class="card-modern kpi-card">
+          <div class="kpi-card-header">
+            <span class="kpi-title bento-stat-label">Gian Hàng Liên Kết</span>
+            <div class="kpi-icon-badge" style="background: rgba(50, 51, 119, 0.12); color: var(--color-primary, #323377);">
+              <i class="bi bi-shop-window"></i>
+            </div>
+          </div>
+          <div class="kpi-number bento-stat-number" id="kpiShops">35</div>
+          <div class="d-flex justify-content-between align-items-center mt-2">
+            <span class="badge-soft badge-soft-warning">
+              <i class="bi bi-hourglass-split"></i> 4 Chờ duyệt
+            </span>
+            <a th:href="@{/merchant/admin/shops}" href="../../merchant/admin/shops.html" class="small text-decoration-none fw-semibold" style="color: var(--color-primary, #323377);">
+              Duyệt ngay &rarr;
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Bento KPI 4: Sản Phẩm & Đánh Giá - Warm Amber Highlight -->
+      <div class="col-12 col-sm-6 col-lg-3">
+        <div class="card-modern kpi-card">
+          <div class="kpi-card-header">
+            <span class="kpi-title bento-stat-label">Sản Phẩm & Đánh Giá</span>
+            <div class="kpi-icon-badge" style="background: #fef3c7; color: #b45309;">
+              <i class="bi bi-box-seam-fill"></i>
+            </div>
+          </div>
+          <div class="kpi-number bento-stat-number" id="kpiProducts">682</div>
+          <div class="d-flex justify-content-between align-items-center mt-2">
+            <span class="badge-soft badge-soft-sage fw-bold">
+              <i class="bi bi-star-fill text-warning"></i> 4.8 / 5.0
+            </span>
+            <span class="small text-muted">1.150 đánh giá</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+
+    <!-- =======================================================================
+         BENTO CELLS: HAI MẪU THIẾT KẾ CỐT LÕI (STATE PATTERN & STRATEGY PATTERN)
+         ======================================================================= -->
+    <div class="row g-4 mb-4">
+
+      <!-- BENTO CELL 1: STATE PATTERN - VÒNG ĐỜI GIAN HÀNG -->
+      <div class="col-lg-6">
+        <div class="card-modern pattern-metric-card h-100 p-4">
+          <div class="d-flex justify-content-between align-items-center mb-2">
+            <h6 class="fw-bold mb-0 text-dark d-flex align-items-center gap-2">
+              <i class="bi bi-diagram-3-fill" style="color: var(--color-primary, #323377);"></i> Vòng Đời Gian Hàng (State Pattern)
+            </h6>
+            <span class="badge-soft badge-soft-primary">Tổng 35 Shop</span>
+          </div>
+          <p class="small text-muted mb-3">
+            Minh họa vòng đời gian hàng trong hệ thống qua 4 State độc lập (BR 03, BR 04, SHOP 01-08).
+          </p>
+
+          <!-- Thanh tiến trình đa phân đoạn Bento (Multi-segment bar) -->
+          <div class="progress-multi-segment" style="height: 12px; border-radius: 9999px;">
+            <div style="background-color: var(--color-sage, #8cc3b2); width: 80%" title="APPROVED: 28 shop (80%)"></div>
+            <div class="bg-warning" style="width: 11.4%" title="PENDING: 4 shop (11.4%)"></div>
+            <div class="bg-danger" style="width: 5.7%" title="REJECTED: 2 shop (5.7%)"></div>
+            <div style="background-color: var(--color-primary, #323377); width: 2.9%" title="LOCKED: 1 shop (2.9%)"></div>
+          </div>
+
+          <!-- Chú thích số liệu chi tiết với thẻ mềm Bento -->
+          <div class="row g-2 pt-3">
+            <div class="col-6 col-sm-3">
+              <div class="p-2 rounded-3 bg-light border text-center">
+                <span class="legend-color-dot d-inline-block rounded-circle me-1" style="background-color: var(--color-sage, #8cc3b2); width: 8px; height: 8px;"></span>
+                <span class="small fw-semibold text-dark"><strong>28</strong> Approved</span>
+                <div class="text-muted" style="font-size: 0.725rem;">(80.0%)</div>
+              </div>
+            </div>
+            <div class="col-6 col-sm-3">
+              <div class="p-2 rounded-3 bg-light border text-center">
+                <span class="legend-color-dot d-inline-block rounded-circle me-1 bg-warning" style="width: 8px; height: 8px;"></span>
+                <span class="small fw-semibold text-dark"><strong>4</strong> Pending</span>
+                <div class="text-muted" style="font-size: 0.725rem;">(11.4%)</div>
+              </div>
+            </div>
+            <div class="col-6 col-sm-3">
+              <div class="p-2 rounded-3 bg-light border text-center">
+                <span class="legend-color-dot d-inline-block rounded-circle me-1 bg-danger" style="width: 8px; height: 8px;"></span>
+                <span class="small fw-semibold text-dark"><strong>2</strong> Rejected</span>
+                <div class="text-muted" style="font-size: 0.725rem;">(5.7%)</div>
+              </div>
+            </div>
+            <div class="col-6 col-sm-3">
+              <div class="p-2 rounded-3 bg-light border text-center">
+                <span class="legend-color-dot d-inline-block rounded-circle me-1" style="background-color: var(--color-primary, #323377); width: 8px; height: 8px;"></span>
+                <span class="small fw-semibold text-dark"><strong>1</strong> Locked</span>
+                <div class="text-muted" style="font-size: 0.725rem;">(2.9%)</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Hộp nhắc nhở hành động phê duyệt -->
+          <div class="mt-3 p-3 rounded-3 d-flex align-items-center justify-content-between small"
+               style="background: #fffbeb; border: 1px solid #fde68a;">
+            <div class="d-flex align-items-center gap-2">
+              <i class="bi bi-bell-fill text-warning fs-5"></i>
+              <span>Có <strong>4 hồ sơ gian hàng</strong> đang đợi Admin thẩm định!</span>
+            </div>
+            <a th:href="@{/merchant/admin/shops}" href="../../merchant/admin/shops.html" class="btn btn-brand-accent btn-sm py-1 px-3 fw-semibold">
+              Xử lý ngay
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- BENTO CELL 2: STRATEGY PATTERN - PHƯƠNG THỨC THANH TOÁN -->
+      <div class="col-lg-6">
+        <div class="card-modern pattern-metric-card h-100 p-4">
+          <div class="d-flex justify-content-between align-items-center mb-2">
+            <h6 class="fw-bold mb-0 text-dark d-flex align-items-center gap-2">
+              <i class="bi bi-wallet2 text-success"></i> Cơ Cấu Thanh Toán (Strategy Pattern)
+            </h6>
+            <span class="badge-soft badge-soft-accent">Tổng 1.428 Đơn</span>
+          </div>
+          <p class="small text-muted mb-3">
+            Tách biệt thuật toán thanh toán qua <code>PaymentStrategy</code> (COD vs BANK_TRANSFER - PAY 01-04).
+          </p>
+
+          <!-- Thanh tiến trình thanh toán Bento -->
+          <div class="progress-multi-segment" style="height: 12px; border-radius: 9999px;">
+            <div style="background-color: var(--color-primary, #323377); width: 58%" title="COD Strategy: 828 đơn (58%)"></div>
+            <div style="background-color: var(--color-accent, #d1588e); width: 42%" title="Bank Transfer Strategy: 600 đơn (42%)"></div>
+          </div>
+
+          <!-- Chú thích chi tiết từng Strategy -->
+          <div class="row g-2 pt-3">
+            <div class="col-6">
+              <div class="p-3 rounded-3 bg-light border d-flex align-items-center gap-3">
+                <div class="rounded-3 p-2 d-flex align-items-center justify-content-center" style="background: rgba(50, 51, 119, 0.12); color: var(--color-primary, #323377);">
+                  <i class="bi bi-cash-stack fs-4"></i>
+                </div>
+                <div>
+                  <div class="fw-bold small text-dark">COD Strategy</div>
+                  <div class="small text-muted">828 đơn (58.0%)</div>
+                  <div class="fw-bold text-dark" style="font-size: 0.85rem;">144.130.000 ₫</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-6">
+              <div class="p-3 rounded-3 bg-light border d-flex align-items-center gap-3">
+                <div class="rounded-3 p-2 d-flex align-items-center justify-content-center" style="background: rgba(209, 88, 142, 0.14); color: var(--color-accent, #d1588e);">
+                  <i class="bi bi-bank fs-4"></i>
+                </div>
+                <div>
+                  <div class="fw-bold small text-dark">Bank Transfer Strategy</div>
+                  <div class="small text-muted">600 đơn (42.0%)</div>
+                  <div class="fw-bold text-dark" style="font-size: 0.85rem;">104.370.000 ₫</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Ghi chú kiến trúc hệ thống -->
+          <div class="mt-3 p-2 px-3 rounded-3 d-flex align-items-center justify-content-between small text-muted bg-light border">
+            <div>
+              <i class="bi bi-shield-check text-success me-1"></i>
+              <span>Cả 2 chiến lược thanh toán mô phỏng đều cập nhật trạng thái đơn độc lập.</span>
+            </div>
+            <a th:href="@{/ordering/checkout}" href="../../ordering/checkout.html" class="small text-decoration-none fw-semibold" style="color: var(--color-primary, #323377);">
+              Xem Checkout &rarr;
+            </a>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+
+    <!-- =======================================================================
+         BENTO BẤT ĐỐI XỨNG: BIỂU ĐỒ 7 NGÀY (7 COLS) & DÒNG SỰ KIỆN OBSERVER (5 COLS)
+         ======================================================================= -->
+    <div class="row g-4 mb-4">
+
+      <!-- CỘT TRÁI (7 COLS): BIỂU ĐỒ DOANH THU 7 NGÀY QUA -->
+      <div class="col-lg-7">
+        <div class="card-modern chart-container-card p-4 h-100">
+          <div class="d-flex justify-content-between align-items-center mb-1">
+            <h6 class="fw-bold mb-0 text-dark d-flex align-items-center gap-2">
+              <i class="bi bi-bar-chart-fill" style="color: var(--color-primary, #323377);"></i> Xu Hướng Doanh Thu 7 Ngày Gần Nhất
+            </h6>
+            <span class="badge-soft badge-soft-sage">Đơn vị: Triệu VNĐ</span>
+          </div>
+          <p class="small text-muted mb-0">Biểu đồ cột CSS tinh gọn, đáp ứng tiêu chí nghiệm thu SRS STAT 05.</p>
+
+          <!-- Khung biểu đồ cột Bento -->
+          <div class="bar-chart-grid my-3">
+            <div class="bar-chart-column">
+              <div class="bar-chart-pillar" style="height: 45%" data-tooltip="T2: 28 Triệu ₫"></div>
+              <div class="bar-chart-label">T2 (23/9)</div>
+            </div>
+
+            <div class="bar-chart-column">
+              <div class="bar-chart-pillar" style="height: 52%" data-tooltip="T3: 32 Triệu ₫"></div>
+              <div class="bar-chart-label">T3 (24/9)</div>
+            </div>
+
+            <div class="bar-chart-column">
+              <div class="bar-chart-pillar" style="height: 58%" data-tooltip="T4: 36 Triệu ₫"></div>
+              <div class="bar-chart-label">T4 (25/9)</div>
+            </div>
+
+            <div class="bar-chart-column">
+              <div class="bar-chart-pillar" style="height: 66%" data-tooltip="T5: 41 Triệu ₫"></div>
+              <div class="bar-chart-label">T5 (26/9)</div>
+            </div>
+
+            <div class="bar-chart-column">
+              <div class="bar-chart-pillar" style="height: 78%" data-tooltip="T6: 48 Triệu ₫"></div>
+              <div class="bar-chart-label">T6 (27/9)</div>
+            </div>
+
+            <div class="bar-chart-column">
+              <div class="bar-chart-pillar" style="height: 88%" data-tooltip="T7: 55 Triệu ₫"></div>
+              <div class="bar-chart-label">T7 (28/9)</div>
+            </div>
+
+            <!-- Cột đỉnh hôm nay với điểm nhấn Accent Vibrant Rose -->
+            <div class="bar-chart-column">
+              <div class="bar-chart-pillar pillar-peak" style="height: 100%" data-tooltip="CN: 62 Triệu ₫"></div>
+              <div class="bar-chart-label fw-bold" style="color: var(--color-accent, #d1588e);">Hôm nay</div>
+            </div>
+          </div>
+
+          <div class="d-flex flex-wrap justify-content-between align-items-center small text-muted pt-2 border-top">
+            <span><i class="bi bi-record-circle-fill fs-6 align-middle" style="color: var(--color-accent, #d1588e);"></i> Ngày cao nhất: <strong>Chủ Nhật (62.000.000 ₫)</strong></span>
+            <span>Doanh thu trung bình: <strong>43.1 Tr/ngày</strong></span>
+          </div>
+        </div>
+      </div>
+
+      <!-- CỘT PHẢI (5 COLS): NHẬT KÝ SỰ KIỆN NỘI BỘ (OBSERVER EVENT STREAM) -->
+      <div class="col-lg-5">
+        <div class="card-modern observer-log-card p-4 h-100">
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <h6 class="fw-bold mb-0 text-dark d-flex align-items-center gap-2">
+              <i class="bi bi-activity" style="color: var(--color-accent, #d1588e);"></i> Sự Kiện Hệ Thống (Observer)
+            </h6>
+            <a th:href="@{/engagement/notifications}" href="../notifications/index.html" class="small text-decoration-none fw-semibold" style="color: var(--color-primary, #323377);">
+              Xem tất cả &rarr;
+            </a>
+          </div>
+
+          <!-- Timeline sự kiện Observer -->
+          <div class="event-timeline">
+
+            <!-- Sự kiện 1: ShopRequested -->
+            <div class="event-timeline-item">
+              <div class="event-timeline-dot bg-warning"></div>
+              <div class="d-flex justify-content-between align-items-center">
+                <span class="badge-soft badge-soft-warning">
+                  ShopRequested
+                </span>
+                <span class="event-meta-time">5 phút trước</span>
+              </div>
+              <div class="small text-dark mt-1">
+                Người dùng <strong>Trần Thị B</strong> vừa nộp hồ sơ mở gian hàng <em>Aura Fashion House</em> (PENDING).
+              </div>
+            </div>
+
+            <!-- Sự kiện 2: OrderCreated -->
+            <div class="event-timeline-item">
+              <div class="event-timeline-dot" style="background-color: var(--color-primary, #323377);"></div>
+              <div class="d-flex justify-content-between align-items-center">
+                <span class="badge-soft badge-soft-primary">
+                  OrderCreated
+                </span>
+                <span class="event-meta-time">18 phút trước</span>
+              </div>
+              <div class="small text-dark mt-1">
+                Đơn hàng <strong>#ORD-9086</strong> được đặt thành công tại <em>TechZone Official</em> (Strategy: COD).
+              </div>
+            </div>
+
+            <!-- Sự kiện 3: OrderStatusChanged -->
+            <div class="event-timeline-item">
+              <div class="event-timeline-dot" style="background-color: var(--color-sage, #8cc3b2);"></div>
+              <div class="d-flex justify-content-between align-items-center">
+                <span class="badge-soft badge-soft-sage">
+                  OrderStatusChanged
+                </span>
+                <span class="event-meta-time">45 phút trước</span>
+              </div>
+              <div class="small text-dark mt-1">
+                Đơn hàng <strong>#ORD-9082</strong> chuyển sang trạng thái <strong>COMPLETED</strong>. Doanh thu được ghi nhận.
+              </div>
+            </div>
+
+            <!-- Sự kiện 4: ReviewCreated -->
+            <div class="event-timeline-item">
+              <div class="event-timeline-dot" style="background-color: var(--color-accent, #d1588e);"></div>
+              <div class="d-flex justify-content-between align-items-center">
+                <span class="badge-soft badge-soft-accent">
+                  ReviewCreated
+                </span>
+                <span class="event-meta-time">2 giờ trước</span>
+              </div>
+              <div class="small text-dark mt-1">
+                Khách hàng đánh giá 5★ cho sản phẩm <em>Bàn phím cơ RGB Bluetooth</em>.
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+
+    <!-- =======================================================================
+         BENTO CELL: BẢNG XẾP HẠNG GIAN HÀNG TIÊU BIỂU (TOP PERFORMING SHOPS)
+         ======================================================================= -->
+    <div class="card-modern p-4 mb-4">
+      <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-2 mb-3">
+        <div>
+          <h5 class="fw-bold mb-1 text-dark d-flex align-items-center gap-2">
+            <i class="bi bi-trophy-fill text-warning"></i> Bảng Xếp Hạng Gian Hàng Tiêu Biểu (Top Performing Shops)
+          </h5>
+          <p class="small text-muted mb-0">Thống kê doanh số bán hàng và độ hài lòng của khách hàng trên toàn sàn SENVIA.</p>
+        </div>
+
+        <a th:href="@{/merchant/admin/shops}" href="../../merchant/admin/shops.html" class="btn btn-brand-primary btn-sm">
+          <i class="bi bi-list-check"></i> Quản lý toàn bộ Gian Hàng
+        </a>
+      </div>
+
+      <!-- Bảng Top Gian hàng với viền mềm không đường kẻ thô -->
+      <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+          <thead class="table-light">
+            <tr class="text-secondary small">
+              <th scope="col" style="width: 50px;">#</th>
+              <th scope="col">Gian hàng</th>
+              <th scope="col">Chủ sở hữu</th>
+              <th scope="col">Trạng thái (State)</th>
+              <th scope="col" class="text-end">Tổng đơn</th>
+              <th scope="col" class="text-end">Doanh thu sàn</th>
+              <th scope="col" class="text-center">Đánh giá</th>
+              <th scope="col" class="text-center" style="width: 120px;">Thao tác</th>
+            </tr>
+          </thead>
+          <tbody>
+
+            <!-- Hàng 1: TechZone -->
+            <tr>
+              <td class="fw-bold" style="color: var(--color-primary, #323377);">1</td>
+              <td>
+                <div class="d-flex align-items-center gap-2">
+                  <img src="../../../static/images/demo/logo-techzone.png"
+                       th:src="@{/images/demo/logo-techzone.png}"
+                       alt="TechZone Logo"
+                       class="rounded-circle border"
+                       style="width: 36px; height: 36px; object-fit: cover;" />
+                  <div>
+                    <div class="fw-semibold text-dark">TechZone Official Store</div>
+                    <div class="small text-muted">Phụ kiện & Thiết bị số</div>
+                  </div>
+                </div>
+              </td>
+              <td class="small text-secondary">Nguyễn Văn A</td>
+              <td>
+                <span class="badge-soft badge-soft-sage">
+                  <i class="bi bi-check-circle-fill"></i> APPROVED
+                </span>
+              </td>
+              <td class="text-end fw-semibold text-dark">845</td>
+              <td class="text-end fw-bold" style="color: var(--color-accent, #d1588e);">142.500.000 ₫</td>
+              <td class="text-center text-warning small fw-bold">
+                <i class="bi bi-star-fill"></i> 4.9 <span class="text-muted fw-normal">(520)</span>
+              </td>
+              <td class="text-center">
+                <a th:href="@{/merchant/admin/shops}" href="../../merchant/admin/shops.html" class="btn btn-outline-secondary btn-sm py-1 px-3 rounded-pill" title="Xem chi tiết">
+                  Chi tiết
+                </a>
+              </td>
+            </tr>
+
+            <!-- Hàng 2: ZenHome -->
+            <tr>
+              <td class="fw-bold" style="color: var(--color-primary, #323377);">2</td>
+              <td>
+                <div class="d-flex align-items-center gap-2">
+                  <img src="../../../static/images/demo/logo-zenhome.png"
+                       th:src="@{/images/demo/logo-zenhome.png}"
+                       alt="ZenHome Logo"
+                       class="rounded-circle border"
+                       style="width: 36px; height: 36px; object-fit: cover;" />
+                  <div>
+                    <div class="fw-semibold text-dark">ZenHome Smart Living</div>
+                    <div class="small text-muted">Đồ gia dụng thông minh</div>
+                  </div>
+                </div>
+              </td>
+              <td class="small text-secondary">Lê Thị C</td>
+              <td>
+                <span class="badge-soft badge-soft-sage">
+                  <i class="bi bi-check-circle-fill"></i> APPROVED
+                </span>
+              </td>
+              <td class="text-end fw-semibold text-dark">412</td>
+              <td class="text-end fw-bold" style="color: var(--color-accent, #d1588e);">86.200.000 ₫</td>
+              <td class="text-center text-warning small fw-bold">
+                <i class="bi bi-star-fill"></i> 4.8 <span class="text-muted fw-normal">(390)</span>
+              </td>
+              <td class="text-center">
+                <a th:href="@{/merchant/admin/shops}" href="../../merchant/admin/shops.html" class="btn btn-outline-secondary btn-sm py-1 px-3 rounded-pill" title="Xem chi tiết">
+                  Chi tiết
+                </a>
+              </td>
+            </tr>
+
+            <!-- Hàng 3: Aura Fashion -->
+            <tr>
+              <td class="fw-bold" style="color: var(--color-primary, #323377);">3</td>
+              <td>
+                <div class="d-flex align-items-center gap-2">
+                  <div class="rounded-circle d-flex align-items-center justify-content-center fw-bold text-white shadow-xs"
+                       style="width: 36px; height: 36px; font-size: 0.8rem; background-color: var(--color-accent, #d1588e);">
+                    AF
+                  </div>
+                  <div>
+                    <div class="fw-semibold text-dark">Aura Fashion House</div>
+                    <div class="small text-muted">Thời trang đường phố</div>
+                  </div>
+                </div>
+              </td>
+              <td class="small text-secondary">Trần Thị B</td>
+              <td>
+                <span class="badge-soft badge-soft-sage">
+                  <i class="bi bi-check-circle-fill"></i> APPROVED
+                </span>
+              </td>
+              <td class="text-end fw-semibold text-dark">171</td>
+              <td class="text-end fw-bold" style="color: var(--color-accent, #d1588e);">19.800.000 ₫</td>
+              <td class="text-center text-warning small fw-bold">
+                <i class="bi bi-star-fill"></i> 4.7 <span class="text-muted fw-normal">(240)</span>
+              </td>
+              <td class="text-center">
+                <a th:href="@{/merchant/admin/shops}" href="../../merchant/admin/shops.html" class="btn btn-outline-secondary btn-sm py-1 px-3 rounded-pill" title="Xem chi tiết">
+                  Chi tiết
+                </a>
+              </td>
+            </tr>
+
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- =======================================================================
+       TOAST PHẢN HỒI THÔNG BÁO THÀNH CÔNG
+       ======================================================================= -->
+  <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 1090">
+    <div id="dashToast" class="toast align-items-center text-bg-success border-0 shadow-lg rounded-3" role="alert" aria-live="assertive" aria-atomic="true">
+      <div class="d-flex">
+        <div class="toast-body d-flex align-items-center gap-2">
+          <i class="bi bi-check-circle-fill fs-5"></i>
+          <span id="dashToastMessage" class="fw-medium">Đã làm mới dữ liệu thành công!</span>
+        </div>
+        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+      </div>
+    </div>
+  </div>
+
+  <!-- =======================================================================
+       FOOTER FRAGMENT
+       ======================================================================= -->
+  <div th:replace="~{fragments/footer :: footer}">
+    <footer class="bg-dark text-white text-center py-4 mt-5">
+      <div class="container">
+        <p class="mb-0 small text-white-50">&copy; 2026 SENVIA E-Commerce Platform. Nhóm 2 - Đồ án giữa kỳ Mẫu Thiết Kế.</p>
+      </div>
+    </footer>
+  </div>
+
+  <!-- Bootstrap 5.3 JS Bundle -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+  <!-- Script Tương Tác: Bộ lọc thời gian, Xuất báo cáo, Refresh -->
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      const refreshBtn = document.getElementById("refreshBtn");
+      const exportBtn = document.getElementById("exportBtn");
+      const filterBtns = document.querySelectorAll("#dateFilterGroup button");
+      const toastEl = document.getElementById("dashToast");
+      const toastMsg = document.getElementById("dashToastMessage");
+
+      function showToast(msg) {
+        toastMsg.textContent = msg;
+        const toast = new bootstrap.Toast(toastEl, { delay: 3000 });
+        toast.show();
+      }
+
+      // Bộ lọc khoảng thời gian Bento
+      filterBtns.forEach(btn => {
+        btn.addEventListener("click", function () {
+          filterBtns.forEach(b => {
+            b.classList.remove("active", "btn-brand-primary", "shadow-xs");
+            b.classList.add("btn-link", "text-secondary");
+          });
+
+          this.classList.remove("btn-link", "text-secondary");
+          this.classList.add("active", "btn-brand-primary", "shadow-xs");
+
+          const range = this.getAttribute("data-range");
+          if (range === "today") {
+            document.getElementById("kpiGmv").textContent = "62.000.000 ₫";
+            document.getElementById("kpiOrders").textContent = "315";
+            showToast("Đã tải dữ liệu thống kê: Hôm nay");
+          } else if (range === "7days") {
+            document.getElementById("kpiGmv").textContent = "306.000.000 ₫";
+            document.getElementById("kpiOrders").textContent = "1.120";
+            showToast("Đã tải dữ liệu thống kê: 7 ngày qua");
+          } else {
+            document.getElementById("kpiGmv").textContent = "248.500.000 ₫";
+            document.getElementById("kpiOrders").textContent = "1.428";
+            showToast("Đã tải dữ liệu thống kê: Tháng 9/2026");
+          }
+        });
+      });
+
+      // Nút làm mới dữ liệu
+      refreshBtn.addEventListener("click", function () {
+        const icon = this.querySelector("i");
+        icon.classList.add("spin-animation");
+        this.disabled = true;
+
+        setTimeout(() => {
+          icon.classList.remove("spin-animation");
+          this.disabled = false;
+          showToast("Đã đồng bộ số liệu mới nhất từ các module!");
+        }, 600);
+      });
+
+      // Nút xuất báo cáo Excel
+      exportBtn.addEventListener("click", function () {
+        this.disabled = true;
+        this.innerHTML = `<span class="spinner-border spinner-border-sm me-1" role="status"></span>Đang xuất...`;
+
+        setTimeout(() => {
+          this.disabled = false;
+          this.innerHTML = `<i class="bi bi-file-earmark-excel-fill"></i> Xuất Báo Cáo`;
+          showToast("Đã xuất file báo cáo: SENVIA_Report_Thang9_2026.xlsx");
+        }, 1000);
+      });
+    });
+  </script>
+
+  <style>
+    .spin-animation {
+      animation: spin 0.6s linear infinite;
+    }
+    @keyframes spin {
+      100% { transform: rotate(360deg); }
+    }
+  </style>
+
+</body>
+</html>

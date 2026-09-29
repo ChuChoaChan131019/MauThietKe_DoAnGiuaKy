@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+  <meta charset="UTF-8" />
+</head>
+<body>
+
+  <!-- =========================================================================
+       FRAGMENT HEADER DÙNG CHUNG (NAVBAR TOÀN SÀN)
+       Nhúng bằng: <div th:replace="~{fragments/header :: header}"></div>
+       ========================================================================= -->
+  <header th:fragment="header" class="senvia-navbar sticky-top">
+    <div class="container">
+      <div class="d-flex align-items-center justify-content-between gap-3 flex-wrap">
+
+        <!-- 1. Logo Thương hiệu & Link Trang chủ -->
+        <a class="navbar-brand-logo" th:href="@{/}" href="/">
+          <i class="bi bi-shop-window brand-icon"></i>
+          <span>SENVIA<span class="text-rose" style="color: var(--color-accent, #d1588e);">MARKET</span></span>
+        </a>
+
+        <!-- 2. Thanh tìm kiếm sản phẩm toàn sàn -->
+        <form class="navbar-search-form d-none d-md-flex" th:action="@{/products}" action="/products" method="get">
+          <input type="text"
+                 name="keyword"
+                 class="form-control navbar-search-input"
+                 placeholder="Tìm kiếm sản phẩm, thương hiệu hoặc gian hàng..."
+                 th:value="${param.keyword}" />
+          <button type="submit" class="navbar-search-btn" title="Tìm kiếm">
+            <i class="bi bi-search"></i>
+          </button>
+        </form>
+
+        <!-- 3. Khu vực hành động: Giỏ hàng, Thông báo & Tài khoản -->
+        <div class="d-flex align-items-center gap-3">
+
+          <!-- ICON 1: GIỎ HÀNG (KÈM BADGE SỐ LƯỢNG) -->
+          <a th:href="@{/shopping/cart}" href="/shopping/cart" class="nav-icon-link" title="Giỏ hàng của bạn">
+            <i class="bi bi-cart3"></i>
+            <span class="badge bg-danger nav-badge-pill"
+                  th:text="${totalCartItems != null ? totalCartItems : 3}">3</span>
+          </a>
+
+          <!-- ICON 2: CHUÔNG THÔNG BÁO (OBSERVER PATTERN DROPDOWN) -->
+          <div class="dropdown">
+            <a href="#"
+               class="nav-icon-link dropdown-toggle"
+               id="notificationDropdown"
+               data-bs-toggle="dropdown"
+               aria-expanded="false"
+               title="Thông báo mới">
+              <i class="bi bi-bell"></i>
+              <span class="badge bg-warning text-dark nav-badge-pill"
+                    th:text="${unreadNotificationCount != null ? unreadNotificationCount : 2}">2</span>
+            </a>
+
+            <!-- Dropdown danh sách thông báo nổi (Observer Event Feed) -->
+            <div class="dropdown-menu dropdown-menu-end notification-dropdown-menu" aria-labelledby="notificationDropdown">
+              <div class="notification-header">
+                <span class="fw-bold text-dark small">
+                  <i class="bi bi-bell-fill text-warning me-1"></i> Thông báo nội bộ
+                </span>
+                <form th:action="@{/engagement/notifications/mark-all-read}" method="post" class="d-inline">
+                  <button type="submit" class="btn btn-link btn-sm text-decoration-none p-0 small text-primary">
+                    Đã đọc tất cả
+                  </button>
+                </form>
+              </div>
+
+              <!-- Danh sách thông báo mẫu -->
+              <div class="notification-list">
+
+                <!-- Thông báo 1: Sự kiện ShopApprovedEvent -->
+                <a th:href="@{/merchant/seller/dashboard}" href="/merchant/seller/dashboard" class="notification-item is-unread">
+                  <div class="notification-item-icon bg-success-subtle text-success">
+                    <i class="bi bi-check-circle-fill"></i>
+                  </div>
+                  <div class="notification-item-content">
+                    <div class="notification-item-title">Gian hàng đã được phê duyệt!</div>
+                    <div class="notification-item-text">Chúc mừng bạn, hồ sơ mở gian hàng đã được Admin thông qua.</div>
+                    <div class="notification-item-time">10 phút trước</div>
+                  </div>
+                </a>
+
+                <!-- Thông báo 2: Sự kiện OrderStatusChangedEvent -->
+                <a th:href="@{/ordering/buyer/orders}" href="/ordering/buyer/orders" class="notification-item is-unread">
+                  <div class="notification-item-icon bg-primary-subtle text-primary">
+                    <i class="bi bi-truck"></i>
+                  </div>
+                  <div class="notification-item-content">
+                    <div class="notification-item-title">Đơn hàng #ORD-8821 đang giao</div>
+                    <div class="notification-item-text">Kiện hàng của bạn từ TechZone đã được bàn giao cho bưu tá.</div>
+                    <div class="notification-item-time">1 giờ trước</div>
+                  </div>
+                </a>
+
+                <!-- Thông báo 3: Sự kiện OrderCreatedEvent -->
+                <a th:href="@{/ordering/seller/orders}" href="/ordering/seller/orders" class="notification-item">
+                  <div class="notification-item-icon bg-info-subtle text-info">
+                    <i class="bi bi-bag-check-fill"></i>
+                  </div>
+                  <div class="notification-item-content">
+                    <div class="notification-item-title">Đơn bán mới #ORD-9912</div>
+                    <div class="notification-item-text">Khách hàng Nguyễn Văn A vừa đặt mua sản phẩm từ gian hàng của bạn.</div>
+                    <div class="notification-item-time">Hôm qua</div>
+                  </div>
+                </a>
+
+              </div>
+
+              <div class="notification-footer">
+                <a th:href="@{/engagement/notifications}" href="/engagement/notifications">
+                  Xem tất cả thông báo <i class="bi bi-chevron-right small"></i>
+                </a>
+              </div>
+            </div>
+          </div>
+
+          <!-- NÚT GIAN HÀNG ĐẶC THÙ (STATE PATTERN CHO VÒNG ĐỜI SHOP) -->
+          <!-- Trường hợp: Shop đã APPROVED -> Hiện Kênh Người Bán -->
+          <a th:if="${currentUser != null && currentShop != null && currentShop.status == 'APPROVED'}"
+             th:href="@{/merchant/seller/products}"
+             href="/merchant/seller/products"
+             class="btn btn-success btn-sm fw-bold d-none d-sm-inline-flex align-items-center gap-1">
+            <i class="bi bi-shop"></i> Kênh Người Bán
+          </a>
+
+          <!-- Trường hợp: Shop đang PENDING -> Badge vàng -->
+          <a th:if="${currentUser != null && currentShop != null && currentShop.status == 'PENDING'}"
+             th:href="@{/merchant/shops/status}"
+             href="/merchant/shops/status"
+             class="badge-status badge-shop-pending text-decoration-none d-none d-sm-inline-flex"
+             title="Hồ sơ đang chờ Admin xét duyệt">
+            <i class="bi bi-hourglass-split"></i> Shop đang duyệt
+          </a>
+
+          <!-- Trường hợp: Shop bị REJECTED -> Badge đỏ kèm nút sửa -->
+          <a th:if="${currentUser != null && currentShop != null && currentShop.status == 'REJECTED'}"
+             th:href="@{/merchant/shops/status}"
+             href="/merchant/shops/status"
+             class="badge-status badge-shop-rejected text-decoration-none d-none d-sm-inline-flex"
+             title="Yêu cầu mở gian hàng bị từ chối">
+            <i class="bi bi-exclamation-triangle-fill"></i> Sửa hồ sơ Shop
+          </a>
+
+          <!-- Trường hợp: Người dùng chưa có shop -> Nút Đăng ký mở shop -->
+          <a th:if="${currentUser != null && currentShop == null}"
+             th:href="@{/merchant/shops/register}"
+             href="/merchant/shops/register"
+             class="btn btn-outline-warning btn-sm d-none d-sm-inline-flex align-items-center gap-1">
+            <i class="bi bi-plus-circle"></i> Mở Gian Hàng
+          </a>
+
+
+          <!-- MENU TÀI KHOẢN (USER DROPDOWN) -->
+          <!-- 1. Khi chưa đăng nhập (Guest) -->
+          <div th:if="${currentUser == null}" class="d-flex align-items-center gap-2">
+            <a th:href="@{/identity/login}" href="/identity/login" class="btn btn-outline-light btn-sm">
+              Đăng nhập
+            </a>
+            <a th:href="@{/identity/register}" href="/identity/register" class="btn btn-info btn-sm text-dark fw-semibold">
+              Đăng ký
+            </a>
+          </div>
+
+          <!-- 2. Khi đã đăng nhập (User / Shop Owner / Admin) -->
+          <div th:if="${currentUser != null}" class="dropdown">
+            <a href="#"
+               class="user-menu-btn dropdown-toggle"
+               id="userMenuDropdown"
+               data-bs-toggle="dropdown"
+               aria-expanded="false">
+              <!-- Avatar ảnh thật nếu có, ngược lại dùng chữ cái đầu -->
+              <img th:if="${currentUser.avatarUrl != null}"
+                   th:src="${currentUser.avatarUrl}"
+                   src="/images/avatar-placeholder.png"
+                   alt="Avatar"
+                   class="user-avatar-circle" />
+              <div th:unless="${currentUser.avatarUrl != null}" class="user-avatar-circle">
+                <span th:text="${#strings.substring(currentUser.fullName, 0, 1)}">U</span>
+              </div>
+              <span class="d-none d-lg-inline text-truncate"
+                    style="max-width: 120px;"
+                    th:text="${currentUser.fullName}">Nguyễn Văn A</span>
+            </a>
+
+            <!-- Dropdown Options -->
+            <ul class="dropdown-menu dropdown-menu-end shadow-sm" aria-labelledby="userMenuDropdown">
+
+              <!-- Tên & Email người dùng -->
+              <li class="px-3 py-2 border-bottom">
+                <div class="fw-bold text-dark text-truncate" th:text="${currentUser.fullName}">Nguyễn Văn A</div>
+                <div class="small text-muted text-truncate" th:text="${currentUser.email}">user@example.com</div>
+                <div class="mt-1" th:if="${currentUser.role == 'ADMIN'}">
+                  <span class="badge bg-danger small">Quản trị viên (Admin)</span>
+                </div>
+              </li>
+
+              <!-- Liên kết hồ sơ -->
+              <li>
+                <a class="dropdown-item py-2 d-flex align-items-center gap-2" th:href="@{/identity/profile}" href="/identity/profile">
+                  <i class="bi bi-person text-primary"></i> Hồ sơ cá nhân
+                </a>
+              </li>
+              <li>
+                <a class="dropdown-item py-2 d-flex align-items-center gap-2" th:href="@{/ordering/buyer/orders}" href="/ordering/buyer/orders">
+                  <i class="bi bi-box2 text-info"></i> Đơn mua của tôi
+                </a>
+              </li>
+              <li>
+                <a class="dropdown-item py-2 d-flex align-items-center gap-2" th:href="@{/shopping/favorites}" href="/shopping/favorites">
+                  <i class="bi bi-heart text-danger"></i> Sản phẩm yêu thích
+                </a>
+              </li>
+              <li>
+                <a class="dropdown-item py-2 d-flex align-items-center gap-2" th:href="@{/identity/change-password}" href="/identity/change-password">
+                  <i class="bi bi-shield-lock text-secondary"></i> Đổi mật khẩu
+                </a>
+              </li>
+
+              <!-- Khu vực Admin (Nếu role ADMIN) -->
+              <li th:if="${currentUser.role == 'ADMIN'}" class="border-top my-1"></li>
+              <li th:if="${currentUser.role == 'ADMIN'}">
+                <a class="dropdown-item py-2 d-flex align-items-center gap-2 text-danger fw-semibold"
+                   th:href="@{/merchant/admin/shops}" href="/merchant/admin/shops">
+                  <i class="bi bi-patch-check text-warning"></i> Xét duyệt Shop (State Pattern)
+                </a>
+              </li>
+              <li th:if="${currentUser.role == 'ADMIN'}">
+                <a class="dropdown-item py-2 d-flex align-items-center gap-2 text-danger"
+                   th:href="@{/engagement/admin/dashboard}" href="/engagement/admin/dashboard">
+                  <i class="bi bi-speedometer2"></i> Báo cáo sàn (Admin)
+                </a>
+              </li>
+
+              <li class="border-top my-1"></li>
+
+              <!-- Đăng xuất (CSRF Protected POST Form) -->
+              <li>
+                <form th:action="@{/logout}" method="post" class="m-0">
+                  <button type="submit" class="dropdown-item py-2 text-danger d-flex align-items-center gap-2">
+                    <i class="bi bi-box-arrow-right"></i> Đăng xuất
+                  </button>
+                </form>
+              </li>
+
+            </ul>
+          </div>
+
+        </div>
+
+      </div>
+    </div>
+  </header>
+
+</body>
+</html>
