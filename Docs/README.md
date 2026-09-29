@@ -26,11 +26,11 @@ AI và thành viên sử dụng AI phải đọc [AGENTS.md](../AGENTS.md) trư�
 
 | Module | Hướng dẫn | Requirement chính |
 | --- | --- | --- |
-| `identity` | [IDENTITY_GUIDE.md](modules/IDENTITY_GUIDE.md) | AUTH 01–07 |
-| `merchant` | [MERCHANT_GUIDE.md](modules/MERCHANT_GUIDE.md) | SHOP 01–09, PROD 01–10 |
-| `shopping` | [SHOPPING_GUIDE.md](modules/SHOPPING_GUIDE.md) | CART 01–06, FAV 01–03 |
-| `ordering` | [ORDERING_GUIDE.md](modules/ORDERING_GUIDE.md) | PAY 01–06, ORDER 01–09 |
-| `engagement` | [ENGAGEMENT_GUIDE.md](modules/ENGAGEMENT_GUIDE.md) | NOTI 01–06, REV 01–04, STAT 01–05 |
+| `identity` | [IDENTITY_GUIDE.md](modules/IDENTITY_GUIDE.md) | AUTH 01–08 |
+| `merchant` | [MERCHANT_GUIDE.md](modules/MERCHANT_GUIDE.md) | SHOP 01–10, PROD 01–11 |
+| `shopping` | [SHOPPING_GUIDE.md](modules/SHOPPING_GUIDE.md) | CART 01–07, FAV 01–03 |
+| `ordering` | [ORDERING_GUIDE.md](modules/ORDERING_GUIDE.md) | PAY 01–08, ORDER 01–09 |
+| `engagement` | [ENGAGEMENT_GUIDE.md](modules/ENGAGEMENT_GUIDE.md) | NOTI 01–07, REV 01–04, STAT 01–05 |
 
 ## Thông tin tổng quan
 

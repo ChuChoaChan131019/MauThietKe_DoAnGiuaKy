@@ -44,16 +44,21 @@ users * ─── * products  (qua reviews và order_items)
 
 ## 4. Ràng buộc quan trọng
 
-- `users.email` là duy nhất.
+- `users.email` được trim, chuyển chữ thường và có unique index trên `LOWER(email)`.
 - `shops.owner_id` là duy nhất; mỗi người dùng có tối đa một gian hàng.
 - `carts.user_id` là duy nhất; mỗi người dùng có một giỏ hàng hiện tại.
 - Cặp `cart_items(cart_id, product_id)` là duy nhất.
 - Cặp `favorites(user_id, product_id)` là duy nhất.
-- Cặp `reviews(user_id, order_item_id)` là duy nhất.
+- `reviews.order_item_id` là duy nhất; mỗi mục hàng chỉ được đánh giá một lần.
 - `payments.order_id` là duy nhất; mỗi đơn có một kết quả thanh toán.
-- Giá và số lượng không được âm; số lượng đặt mua phải lớn hơn 0.
+- Cặp `notifications(event_id, receiver_id)` là duy nhất để event xử lý lặp không tạo thông báo trùng cho từng người nhận.
+- Giá sản phẩm phải lớn hơn 0; tồn kho không âm; số lượng đặt mua phải lớn hơn 0.
 - Không xóa tùy tiện dữ liệu đã phát sinh giao dịch; ưu tiên trạng thái ẩn hoặc khóa.
 - `order_items` lưu tên và giá snapshot để lịch sử đơn không thay đổi khi sản phẩm được sửa.
+- `cart_items` không lưu giá; giá giỏ hàng luôn được đọc từ `products.price` hiện tại.
+- `payments` là nguồn chuẩn duy nhất cho phương thức và trạng thái thanh toán; `orders` không lặp hai trường này.
+- `shops` lưu `lock_reason`, `locked_by` và `locked_at` khi bị khóa.
+- Trừ tồn kho dùng cập nhật nguyên tử có điều kiện `stock_quantity >= quantity`.
 
 ## 5. Trạng thái nghiệp vụ
 
@@ -72,8 +77,10 @@ PENDING | APPROVED | REJECTED | LOCKED
 ### Sản phẩm
 
 ```text
-ACTIVE | HIDDEN | OUT_OF_STOCK
+ACTIVE | HIDDEN
 ```
+
+Hết hàng không phải trạng thái lưu riêng; sản phẩm hết hàng khi `stock_quantity = 0`.
 
 ### Đơn hàng
 
@@ -88,7 +95,7 @@ Các bước hợp lệ:
 | --- | --- |
 | `PENDING` | `CONFIRMED` hoặc `CANCELLED` |
 | `CONFIRMED` | `PREPARING` hoặc `CANCELLED` |
-| `PREPARING` | `SHIPPING` |
+| `PREPARING` | `SHIPPING` hoặc `CANCELLED` |
 | `SHIPPING` | `COMPLETED` |
 | `COMPLETED` | Không có |
 | `CANCELLED` | Không có |
@@ -96,10 +103,22 @@ Các bước hợp lệ:
 ### Thanh toán
 
 ```text
-PENDING | COD_PENDING | PAID | FAILED
+PENDING | COD_PENDING | PAID | FAILED | CANCELLED | REFUNDED
 ```
 
-## 6. Quy tắc migration và dữ liệu mẫu
+- COD tạo `COD_PENDING`, chuyển `PAID` khi đơn `COMPLETED`.
+- Chuyển khoản tạo `PENDING`; chủ shop xác nhận mô phỏng để chuyển `PAID` trước khi xác nhận đơn.
+- Hủy đơn chưa thanh toán chuyển payment thành `CANCELLED`; hủy đơn đã thanh toán chuyển thành `REFUNDED`.
+
+## 6. Toàn vẹn checkout và event
+
+- Checkout nhiều shop là một giao dịch all-or-nothing. Một sản phẩm hoặc nhóm shop lỗi phải rollback toàn bộ order, payment, tồn kho và cart.
+- Giá được đọc lại ở checkout; nếu khác màn hình buyer vừa xác nhận thì dừng và yêu cầu xác nhận tổng tiền mới.
+- Điều kiện bán gồm owner `ACTIVE`, shop `APPROVED`, category active, product `ACTIVE` và tồn kho lớn hơn 0.
+- Category bị ẩn không dùng cho sản phẩm mới; sản phẩm cũ vẫn tồn tại nhưng không xuất hiện công khai.
+- Event tạo notification chỉ được xử lý sau commit; cặp `event_id`, `receiver_id` xác định duy nhất notification của từng người nhận.
+
+## 7. Quy tắc migration và dữ liệu mẫu
 
 1. Mọi thay đổi schema phải được quản lý bằng migration trong `src/main/resources/db/migration`.
 2. Tên migration dùng `VyyyyMMddHHmm__module_description.sql`, ví dụ `V202609271430__merchant_create_shops.sql`.

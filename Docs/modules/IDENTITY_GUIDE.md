@@ -5,7 +5,7 @@
 ## Phạm vi
 
 - **Chủ sở hữu:** Thành viên 1.
-- **Requirement:** [AUTH 01–07](../SRS.md#sec_1013).
+- **Requirement:** [AUTH 01–08](../SRS.md#sec_1013).
 - **Bảng:** `users`.
 - **Package:** `com.senvia.doangiuaky.identity` và phần kỹ thuật `common`.
 - **Template:** `templates/identity`.
@@ -25,12 +25,13 @@ Không công bố password hash, repository hoặc security principal nội bộ
 ## Thứ tự triển khai
 
 1. Tạo migration `users`, enum role và account status.
-2. Tạo Entity/Repository và truy vấn email duy nhất.
+2. Tạo Entity/Repository, chuẩn hóa email bằng trim/lowercase và unique index trên `LOWER(email)`.
 3. Triển khai đăng ký với validation và BCrypt.
 4. Cấu hình đăng nhập, đăng xuất, access denied và tài khoản bị khóa.
 5. Triển khai xem/sửa hồ sơ và đổi mật khẩu.
-6. Công bố contract người dùng cho các module khác.
-7. Hoàn thiện template đăng ký, đăng nhập và hồ sơ.
+6. Làm màn hình Admin xem, tìm kiếm, khóa và mở khóa tài khoản; không cho tự khóa hoặc khóa Admin ACTIVE cuối cùng.
+7. Công bố contract người dùng cho các module khác.
+8. Hoàn thiện template đăng ký, đăng nhập, hồ sơ và quản lý tài khoản.
 
 ## Thành phần dự kiến
 
@@ -43,15 +44,18 @@ Không công bố password hash, repository hoặc security principal nội bộ
 ## Kiểm tra bắt buộc
 
 - Email sai định dạng hoặc trùng bị từ chối.
+- Email có khoảng trắng hoặc khác hoa thường được chuẩn hóa trước khi kiểm tra và lưu.
 - Password chỉ được lưu dưới dạng BCrypt.
 - Sai mật khẩu và tài khoản LOCKED không đăng nhập được.
 - Người dùng chỉ sửa hồ sơ và mật khẩu của chính mình.
 - Đổi mật khẩu yêu cầu mật khẩu hiện tại đúng.
 - DTO/API công khai không chứa password hash.
+- Account owner LOCKED được contract phản ánh ngay để Merchant ngừng cho shop nhận đơn mới và ẩn catalog công khai.
+- Admin không có quyền mua hàng; khóa/mở khóa phải kiểm tra ở backend.
 
 ## Bàn giao
 
-- AUTH 01–07 có test tương ứng.
+- AUTH 01–08 có test tương ứng.
 - Các module khác có thể lấy user id/role/status qua `identity.api`.
 - Không có module nào cần truy cập `UserRepository` trực tiếp.
 - Thành viên 2 review phần contract; thay đổi `common` cần pull request riêng.

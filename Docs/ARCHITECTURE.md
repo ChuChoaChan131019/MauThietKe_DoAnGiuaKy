@@ -118,6 +118,8 @@ Quy tắc bắt buộc:
 5. Entity không chứa logic trình bày giao diện.
 6. Không trả mật khẩu, token hoặc trường nội bộ qua DTO.
 7. Kiểm tra quyền sở hữu shop và đơn hàng tại backend.
+8. Checkout nhiều shop chạy all-or-nothing trong một transaction; API trừ tồn kho tham gia cùng transaction và dùng cập nhật nguyên tử có điều kiện.
+9. Event tạo notification mang eventId và chỉ được listener xử lý sau khi transaction nghiệp vụ commit.
 
 Chi tiết ownership xem [MODULE_OWNERSHIP.md](MODULE_OWNERSHIP.md).
 
@@ -143,9 +145,11 @@ APPROVED → LOCKED → APPROVED
 
 `CheckoutService` phụ thuộc vào hợp đồng Strategy thay vì chứa thuật toán của mọi phương thức thanh toán.
 
+`payments` là nguồn chuẩn duy nhất cho phương thức và trạng thái thanh toán. COD tạo `COD_PENDING`; chuyển khoản tạo `PENDING` và chỉ chuyển `PAID` khi chủ shop xác nhận mô phỏng.
+
 ### Observer Pattern
 
-Listener đặt trong `engagement.event`. `merchant` và `ordering` phát Spring Event khi gian hàng hoặc đơn hàng thay đổi; `engagement` tiếp nhận để tạo notification mà không truy cập Repository nội bộ của module phát sự kiện.
+Observer là mẫu thứ ba được áp dụng chính thức. Listener đặt trong `engagement.event`; `merchant` và `ordering` phát Spring Event khi gian hàng hoặc đơn hàng thay đổi, còn luồng review phát `ReviewCreatedEvent`. Engagement tiếp nhận sau commit để tạo notification mà không truy cập Repository nội bộ của module phát sự kiện. Mỗi event có eventId và cặp `notifications(event_id, receiver_id)` là duy nhất để việc xử lý lặp không tạo thông báo trùng cho từng người nhận.
 
 ## 6. Cấu trúc giao diện
 

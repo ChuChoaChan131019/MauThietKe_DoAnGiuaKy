@@ -17,7 +17,7 @@ tháng 9 năm 2026
 | --- | --- |
 | Tên tài liệu | Đặc tả yêu cầu phần mềm Website Sàn thương mại điện tử |
 | Mã tài liệu | SRS ECOM 01 |
-| Phiên bản | 1.3 |
+| Phiên bản | 1.4 |
 | Trạng thái | Bản cơ sở để nhóm thống nhất phân tích và triển khai |
 | Đối tượng sử dụng | Nhóm phát triển, giảng viên hướng dẫn và người kiểm thử |
 | Công nghệ chính | Java 21, Spring Boot, Thymeleaf, Spring Data JPA, Spring Security, Supabase PostgreSQL và Cloudinary |
@@ -30,6 +30,7 @@ tháng 9 năm 2026
 | 1.1 | 25/09/2026 | Nhóm phát triển | Chốt VS Code, Cloudinary, kiểm thử và hai mẫu thiết kế bắt buộc |
 | 1.2 | 25/09/2026 | Nhóm phát triển | Bổ sung cấu trúc chi tiết và giải thích trường dữ liệu của 14 bảng |
 | 1.3 | 27/09/2026 | Nhóm phát triển | Chuyển cấu trúc package sang modular monolith theo năm bounded context |
+| 1.4 | 29/09/2026 | Nhóm phát triển | Chốt quy tắc checkout, hủy đơn, thanh toán, tồn kho, catalog, thông báo và đánh giá |
 
 ### Phê duyệt tài liệu
 
@@ -107,14 +108,14 @@ tháng 9 năm 2026
 
 Tài liệu này xác định các yêu cầu chức năng, yêu cầu phi chức năng, quy tắc nghiệp vụ, dữ liệu và giới hạn của Website Sàn thương mại điện tử. Tài liệu là cơ sở chung để năm thành viên thống nhất phạm vi, phân chia công việc, thiết kế hệ thống, lập trình, kiểm thử và trình bày sản phẩm giữa kỳ.
 
-Kết quả cần đạt là một website cho phép mọi tài khoản mua hàng; người dùng có nhu cầu bán hàng có thể gửi yêu cầu mở gian hàng và chỉ được kinh doanh sau khi quản trị viên phê duyệt. Hệ thống phải minh họa rõ State Pattern trong vòng đời gian hàng và Strategy Pattern trong xử lý phương thức thanh toán.
+Kết quả cần đạt là một website cho phép tài khoản USER mua hàng; người dùng có nhu cầu bán hàng có thể gửi yêu cầu mở gian hàng và chỉ được kinh doanh sau khi quản trị viên phê duyệt. Hệ thống phải minh họa rõ State Pattern trong vòng đời gian hàng, Strategy Pattern trong xử lý phương thức thanh toán và Observer Pattern trong tạo thông báo.
 
 <a id="sec_1002"></a>
 ### 1.2 Phạm vi sản phẩm
 
 Sản phẩm là ứng dụng web nguyên khối được xây dựng bằng Java và Spring Boot. Hệ thống phục vụ ba nhóm hành vi chính: mua hàng, vận hành gian hàng và quản trị sàn. Dữ liệu được lưu trên Supabase PostgreSQL để các thành viên cùng sử dụng; hình ảnh được lưu trên Cloudinary.
 
-Bộ công nghệ chính thức gồm VS Code, Java 21, Spring Boot, Spring MVC, Thymeleaf, Bootstrap, Spring Data JPA, Spring Security, Supabase PostgreSQL và Cloudinary. State Pattern và Strategy Pattern là hai mẫu bắt buộc; Observer chỉ là phần mở rộng nếu còn thời gian.
+Bộ công nghệ chính thức gồm VS Code, Java 21, Spring Boot, Spring MVC, Thymeleaf, Bootstrap, Spring Data JPA, Spring Security, Supabase PostgreSQL và Cloudinary. State Pattern và Strategy Pattern là hai mẫu bắt buộc của đề tài; nhóm áp dụng thêm Observer Pattern cho thông báo như mẫu thứ ba.
 
 - Người dùng đăng ký, đăng nhập, quản lý hồ sơ, mua hàng, theo dõi đơn, đánh giá và lưu sản phẩm yêu thích.
 - Người dùng gửi yêu cầu mở gian hàng; quản trị viên phê duyệt, từ chối hoặc khóa gian hàng.
@@ -191,7 +192,7 @@ Hệ thống có hai loại tài khoản là USER và ADMIN. Khái niệm ngư�
 | Khách | Người chưa đăng nhập. | Xem danh sách, tìm kiếm, lọc và xem chi tiết sản phẩm; đăng ký và đăng nhập. |
 | Người dùng | Tài khoản có vai trò USER. | Quản lý hồ sơ, giỏ hàng, đặt hàng, đánh giá, yêu thích và gửi yêu cầu mở gian hàng. |
 | Chủ gian hàng | USER có shop APPROVED. | Có toàn bộ quyền của người dùng và thêm quyền quản lý sản phẩm, đơn bán, tồn kho và thống kê. |
-| Quản trị viên | Tài khoản có vai trò ADMIN. | Duyệt gian hàng, quản lý danh mục, khóa gian hàng, xem dữ liệu quản trị và xử lý vi phạm. |
+| Quản trị viên | Tài khoản có vai trò ADMIN, không tham gia mua bán. | Quản lý tài khoản, duyệt gian hàng, quản lý danh mục, giám sát đơn hàng và xử lý vi phạm. |
 
 <a id="sec_1011"></a>
 ### 3.1 Ma trận quyền
@@ -199,12 +200,13 @@ Hệ thống có hai loại tài khoản là USER và ADMIN. Khái niệm ngư�
 | **Chức năng** | **Khách** | **User** | **Shop được duyệt** | **Admin** |
 | --- | --- | --- | --- | --- |
 | Xem sản phẩm | Có | Có | Có | Có |
-| Mua hàng | Không | Có | Có | Tùy cấu hình |
+| Mua hàng | Không | Có | Có, trừ sản phẩm của chính shop mình | Không |
 | Gửi yêu cầu mở shop | Không | Có | Không | Không |
 | Đăng sản phẩm | Không | Không | Có | Không |
 | Xử lý đơn bán | Không | Không | Có | Theo dõi |
 | Duyệt gian hàng | Không | Không | Không | Có |
 | Quản lý danh mục | Không | Không | Không | Có |
+| Quản lý tài khoản | Không | Không | Không | Có |
 
 <a id="sec_1012"></a>
 ## 4 Yêu cầu chức năng
@@ -217,12 +219,13 @@ Mức ưu tiên được quy ước: Bắt buộc là yêu cầu phải hoàn th
 | **Mã** | **Yêu cầu** | **Ưu tiên** |
 | --- | --- | --- |
 | **AUTH 01** | Hệ thống cho phép khách đăng ký bằng họ tên, email và mật khẩu. | Bắt buộc |
-| **AUTH 02** | Email phải duy nhất và có định dạng hợp lệ. | Bắt buộc |
+| **AUTH 02** | Email phải có định dạng hợp lệ, được trim, chuẩn hóa chữ thường và duy nhất không phân biệt hoa thường. | Bắt buộc |
 | **AUTH 03** | Mật khẩu được mã hóa bằng BCrypt trước khi lưu. | Bắt buộc |
 | **AUTH 04** | Người dùng đăng nhập và đăng xuất khỏi hệ thống. | Bắt buộc |
 | **AUTH 05** | Người dùng xem và cập nhật họ tên, số điện thoại, địa chỉ và ảnh đại diện. | Bắt buộc |
 | **AUTH 06** | Người dùng đổi mật khẩu sau khi xác nhận mật khẩu hiện tại. | Bắt buộc |
 | **AUTH 07** | Hệ thống từ chối tài khoản bị khóa và các yêu cầu không đúng quyền. | Bắt buộc |
+| **AUTH 08** | Admin xem, tìm kiếm, khóa và mở khóa tài khoản; không được tự khóa mình hoặc khóa Admin ACTIVE cuối cùng. | Bắt buộc |
 
 <a id="sec_1014"></a>
 ### 4.2 Gian hàng và xét duyệt
@@ -236,24 +239,26 @@ Mức ưu tiên được quy ước: Bắt buộc là yêu cầu phải hoàn th
 | **SHOP 05** | Admin phê duyệt yêu cầu và chuyển trạng thái thành APPROVED. | Bắt buộc |
 | **SHOP 06** | Admin từ chối yêu cầu, bắt buộc nhập lý do. | Bắt buộc |
 | **SHOP 07** | Người dùng xem lý do, chỉnh sửa và gửi lại yêu cầu bị từ chối. | Bắt buộc |
-| **SHOP 08** | Admin khóa gian hàng vi phạm bằng trạng thái LOCKED. | Bắt buộc |
+| **SHOP 08** | Admin khóa gian hàng vi phạm bằng trạng thái LOCKED, bắt buộc lưu lý do, người khóa và thời điểm khóa. | Bắt buộc |
 | **SHOP 09** | Chủ shop APPROVED được cập nhật thông tin gian hàng. | Bắt buộc |
+| **SHOP 10** | Shop LOCKED không nhận đơn mới hoặc thay đổi catalog nhưng chủ shop vẫn được xử lý các đơn đã tồn tại trước khi khóa. | Bắt buộc |
 
 <a id="sec_1015"></a>
 ### 4.3 Danh mục và sản phẩm
 
 | **Mã** | **Yêu cầu** | **Ưu tiên** |
 | --- | --- | --- |
-| **PROD 01** | Admin thêm, sửa và ẩn danh mục sản phẩm. | Bắt buộc |
+| **PROD 01** | Admin thêm, sửa và ẩn danh mục; danh mục ẩn không được chọn cho sản phẩm mới và sản phẩm thuộc danh mục đó không xuất hiện ở trang công khai. | Bắt buộc |
 | **PROD 02** | Chủ shop APPROVED thêm sản phẩm thuộc gian hàng mình. | Bắt buộc |
 | **PROD 03** | Sản phẩm có tên, mô tả, giá, tồn kho, danh mục và ít nhất một ảnh. | Bắt buộc |
 | **PROD 04** | Chủ shop sửa hoặc ẩn sản phẩm thuộc sở hữu của mình. | Bắt buộc |
-| **PROD 05** | Hệ thống không cho phép giá âm hoặc tồn kho âm. | Bắt buộc |
+| **PROD 05** | Giá sản phẩm phải lớn hơn 0 và tồn kho không được âm. | Bắt buộc |
 | **PROD 06** | Khách và người dùng xem danh sách, chi tiết và thông tin gian hàng. | Bắt buộc |
 | **PROD 07** | Hệ thống tìm kiếm sản phẩm theo tên. | Bắt buộc |
 | **PROD 08** | Hệ thống lọc theo danh mục và khoảng giá. | Bắt buộc |
 | **PROD 09** | Danh sách hỗ trợ phân trang. | Nên có |
 | **PROD 10** | Ảnh được lưu trên Cloudinary; cơ sở dữ liệu lưu URL và public\_id để hiển thị, thay thế hoặc xóa ảnh. | Bắt buộc |
+| **PROD 11** | Sản phẩm chỉ có thể bán khi owner ACTIVE, shop APPROVED, danh mục đang active, sản phẩm ACTIVE và tồn kho lớn hơn 0. | Bắt buộc |
 
 <a id="sec_1016"></a>
 ### 4.4 Giỏ hàng
@@ -264,8 +269,9 @@ Mức ưu tiên được quy ước: Bắt buộc là yêu cầu phải hoàn th
 | **CART 02** | Sản phẩm đã có trong giỏ được tăng số lượng thay vì tạo dòng trùng. | Bắt buộc |
 | **CART 03** | Người dùng thay đổi số lượng hoặc xóa sản phẩm khỏi giỏ. | Bắt buộc |
 | **CART 04** | Số lượng trong giỏ không vượt quá tồn kho hiện tại. | Bắt buộc |
-| **CART 05** | Giỏ hiển thị sản phẩm theo từng gian hàng và tính tạm tính. | Bắt buộc |
+| **CART 05** | Giỏ hiển thị sản phẩm theo từng gian hàng và tính tạm tính bằng giá hiện tại của sản phẩm; giỏ không lưu giá snapshot. | Bắt buộc |
 | **CART 06** | Sản phẩm ẩn hoặc hết hàng được cảnh báo trước khi thanh toán. | Bắt buộc |
+| **CART 07** | Khi shop thay đổi giá, mọi giỏ chứa sản phẩm đó hiển thị và tính lại theo giá mới. | Bắt buộc |
 
 <a id="sec_1017"></a>
 ### 4.5 Đặt hàng và thanh toán
@@ -273,11 +279,13 @@ Mức ưu tiên được quy ước: Bắt buộc là yêu cầu phải hoàn th
 | **Mã** | **Yêu cầu** | **Ưu tiên** |
 | --- | --- | --- |
 | **PAY 01** | Người dùng nhập hoặc chọn địa chỉ nhận hàng khi checkout. | Bắt buộc |
-| **PAY 02** | Hệ thống nhóm sản phẩm theo gian hàng và tạo một đơn cho mỗi shop. | Bắt buộc |
+| **PAY 02** | Hệ thống nhóm sản phẩm theo gian hàng và tạo một đơn cho mỗi shop theo nguyên tắc all-or-nothing. | Bắt buộc |
 | **PAY 03** | Người dùng chọn COD hoặc chuyển khoản mô phỏng. | Bắt buộc |
 | **PAY 04** | Hệ thống áp dụng Payment Strategy tương ứng. | Bắt buộc |
-| **PAY 05** | Chuyển khoản chỉ hiển thị hướng dẫn và mã đơn, không gọi ngân hàng thật. | Bắt buộc |
-| **PAY 06** | Sau khi đặt thành công, hệ thống trừ tồn kho và xóa các mục đã mua khỏi giỏ. | Bắt buộc |
+| **PAY 05** | Chuyển khoản hiển thị hướng dẫn và mã tham chiếu riêng cho từng đơn; chủ shop xác nhận đã nhận tiền mô phỏng trước khi xác nhận đơn. | Bắt buộc |
+| **PAY 06** | Sau khi đặt thành công, hệ thống trừ tồn kho nguyên tử và xóa các mục đã mua khỏi giỏ; nếu bất kỳ nhóm nào lỗi thì rollback toàn bộ. | Bắt buộc |
+| **PAY 07** | Bảng payments là nguồn chuẩn duy nhất cho phương thức và trạng thái thanh toán. | Bắt buộc |
+| **PAY 08** | Payment hỗ trợ PENDING, COD_PENDING, PAID, FAILED, CANCELLED và REFUNDED theo luồng đã quy định. | Bắt buộc |
 
 <a id="sec_1018"></a>
 ### 4.6 Quản lý đơn hàng
@@ -287,11 +295,11 @@ Mức ưu tiên được quy ước: Bắt buộc là yêu cầu phải hoàn th
 | **ORDER 01** | Người mua xem danh sách và chi tiết đơn của mình. | Bắt buộc |
 | **ORDER 02** | Chủ shop chỉ xem đơn thuộc gian hàng của mình. | Bắt buộc |
 | **ORDER 03** | Đơn mới có trạng thái PENDING. | Bắt buộc |
-| **ORDER 04** | Chủ shop xác nhận đơn theo luồng trạng thái hợp lệ. | Bắt buộc |
+| **ORDER 04** | Chủ shop xử lý đơn theo luồng trạng thái hợp lệ; đơn chuyển khoản chỉ được CONFIRMED sau khi payment PAID. | Bắt buộc |
 | **ORDER 05** | Luồng chuẩn gồm PENDING, CONFIRMED, PREPARING, SHIPPING và COMPLETED. | Bắt buộc |
-| **ORDER 06** | Đơn có thể chuyển sang CANCELLED theo quy tắc hủy. | Bắt buộc |
+| **ORDER 06** | Buyer sở hữu đơn, chủ shop sở hữu đơn hoặc Admin được hủy đơn ở PENDING, CONFIRMED hoặc PREPARING và bắt buộc nhập lý do hợp lệ. | Bắt buộc |
 | **ORDER 07** | Hệ thống ghi lịch sử mỗi lần thay đổi trạng thái. | Bắt buộc |
-| **ORDER 08** | Hủy đơn hợp lệ phải hoàn lại tồn kho. | Bắt buộc |
+| **ORDER 08** | Hủy đơn hợp lệ phải hoàn tồn kho đúng một lần và chuyển payment chưa trả sang CANCELLED hoặc payment đã trả sang REFUNDED. | Bắt buộc |
 | **ORDER 09** | Người không sở hữu đơn không được xem hoặc sửa đơn. | Bắt buộc |
 
 <a id="sec_1019"></a>
@@ -299,12 +307,13 @@ Mức ưu tiên được quy ước: Bắt buộc là yêu cầu phải hoàn th
 
 | **Mã** | **Yêu cầu** | **Ưu tiên** |
 | --- | --- | --- |
-| **NOTI 01** | Admin nhận thông báo khi có yêu cầu mở gian hàng mới. | Bắt buộc |
+| **NOTI 01** | Tất cả Admin ACTIVE nhận thông báo khi có yêu cầu mở gian hàng mới. | Bắt buộc |
 | **NOTI 02** | Người dùng nhận thông báo khi yêu cầu được duyệt hoặc từ chối. | Bắt buộc |
 | **NOTI 03** | Chủ shop nhận thông báo khi có đơn hàng mới. | Bắt buộc |
-| **NOTI 04** | Người mua nhận thông báo khi trạng thái đơn thay đổi. | Bắt buộc |
+| **NOTI 04** | Người mua nhận thông báo khi shop/Admin đổi trạng thái đơn; chủ shop nhận thông báo khi buyer/Admin hủy đơn. | Bắt buộc |
 | **NOTI 05** | Người dùng xem danh sách, số lượng chưa đọc và đánh dấu đã đọc. | Bắt buộc |
 | **NOTI 06** | Thông báo hoạt động trong website và không yêu cầu realtime. | Bắt buộc |
+| **NOTI 07** | Chủ shop nhận thông báo khi sản phẩm thuộc shop có đánh giá mới hợp lệ. | Bắt buộc |
 
 <a id="sec_1020"></a>
 ### 4.8 Đánh giá và yêu thích
@@ -313,7 +322,7 @@ Mức ưu tiên được quy ước: Bắt buộc là yêu cầu phải hoàn th
 | --- | --- | --- |
 | **REV 01** | Người mua chỉ đánh giá sản phẩm thuộc đơn COMPLETED của mình. | Bắt buộc |
 | **REV 02** | Đánh giá gồm điểm từ 1 đến 5 và nội dung nhận xét. | Bắt buộc |
-| **REV 03** | Mỗi sản phẩm trong một đơn chỉ được người mua đánh giá một lần. | Bắt buộc |
+| **REV 03** | Mỗi order item chỉ được đánh giá một lần; hệ thống không hỗ trợ sửa hoặc xóa review trong MVP. | Bắt buộc |
 | **REV 04** | Hệ thống hiển thị điểm trung bình và danh sách đánh giá. | Bắt buộc |
 | **FAV 01** | Người dùng thêm hoặc xóa sản phẩm yêu thích. | Bắt buộc |
 | **FAV 02** | Một người dùng không thể lưu trùng cùng một sản phẩm. | Bắt buộc |
@@ -341,7 +350,7 @@ Mức ưu tiên được quy ước: Bắt buộc là yêu cầu phải hoàn th
 | Tác nhân | Khách |
 | Tiền điều kiện | Email chưa tồn tại trong hệ thống. |
 | Kích hoạt | Khách chọn Đăng ký. |
-| Luồng chính | 1. Khách nhập họ tên, email, mật khẩu và xác nhận mật khẩu.  <br>2. Hệ thống kiểm tra định dạng và tính duy nhất của email.  <br>3. Hệ thống mã hóa mật khẩu và tạo tài khoản USER ở trạng thái ACTIVE.  <br>4. Hệ thống chuyển đến trang đăng nhập hoặc tự động đăng nhập theo cấu hình. |
+| Luồng chính | 1. Khách nhập họ tên, email, mật khẩu và xác nhận mật khẩu.  <br>2. Hệ thống trim, chuyển email thành chữ thường rồi kiểm tra định dạng và tính duy nhất không phân biệt hoa thường.  <br>3. Hệ thống mã hóa mật khẩu và tạo tài khoản USER ở trạng thái ACTIVE.  <br>4. Hệ thống chuyển đến trang đăng nhập. |
 | Ngoại lệ | 1. Email đã tồn tại: hiển thị lỗi và không tạo tài khoản.  <br>2. Mật khẩu xác nhận không khớp: yêu cầu nhập lại.  <br>3. Dữ liệu thiếu hoặc sai định dạng: hiển thị lỗi tại trường tương ứng. |
 | Hậu điều kiện | Tài khoản được lưu an toàn và có thể đăng nhập. |
 
@@ -390,8 +399,8 @@ Mức ưu tiên được quy ước: Bắt buộc là yêu cầu phải hoàn th
 | Tiền điều kiện | Đã đăng nhập; sản phẩm đang bán và còn hàng. |
 | Kích hoạt | Người dùng chọn Thêm vào giỏ. |
 | Luồng chính | 1. Hệ thống đọc giỏ hiện tại của người dùng.  <br>2. Nếu sản phẩm chưa có, tạo mục giỏ hàng.  <br>3. Nếu đã có, tăng số lượng.  <br>4. Kiểm tra tổng số lượng không vượt tồn kho.  <br>5. Hiển thị giỏ hàng và tổng tạm tính. |
-| Ngoại lệ | 1. Sản phẩm hết hàng hoặc bị ẩn: không cho thêm.  <br>2. Số lượng vượt tồn kho: giữ mức tối đa hợp lệ và cảnh báo. |
-| Hậu điều kiện | Giỏ hàng được cập nhật, chưa thay đổi tồn kho thật. |
+| Ngoại lệ | 1. Owner bị khóa, shop không APPROVED, danh mục bị ẩn, sản phẩm bị ẩn hoặc hết hàng: không cho thêm.  <br>2. Số lượng vượt tồn kho: giữ mức tối đa hợp lệ và cảnh báo.  <br>3. Chủ shop thêm sản phẩm của chính mình: từ chối. |
+| Hậu điều kiện | Giỏ hàng chỉ lưu sản phẩm và số lượng, chưa thay đổi tồn kho thật; giá và tạm tính luôn được đọc lại từ giá sản phẩm hiện tại. |
 
 <a id="sec_1028"></a>
 ### UC 06 Đặt hàng
@@ -401,8 +410,8 @@ Mức ưu tiên được quy ước: Bắt buộc là yêu cầu phải hoàn th
 | Tác nhân | Người dùng |
 | Tiền điều kiện | Đã đăng nhập; giỏ có sản phẩm hợp lệ. |
 | Kích hoạt | Người dùng chọn Đặt hàng. |
-| Luồng chính | 1. Người dùng xác nhận địa chỉ và phương thức thanh toán.  <br>2. Hệ thống kiểm tra lại tồn kho và trạng thái sản phẩm.  <br>3. Hệ thống nhóm các mục giỏ theo gian hàng.  <br>4. Hệ thống tạo một đơn PENDING cho mỗi gian hàng.  <br>5. Payment Strategy xử lý COD hoặc chuyển khoản mô phỏng.  <br>6. Hệ thống trừ tồn kho, xóa mục đã mua và tạo thông báo cho shop.  <br>7. Hệ thống hiển thị kết quả và mã đơn. |
-| Ngoại lệ | 1. Tồn kho thay đổi: yêu cầu người dùng điều chỉnh số lượng.  <br>2. Một nhóm sản phẩm không hợp lệ: không tạo đơn cho nhóm đó và thông báo rõ.  <br>3. Có lỗi lưu dữ liệu: giao dịch được hoàn tác để tránh trừ kho nhưng không có đơn. |
+| Luồng chính | 1. Người dùng xác nhận địa chỉ, tổng tiền hiện tại và phương thức thanh toán.  <br>2. Hệ thống kiểm tra lại owner, shop, danh mục, sản phẩm, giá và tồn kho.  <br>3. Hệ thống nhóm các mục giỏ theo gian hàng.  <br>4. Hệ thống tạo một đơn PENDING và một payment cho mỗi gian hàng.  <br>5. Payment Strategy tạo COD_PENDING hoặc hướng dẫn chuyển khoản PENDING cùng mã tham chiếu riêng.  <br>6. Hệ thống trừ tồn kho bằng thao tác nguyên tử, snapshot giá vào order item, xóa mục đã mua và phát event tạo đơn sau khi commit.  <br>7. Hệ thống hiển thị kết quả và mã đơn. |
+| Ngoại lệ | 1. Giá thay đổi sau màn hình xác nhận: dừng checkout, hiển thị tổng mới và yêu cầu người dùng xác nhận lại.  <br>2. Bất kỳ sản phẩm hoặc nhóm shop nào không hợp lệ: không tạo bất kỳ đơn nào.  <br>3. Có lỗi tạo order, payment, trừ kho hoặc xóa cart: rollback toàn bộ checkout. |
 | Hậu điều kiện | Các đơn được tạo nhất quán và có thể theo dõi. |
 
 <a id="sec_1029"></a>
@@ -410,11 +419,11 @@ Mức ưu tiên được quy ước: Bắt buộc là yêu cầu phải hoàn th
 
 | **Thuộc tính** | **Nội dung** |
 | --- | --- |
-| Tác nhân | Chủ gian hàng |
-| Tiền điều kiện | Shop APPROVED; đơn thuộc shop. |
+| Tác nhân | Chủ gian hàng; Buyer hoặc Admin đối với thao tác hủy |
+| Tiền điều kiện | Đơn thuộc đúng buyer/shop hoặc người thao tác là Admin; shop LOCKED vẫn được xử lý đơn đã tồn tại trước khi khóa. |
 | Kích hoạt | Chủ shop mở chi tiết đơn bán. |
-| Luồng chính | 1. Chủ shop xem thông tin đơn và sản phẩm.  <br>2. Chọn trạng thái kế tiếp hợp lệ.  <br>3. Hệ thống xác nhận quyền và quy tắc chuyển trạng thái.  <br>4. Hệ thống cập nhật đơn và ghi lịch sử.  <br>5. Hệ thống tạo thông báo cho người mua. |
-| Ngoại lệ | 1. Đơn không thuộc shop: từ chối truy cập.  <br>2. Trạng thái chuyển không hợp lệ: giữ nguyên và hiển thị lỗi.  <br>3. Đơn đã COMPLETED hoặc CANCELLED: không cho xử lý tiếp. |
+| Luồng chính | 1. Chủ shop xem thông tin đơn và sản phẩm.  <br>2. Chọn trạng thái kế tiếp hợp lệ; chủ shop chuyển SHIPPING sang COMPLETED.  <br>3. Với chuyển khoản, hệ thống chỉ cho CONFIRMED khi payment PAID; COD ở COD_PENDING vẫn được xác nhận.  <br>4. Hệ thống cập nhật đơn, payment khi phù hợp và ghi lịch sử.  <br>5. Hệ thống phát event để tạo thông báo cho người mua sau khi commit. |
+| Ngoại lệ | 1. Đơn không thuộc quyền truy cập: từ chối.  <br>2. Trạng thái chuyển không hợp lệ: giữ nguyên và hiển thị lỗi.  <br>3. Buyer, chủ shop hoặc Admin chỉ được hủy PENDING, CONFIRMED hoặc PREPARING, phải nhập lý do sau khi trim và tối đa 500 ký tự.  <br>4. Hủy hợp lệ hoàn kho đúng một lần; payment chưa trả chuyển CANCELLED, payment đã trả chuyển REFUNDED.  <br>5. Đơn SHIPPING, COMPLETED hoặc CANCELLED không được hủy. |
 | Hậu điều kiện | Trạng thái, lịch sử và thông báo được cập nhật. |
 
 <a id="sec_1030"></a>
@@ -425,7 +434,7 @@ Mức ưu tiên được quy ước: Bắt buộc là yêu cầu phải hoàn th
 | Tác nhân | Người dùng |
 | Tiền điều kiện | Có đơn COMPLETED chứa sản phẩm; chưa đánh giá mục đó. |
 | Kích hoạt | Người dùng chọn Viết đánh giá. |
-| Luồng chính | 1. Người dùng chọn từ 1 đến 5 sao và nhập nhận xét.  <br>2. Hệ thống xác minh quyền đánh giá từ order item.  <br>3. Hệ thống lưu đánh giá.  <br>4. Hệ thống tính lại điểm trung bình sản phẩm.  <br>5. Hệ thống thông báo cho chủ shop. |
+| Luồng chính | 1. Người dùng chọn từ 1 đến 5 sao và nhập nhận xét.  <br>2. Hệ thống xác minh order item thuộc đơn COMPLETED của chính người dùng và chứa đúng sản phẩm.  <br>3. Hệ thống lưu đánh giá duy nhất theo order item.  <br>4. Hệ thống tính lại điểm trung bình sản phẩm.  <br>5. Hệ thống phát ReviewCreatedEvent và tạo thông báo cho chủ shop sau khi commit. |
 | Ngoại lệ | 1. Đơn chưa COMPLETED hoặc không thuộc người dùng: từ chối.  <br>2. Đã đánh giá: chuyển sang xem đánh giá hiện có.  <br>3. Điểm ngoài khoảng 1 đến 5: yêu cầu nhập lại. |
 | Hậu điều kiện | Đánh giá hợp lệ được hiển thị và không bị trùng. |
 
@@ -434,17 +443,17 @@ Mức ưu tiên được quy ước: Bắt buộc là yêu cầu phải hoàn th
 
 | **Mã** | **Nội dung** |
 | --- | --- |
-| **BR 01** | Mỗi email chỉ thuộc một tài khoản. |
+| **BR 01** | Mỗi email sau khi trim và chuyển chữ thường chỉ thuộc một tài khoản; database áp dụng unique index trên LOWER(email). |
 | **BR 02** | Mỗi người dùng chỉ sở hữu tối đa một gian hàng. |
-| **BR 03** | Shop PENDING, REJECTED hoặc LOCKED không được đăng sản phẩm hay nhận đơn mới. |
+| **BR 03** | Shop PENDING, REJECTED hoặc LOCKED không được thay đổi catalog hay nhận đơn mới; shop LOCKED vẫn xử lý được đơn đã tồn tại. |
 | **BR 04** | Chỉ Admin được phê duyệt, từ chối hoặc khóa gian hàng. |
 | **BR 05** | Từ chối gian hàng bắt buộc có lý do. |
 | **BR 06** | Mỗi sản phẩm thuộc đúng một gian hàng và một danh mục. |
-| **BR 07** | Giá sản phẩm lớn hơn 0; tồn kho không âm. |
+| **BR 07** | Giá sản phẩm lớn hơn 0; tồn kho không âm; tình trạng hết hàng được suy ra từ stock_quantity bằng 0, không lưu thành trạng thái riêng. |
 | **BR 08** | Giá tại thời điểm mua được lưu trong order item để không bị thay đổi khi giá sản phẩm cập nhật. |
 | **BR 09** | Mỗi đơn hàng thuộc đúng một người mua và một gian hàng. |
 | **BR 10** | Giỏ có nhiều gian hàng được tách thành nhiều đơn. |
-| **BR 11** | Chỉ đơn PENDING hoặc CONFIRMED mới có thể bị hủy theo cấu hình dự án. |
+| **BR 11** | Buyer sở hữu đơn, chủ shop sở hữu đơn hoặc Admin được hủy PENDING, CONFIRMED hoặc PREPARING; SHIPPING, COMPLETED và CANCELLED không được hủy. |
 | **BR 12** | Hủy đơn thành công phải hoàn lại tồn kho đúng một lần. |
 | **BR 13** | Đơn COMPLETED và CANCELLED là trạng thái kết thúc. |
 | **BR 14** | Doanh thu chỉ bao gồm đơn COMPLETED. |
@@ -452,6 +461,15 @@ Mức ưu tiên được quy ước: Bắt buộc là yêu cầu phải hoàn th
 | **BR 16** | Một người dùng không được lưu trùng một sản phẩm yêu thích. |
 | **BR 17** | Thông báo thuộc riêng người nhận và người khác không được đọc hoặc sửa. |
 | **BR 18** | Mọi thao tác quản trị quan trọng phải kiểm tra quyền ở backend, không chỉ ẩn nút trên giao diện. |
+| **BR 19** | Checkout nhiều shop là all-or-nothing; bất kỳ nhóm nào lỗi phải rollback order, payment, tồn kho và cart của toàn checkout. |
+| **BR 20** | Trừ tồn kho phải là thao tác nguyên tử có điều kiện stock_quantity đủ; thất bại ở bất kỳ sản phẩm nào làm rollback checkout. |
+| **BR 21** | Cart không lưu giá; giá hiện tại được đọc lại để hiển thị, còn order item snapshot giá tại thời điểm đặt thành công. |
+| **BR 22** | Category không active không được chọn cho sản phẩm mới; sản phẩm cũ vẫn được quản lý nhưng không xuất hiện ở trang công khai. |
+| **BR 23** | Admin không mua hàng và chủ shop không được mua sản phẩm của chính shop mình. |
+| **BR 24** | Account owner LOCKED làm shop ngừng nhận đơn mới và ẩn sản phẩm công khai; Admin xử lý hoặc hủy đơn cũ nếu owner không thể đăng nhập. |
+| **BR 25** | Notification được tạo từ event sau khi transaction nghiệp vụ commit và dùng cặp event_id, receiver_id duy nhất để xử lý lặp an toàn cho từng người nhận. |
+| **BR 26** | Review được tạo duy nhất theo order_item_id, không sửa hoặc xóa trong MVP. |
+| **BR 27** | COD chuyển COD_PENDING sang PAID khi đơn COMPLETED; chuyển khoản phải PAID trước khi đơn CONFIRMED; hủy payment chưa trả thành CANCELLED và payment đã trả thành REFUNDED. |
 
 <a id="sec_1032"></a>
 ### 6.1 Quy tắc chuyển trạng thái gian hàng
@@ -472,7 +490,7 @@ Mức ưu tiên được quy ước: Bắt buộc là yêu cầu phải hoàn th
 | --- | --- |
 | PENDING | CONFIRMED hoặc CANCELLED |
 | CONFIRMED | PREPARING hoặc CANCELLED |
-| PREPARING | SHIPPING |
+| PREPARING | SHIPPING hoặc CANCELLED |
 | SHIPPING | COMPLETED |
 | COMPLETED | Không có |
 | CANCELLED | Không có |
@@ -485,17 +503,17 @@ Cơ sở dữ liệu sử dụng Supabase PostgreSQL. Tên bảng dùng số nhi
 | **Bảng** | **Mục đích** | **Trường chính dự kiến** |
 | --- | --- | --- |
 | users | Tài khoản | id, full\_name, email, password\_hash, phone, address, avatar\_url, avatar\_public\_id, role, account\_status |
-| shops | Gian hàng và yêu cầu mở shop | id, owner\_id, shop\_name, description, logo\_url, logo\_public\_id, phone, address, status, rejection\_reason, approved\_by |
+| shops | Gian hàng và yêu cầu mở shop | id, owner\_id, shop\_name, description, logo\_url, logo\_public\_id, phone, address, status, rejection\_reason, approved\_by, lock\_reason, locked\_by, locked\_at |
 | categories | Danh mục | id, name, description, active |
 | products | Sản phẩm | id, shop\_id, category\_id, name, description, price, stock\_quantity, status |
 | product\_images | Ảnh sản phẩm | id, product\_id, image\_url, public\_id, display\_order |
 | carts | Giỏ hàng | id, user\_id |
 | cart\_items | Mục giỏ | id, cart\_id, product\_id, quantity |
-| orders | Đơn hàng | id, buyer\_id, shop\_id, status, payment\_method, payment\_status, shipping\_address, total\_amount |
+| orders | Đơn hàng | id, buyer\_id, shop\_id, status, shipping\_address, total\_amount |
 | order\_items | Mục đơn hàng | id, order\_id, product\_id, product\_name\_snapshot, unit\_price, quantity, subtotal |
 | payments | Kết quả thanh toán mô phỏng | id, order\_id, method, amount, status, transaction\_reference |
 | order\_status\_histories | Lịch sử trạng thái | id, order\_id, old\_status, new\_status, changed\_by, changed\_at |
-| notifications | Thông báo nội bộ | id, receiver\_id, type, title, content, reference\_id, is\_read, created\_at |
+| notifications | Thông báo nội bộ | id, event\_id, receiver\_id, type, title, content, reference\_id, is\_read, created\_at |
 | reviews | Đánh giá | id, user\_id, product\_id, order\_item\_id, rating, comment, created\_at |
 | favorites | Sản phẩm yêu thích | id, user\_id, product\_id, created\_at |
 
@@ -512,7 +530,7 @@ Lưu tài khoản dùng chung của người mua, chủ gian hàng và quản tr
 | --- | --- | --- | --- |
 | id | BIGSERIAL | PK | Mã định danh duy nhất của tài khoản. |
 | full\_name | VARCHAR(100) | NOT NULL | Họ tên hiển thị của người dùng. |
-| email | VARCHAR(150) | NOT NULL, UNIQUE | Email dùng để đăng nhập và nhận thông báo. |
+| email | VARCHAR(150) | NOT NULL | Email đã trim và chuẩn hóa chữ thường; unique index trên LOWER(email) bảo đảm không trùng không phân biệt hoa thường. |
 | password\_hash | VARCHAR(255) | NOT NULL | Mật khẩu đã được mã hóa bằng BCrypt. |
 | phone | VARCHAR(20) | NULL | Số điện thoại liên hệ. |
 | address | TEXT | NULL | Địa chỉ mặc định trong hồ sơ. |
@@ -542,6 +560,9 @@ Lưu thông tin gian hàng đồng thời quản lý quy trình gửi yêu cầu
 | approved\_by | BIGINT | FK users(id), NULL | Admin đã duyệt hoặc xử lý yêu cầu. |
 | submitted\_at | TIMESTAMPTZ | NOT NULL, DEFAULT NOW() | Thời điểm người dùng gửi yêu cầu. |
 | approved\_at | TIMESTAMPTZ | NULL | Thời điểm yêu cầu được phê duyệt. |
+| lock\_reason | VARCHAR(500) | NULL | Lý do khóa gian hàng, bắt buộc khi trạng thái chuyển sang LOCKED. |
+| locked\_by | BIGINT | FK users(id), NULL | Admin thực hiện khóa gian hàng. |
+| locked\_at | TIMESTAMPTZ | NULL | Thời điểm gian hàng bị khóa. |
 | created\_at | TIMESTAMPTZ | NOT NULL, DEFAULT NOW() | Thời điểm tạo bản ghi gian hàng. |
 | updated\_at | TIMESTAMPTZ | NOT NULL, DEFAULT NOW() | Thời điểm cập nhật gần nhất. |
 
@@ -569,9 +590,9 @@ Lưu thông tin sản phẩm thuộc từng gian hàng và danh mục. Chủ gia
 | category\_id | BIGINT | FK categories(id), NOT NULL | Danh mục của sản phẩm. |
 | name | VARCHAR(200) | NOT NULL | Tên sản phẩm. |
 | description | TEXT | NULL | Thông tin mô tả chi tiết sản phẩm. |
-| price | NUMERIC(12,2) | NOT NULL, CHECK >= 0 | Giá bán hiện tại; dùng kiểu số thập phân chính xác. |
+| price | NUMERIC(12,2) | NOT NULL, CHECK > 0 | Giá bán hiện tại; dùng kiểu số thập phân chính xác. |
 | stock\_quantity | INTEGER | NOT NULL, CHECK >= 0 | Số lượng tồn kho hiện tại. |
-| status | VARCHAR(20) | NOT NULL, DEFAULT 'ACTIVE' | Trạng thái ACTIVE, HIDDEN hoặc OUT\_OF\_STOCK. |
+| status | VARCHAR(20) | NOT NULL, DEFAULT 'ACTIVE' | Trạng thái ACTIVE hoặc HIDDEN; hết hàng được suy ra từ stock_quantity bằng 0. |
 | created\_at | TIMESTAMPTZ | NOT NULL, DEFAULT NOW() | Thời điểm tạo sản phẩm. |
 | updated\_at | TIMESTAMPTZ | NOT NULL, DEFAULT NOW() | Thời điểm cập nhật gần nhất. |
 
@@ -601,7 +622,7 @@ Lưu nhiều hình ảnh cho một sản phẩm. Tệp thật được lưu trê
 
 #### 7.1.7 Bảng cart\_items Sản phẩm trong giỏ hàng
 
-Lưu từng sản phẩm và số lượng mà người dùng đã thêm vào giỏ.
+Lưu từng sản phẩm và số lượng mà người dùng đã thêm vào giỏ. Giỏ không lưu giá; giao diện và checkout luôn đọc giá hiện tại từ sản phẩm.
 
 | **Tên trường** | **Kiểu dữ liệu** | **Ràng buộc** | **Giải thích** |
 | --- | --- | --- | --- |
@@ -624,13 +645,11 @@ Lưu đơn hàng của người mua. Khi giỏ có sản phẩm từ nhiều gia
 | buyer\_id | BIGINT | FK users(id), NOT NULL | Người dùng đặt mua sản phẩm. |
 | shop\_id | BIGINT | FK shops(id), NOT NULL | Gian hàng chịu trách nhiệm xử lý đơn. |
 | status | VARCHAR(20) | NOT NULL, DEFAULT 'PENDING' | Trạng thái PENDING, CONFIRMED, PREPARING, SHIPPING, COMPLETED hoặc CANCELLED. |
-| payment\_method | VARCHAR(20) | NOT NULL | Phương thức COD hoặc BANK\_TRANSFER; được xử lý bằng Strategy Pattern. |
-| payment\_status | VARCHAR(20) | NOT NULL, DEFAULT 'PENDING' | Trạng thái PENDING, COD\_PENDING, PAID hoặc FAILED. |
 | receiver\_name | VARCHAR(100) | NOT NULL | Tên người nhận tại thời điểm đặt hàng. |
 | receiver\_phone | VARCHAR(20) | NOT NULL | Số điện thoại người nhận. |
 | shipping\_address | TEXT | NOT NULL | Địa chỉ giao hàng được chụp tại thời điểm đặt. |
 | note | TEXT | NULL | Ghi chú giao hàng của người mua. |
-| total\_amount | NUMERIC(14,2) | NOT NULL, CHECK >= 0 | Tổng tiền của đơn thuộc một gian hàng. |
+| total\_amount | NUMERIC(14,2) | NOT NULL, CHECK > 0 | Tổng tiền của đơn thuộc một gian hàng. |
 | created\_at | TIMESTAMPTZ | NOT NULL, DEFAULT NOW() | Thời điểm đặt hàng. |
 | updated\_at | TIMESTAMPTZ | NOT NULL, DEFAULT NOW() | Thời điểm cập nhật gần nhất. |
 
@@ -644,9 +663,9 @@ Lưu các sản phẩm thuộc một đơn hàng. Tên và giá được chụp 
 | order\_id | BIGINT | FK orders(id), NOT NULL | Đơn hàng chứa dòng sản phẩm. |
 | product\_id | BIGINT | FK products(id), NOT NULL | Sản phẩm gốc được mua. |
 | product\_name\_snapshot | VARCHAR(200) | NOT NULL | Tên sản phẩm tại thời điểm đặt hàng. |
-| unit\_price | NUMERIC(12,2) | NOT NULL, CHECK >= 0 | Đơn giá tại thời điểm đặt hàng. |
+| unit\_price | NUMERIC(12,2) | NOT NULL, CHECK > 0 | Đơn giá tại thời điểm đặt hàng. |
 | quantity | INTEGER | NOT NULL, CHECK > 0 | Số lượng sản phẩm đã đặt. |
-| subtotal | NUMERIC(14,2) | NOT NULL, CHECK >= 0 | Thành tiền bằng đơn giá nhân số lượng. |
+| subtotal | NUMERIC(14,2) | NOT NULL, CHECK > 0 | Thành tiền bằng đơn giá nhân số lượng. |
 
 #### 7.1.10 Bảng payments Thanh toán mô phỏng
 
@@ -657,10 +676,11 @@ Lưu kết quả xử lý thanh toán COD hoặc chuyển khoản mô phỏng. H
 | id | BIGSERIAL | PK | Mã định danh của giao dịch mô phỏng. |
 | order\_id | BIGINT | FK orders(id), NOT NULL, UNIQUE | Đơn hàng được thanh toán; mỗi đơn có một kết quả thanh toán. |
 | method | VARCHAR(20) | NOT NULL | Phương thức COD hoặc BANK\_TRANSFER. |
-| amount | NUMERIC(14,2) | NOT NULL, CHECK >= 0 | Số tiền cần thanh toán. |
-| status | VARCHAR(20) | NOT NULL | Trạng thái PENDING, COD\_PENDING, PAID hoặc FAILED. |
+| amount | NUMERIC(14,2) | NOT NULL, CHECK > 0 | Số tiền cần thanh toán. |
+| status | VARCHAR(20) | NOT NULL | Trạng thái PENDING, COD\_PENDING, PAID, FAILED, CANCELLED hoặc REFUNDED. |
 | transaction\_reference | VARCHAR(100) | NULL | Mã tham chiếu giả lập cho giao dịch chuyển khoản. |
 | paid\_at | TIMESTAMPTZ | NULL | Thời điểm được ghi nhận đã thanh toán. |
+| refunded\_at | TIMESTAMPTZ | NULL | Thời điểm hoàn tiền mô phỏng khi hủy đơn đã thanh toán. |
 | created\_at | TIMESTAMPTZ | NOT NULL, DEFAULT NOW() | Thời điểm tạo kết quả thanh toán. |
 
 #### 7.1.11 Bảng order\_status\_histories Lịch sử trạng thái đơn
@@ -684,6 +704,7 @@ Lưu thông báo nội bộ về duyệt gian hàng, đơn hàng, tồn kho và 
 | **Tên trường** | **Kiểu dữ liệu** | **Ràng buộc** | **Giải thích** |
 | --- | --- | --- | --- |
 | id | BIGSERIAL | PK | Mã định danh của thông báo. |
+| event\_id | UUID | NOT NULL | Định danh event nguồn. |
 | receiver\_id | BIGINT | FK users(id), NOT NULL | Tài khoản nhận thông báo. |
 | type | VARCHAR(50) | NOT NULL | Loại sự kiện tạo thông báo. |
 | title | VARCHAR(150) | NOT NULL | Tiêu đề ngắn của thông báo. |
@@ -691,6 +712,7 @@ Lưu thông báo nội bộ về duyệt gian hàng, đơn hàng, tồn kho và 
 | reference\_id | BIGINT | NULL | Mã đối tượng liên quan như đơn hàng hoặc gian hàng. |
 | is\_read | BOOLEAN | NOT NULL, DEFAULT FALSE | Đánh dấu người dùng đã đọc hay chưa. |
 | created\_at | TIMESTAMPTZ | NOT NULL, DEFAULT NOW() | Thời điểm tạo thông báo. |
+| event\_id, receiver\_id | - | UNIQUE | Một event chỉ tạo tối đa một notification cho mỗi người nhận. |
 
 #### 7.1.13 Bảng reviews Đánh giá sản phẩm
 
@@ -705,8 +727,7 @@ Lưu điểm số và nhận xét của người đã mua. Mỗi mục hàng tro
 | rating | SMALLINT | NOT NULL, CHECK 1..5 | Số sao đánh giá từ 1 đến 5. |
 | comment | TEXT | NULL | Nội dung nhận xét của người mua. |
 | created\_at | TIMESTAMPTZ | NOT NULL, DEFAULT NOW() | Thời điểm tạo đánh giá. |
-| updated\_at | TIMESTAMPTZ | NOT NULL, DEFAULT NOW() | Thời điểm chỉnh sửa đánh giá gần nhất. |
-| user\_id, order\_item\_id | - | UNIQUE | Ngăn một người đánh giá trùng cùng một mục hàng. |
+| order\_item\_id | - | UNIQUE | Mỗi mục hàng chỉ được đánh giá một lần. |
 
 #### 7.1.14 Bảng favorites Sản phẩm yêu thích
 
@@ -723,10 +744,14 @@ Lưu danh sách sản phẩm mà người dùng đánh dấu để xem lại sau
 <a id="sec_1036"></a>
 ### 7.2 Ràng buộc dữ liệu
 
-- users.email là duy nhất.
+- users.email được trim, chuyển chữ thường và có unique index trên LOWER(email).
 - shops.owner\_id là duy nhất để bảo đảm một người dùng chỉ có một gian hàng.
 - favorites có ràng buộc duy nhất trên cặp user\_id và product\_id.
-- reviews có ràng buộc duy nhất trên order\_item\_id và user\_id.
+- reviews có ràng buộc duy nhất trên order\_item\_id.
+- notifications có ràng buộc duy nhất trên cặp event\_id và receiver\_id để bảo đảm idempotency và hỗ trợ event có nhiều người nhận.
+- products.price phải lớn hơn 0; stock\_quantity không âm và được trừ bằng cập nhật nguyên tử có điều kiện.
+- carts và cart\_items không lưu giá; order\_items là nơi duy nhất snapshot giá mua.
+- orders không lặp phương thức hoặc trạng thái thanh toán; payments là nguồn chuẩn duy nhất.
 - order\_items lưu tên và giá chụp tại thời điểm đặt hàng.
 - Các khóa ngoại quan trọng không được xóa tùy tiện; ưu tiên trạng thái ẩn hoặc khóa.
 - Số tiền dùng kiểu số thập phân chính xác, không dùng float hoặc double cho dữ liệu tiền tệ.
@@ -750,7 +775,7 @@ Lưu danh sách sản phẩm mà người dùng đánh dấu để xem lại sau
 | **NFR 03** | Bảo mật | Mật khẩu mã hóa bằng BCrypt và không xuất hiện trong log hoặc response. |
 | **NFR 04** | Bảo mật | Mọi endpoint quản trị và người bán phải kiểm tra xác thực và quyền ở backend. |
 | **NFR 05** | Bảo mật | Thông tin kết nối Supabase, Cloudinary API Secret và các khóa bí mật được lưu bằng biến môi trường. |
-| **NFR 06** | Toàn vẹn | Tạo đơn, trừ tồn kho và xóa giỏ phải nằm trong giao dịch cơ sở dữ liệu. |
+| **NFR 06** | Toàn vẹn | Checkout nhiều shop là một giao dịch all-or-nothing; tạo đơn/payment, trừ tồn kho và xóa giỏ phải rollback toàn bộ khi một bước lỗi. |
 | **NFR 07** | Dễ dùng | Giao diện responsive, thông báo lỗi gần trường nhập và có xác nhận trước thao tác quan trọng. |
 | **NFR 08** | Tương thích | Hỗ trợ phiên bản hiện hành của Chrome, Edge và Firefox trên máy tính. |
 | **NFR 09** | Khả trì | Mã nguồn phân lớp rõ; nghiệp vụ không đặt trực tiếp trong Controller. |
@@ -860,7 +885,7 @@ Vấn đề cần giải quyết là hành vi của gian hàng thay đổi theo 
 | PendingShopState | Không cho bán; cho phép chờ Admin xử lý. |
 | ApprovedShopState | Cho đăng sản phẩm, nhận đơn và quản lý gian hàng. |
 | RejectedShopState | Không cho bán; cho phép sửa và gửi lại yêu cầu. |
-| LockedShopState | Chặn hoạt động bán cho đến khi Admin mở khóa. |
+| LockedShopState | Chặn catalog và đơn mới nhưng cho phép xử lý đơn đã tồn tại trước khi khóa. |
 | ShopContext hoặc ShopService | Chọn State hiện tại và ủy quyền kiểm tra hành vi. |
 
 Tiêu chí chứng minh: cùng một lời gọi kiểm tra quyền bán phải trả kết quả khác nhau theo trạng thái; việc thêm trạng thái mới không buộc sửa nhiều nhánh điều kiện ở các Controller.
@@ -874,7 +899,7 @@ COD và chuyển khoản có cách xử lý và thông điệp kết quả khác
 | --- | --- |
 | PaymentStrategy | Giao diện khai báo phương thức xử lý thanh toán mô phỏng. |
 | CodPaymentStrategy | Tạo trạng thái chờ thanh toán khi nhận hàng. |
-| BankTransferStrategy | Tạo hướng dẫn chuyển khoản và mã tham chiếu đơn. |
+| BankTransferStrategy | Tạo payment PENDING, hướng dẫn chuyển khoản và mã tham chiếu riêng cho đơn; chủ shop xác nhận để chuyển sang PAID. |
 | PaymentStrategyFactory | Chọn Strategy dựa trên phương thức người dùng nhập. |
 | CheckoutService | Tạo đơn và gọi Strategy mà không phụ thuộc chi tiết từng phương thức. |
 
@@ -883,11 +908,11 @@ Tiêu chí chứng minh: có thể bổ sung một phương thức thanh toán m
 <a id="sec_1046"></a>
 ### 10.3 Observer Pattern cho thông báo
 
-Observer là mẫu mở rộng không bắt buộc. Phiên bản đầu có thể dùng NotificationService trực tiếp; nếu còn thời gian, nhóm áp dụng Observer để tách nghiệp vụ chính khỏi việc tạo thông báo. Khi trạng thái đơn hoặc gian hàng thay đổi, publisher phát sự kiện và các listener tạo notification tương ứng. Trong Spring Boot, nhóm có thể triển khai bằng application event hoặc giao diện observer tự xây dựng, nhưng phải giải thích nhất quán trong báo cáo.
+Observer là mẫu thứ ba được nhóm áp dụng chính thức để tách nghiệp vụ chính khỏi việc tạo thông báo. Publisher phát event có eventId; listener trong engagement xử lý sau khi transaction nghiệp vụ commit và lưu notification với cặp event_id, receiver_id duy nhất để chống tạo trùng cho từng người nhận khi xử lý lặp.
 
 | **Sự kiện** | **Đối tượng nhận thông báo** |
 | --- | --- |
-| ShopRequested | Admin |
+| ShopRequested | Tất cả Admin ACTIVE |
 | ShopApproved hoặc ShopRejected | Chủ gian hàng |
 | OrderCreated | Chủ gian hàng |
 | OrderStatusChanged | Người mua |
@@ -901,13 +926,13 @@ Observer là mẫu mở rộng không bắt buộc. Phiên bản đầu có th�
 | Công khai | Trang chủ; danh sách sản phẩm; chi tiết sản phẩm; trang gian hàng; đăng ký; đăng nhập. |
 | Người dùng | Hồ sơ; giỏ hàng; checkout; đơn mua; chi tiết đơn; thông báo; yêu thích; viết đánh giá. |
 | Kênh người bán | Tổng quan; thông tin gian hàng; sản phẩm; thêm sửa sản phẩm; đơn bán; chi tiết đơn; thống kê. |
-| Quản trị | Dashboard; yêu cầu mở shop; chi tiết xét duyệt; danh mục; danh sách gian hàng; khóa mở khóa. |
+| Quản trị | Dashboard; quản lý tài khoản; yêu cầu mở shop; chi tiết xét duyệt; danh mục; danh sách gian hàng; giám sát và hủy đơn hợp lệ. |
 
 <a id="sec_1048"></a>
 ### 11.1 Nguyên tắc giao diện
 
 - Thanh điều hướng thay đổi theo trạng thái đăng nhập và quyền.
-- Nút Kênh người bán chỉ xuất hiện khi shop APPROVED; trạng thái khác hiển thị tiến trình phù hợp.
+- Nút Kênh người bán xuất hiện đầy đủ khi shop APPROVED; shop LOCKED chỉ được vào khu vực đơn cũ, trạng thái khác hiển thị tiến trình phù hợp.
 - Form hiển thị lỗi tại trường nhập và giữ lại dữ liệu hợp lệ đã nhập.
 - Các thao tác hủy đơn, khóa shop và ẩn sản phẩm phải có xác nhận.
 - Trạng thái đơn và gian hàng dùng nhãn chữ rõ ràng, không chỉ dựa vào màu sắc.
@@ -918,14 +943,14 @@ Observer là mẫu mở rộng không bắt buộc. Phiên bản đầu có th�
 
 | **Mã** | **Phạm vi** | **Điều kiện đạt** |
 | --- | --- | --- |
-| **AT 01** | Tài khoản | Đăng ký, đăng nhập, đăng xuất và cập nhật hồ sơ hoạt động; mật khẩu trong CSDL không ở dạng văn bản. |
+| **AT 01** | Tài khoản | Đăng ký chuẩn hóa email, đăng nhập, đăng xuất, cập nhật hồ sơ và quản lý khóa tài khoản hoạt động; mật khẩu trong CSDL không ở dạng văn bản. |
 | **AT 02** | Gian hàng | User gửi yêu cầu; Admin duyệt hoặc từ chối; quyền bán thay đổi đúng theo State. |
 | **AT 03** | Sản phẩm | Shop APPROVED tạo và sửa sản phẩm của mình; không thể sửa sản phẩm shop khác. |
 | **AT 04** | Tìm kiếm | Tìm theo tên và lọc theo danh mục, giá trả về kết quả phù hợp. |
-| **AT 05** | Giỏ hàng | Thêm, sửa, xóa và kiểm tra tồn kho chính xác. |
-| **AT 06** | Checkout | Giỏ nhiều shop tạo nhiều đơn; COD và chuyển khoản dùng Strategy tương ứng. |
-| **AT 07** | Đơn hàng | Người bán xử lý đúng luồng; người mua theo dõi được; lịch sử trạng thái được ghi. |
-| **AT 08** | Thông báo | Các sự kiện bắt buộc tạo thông báo đúng người nhận và có thể đánh dấu đã đọc. |
+| **AT 05** | Giỏ hàng | Thêm, sửa, xóa, kiểm tra tồn kho và tự phản ánh giá sản phẩm hiện tại chính xác. |
+| **AT 06** | Checkout | Giỏ nhiều shop tạo nhiều đơn theo all-or-nothing; COD và chuyển khoản dùng Strategy tương ứng; lỗi bất kỳ bước nào rollback toàn bộ. |
+| **AT 07** | Đơn hàng | Chủ shop xử lý đúng luồng; ba actor hủy đúng trạng thái với lý do; hoàn kho/payment chỉ cập nhật một lần và lịch sử được ghi. |
+| **AT 08** | Thông báo | Observer tạo thông báo đúng người nhận cho shop, order và review; event lặp không tạo notification trùng. |
 | **AT 09** | Doanh thu | Doanh thu chỉ cộng đơn COMPLETED của đúng shop. |
 | **AT 10** | Đánh giá | Chỉ người đã mua và hoàn tất đơn mới đánh giá; không tạo đánh giá trùng. |
 | **AT 11** | Yêu thích | Thêm, xóa và xem danh sách; không tạo bản ghi trùng. |
@@ -982,9 +1007,9 @@ Các chức năng dưới đây không thuộc phiên bản giữa kỳ. Việc 
 | --- | --- |
 | Tài khoản | ACTIVE, LOCKED |
 | Gian hàng | PENDING, APPROVED, REJECTED, LOCKED |
-| Sản phẩm | ACTIVE, HIDDEN, OUT\_OF\_STOCK |
+| Sản phẩm | ACTIVE, HIDDEN; hết hàng được suy ra khi stock_quantity bằng 0 |
 | Đơn hàng | PENDING, CONFIRMED, PREPARING, SHIPPING, COMPLETED, CANCELLED |
-| Thanh toán | PENDING, PAID, FAILED hoặc COD\_PENDING tùy thiết kế chi tiết |
+| Thanh toán | PENDING, COD\_PENDING, PAID, FAILED, CANCELLED, REFUNDED |
 
 <a id="sec_1056"></a>
 ### 15.2 Điều kiện đóng băng yêu cầu
