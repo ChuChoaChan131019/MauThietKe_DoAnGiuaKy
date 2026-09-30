@@ -1,0 +1,62 @@
+:root {
+    --senvia-ivory: #F7F1EC;
+    --senvia-white: #FFFFFF;
+    --senvia-plum: #2F2328;
+    --senvia-burgundy: #A63D63;
+    --senvia-blush: #E8CFC4;
+    --senvia-clay: #D8BBB0;
+    --senvia-muted: #8D7C77;
+    --senvia-champagne: #B9936B;
+    
+    --font-sans: 'Inter', sans-serif;
+    --font-serif: 'Playfair Display', serif;
+}
+
+body {
+    background-color: var(--senvia-ivory);
+    color: var(--senvia-plum);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+}
+
+/* Typography Utilities */
+.text-serif {
+    font-family: var(--font-serif);
+}
+
+.text-ivory { color: var(--senvia-ivory); }
+.text-plum { color: var(--senvia-plum); }
+.text-burgundy { color: var(--senvia-burgundy); }
+.text-muted { color: var(--senvia-muted); }
+
+.bg-ivory { background-color: var(--senvia-ivory); }
+.bg-white { background-color: var(--senvia-white); }
+.bg-plum { background-color: var(--senvia-plum); }
+.bg-burgundy { background-color: var(--senvia-burgundy); }
+
+/* Borders & Rules */
+.senvia-rule {
+    border-color: rgba(47,35,40,0.18);
+}
+.senvia-rule-burgundy {
+    border-color: var(--senvia-burgundy);
+}
+
+/* Layout Utilities */
+.no-scrollbar::-webkit-scrollbar { display: none; }
+.no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+.vertical-text {
+    writing-mode: vertical-rl;
+    transform: rotate(180deg);
+}
+
+/* Reset / Overrides for Bootstrap */
+a {
+    text-decoration: none;
+    color: inherit;
+}
+a:hover {
+    color: inherit;
+}

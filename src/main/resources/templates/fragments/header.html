@@ -1,0 +1,89 @@
+<header th:fragment="header" class="w-100 d-flex flex-column" style="z-index: 50;">
+    <!-- TOP BAR - Espresso -->
+    <div class="w-100 bg-plum text-white py-2 px-3 px-md-4 d-flex justify-content-between align-items-center" style="font-size: 11px; letter-spacing: 0.025em; background-color: var(--senvia-plum);">
+        <div class="flex-grow-1 d-none d-md-block opacity-75">Miễn phí vận chuyển từ 499.000đ</div>
+        <div class="flex-grow-1 text-center fw-medium" style="color: var(--senvia-blush);">Senvia Edit — Lựa chọn mới mỗi tuần</div>
+        <div class="flex-grow-1 d-none d-md-flex justify-content-end gap-4 opacity-75">
+            <a href="#" class="text-white text-decoration-none hover-burgundy transition-colors">Theo dõi đơn hàng</a>
+            <a href="#" class="text-white text-decoration-none hover-burgundy transition-colors">Trợ giúp</a>
+        </div>
+    </div>
+
+    <!-- MAIN HEADER - White/Ivory -->
+    <div id="main-header" class="w-100 bg-white sticky-top py-4 transition-all border-bottom" style="z-index: 50; border-color: rgba(232,207,196,0.5) !important;">
+        <div class="container-fluid max-w-1440 px-3 px-md-4 d-flex align-items-center justify-content-between">
+            
+            <!-- LOGO -->
+            <a th:href="@{/}" class="flex-shrink-0 d-flex align-items-center text-decoration-none group">
+                <span class="text-serif fw-bold" style="font-size: 1.875rem; letter-spacing: 0.15em; color: var(--senvia-plum);">SEN</span>
+                <span class="text-serif fw-bold" style="font-size: 1.875rem; letter-spacing: 0.15em; color: var(--senvia-burgundy);">VIA</span>
+            </a>
+
+            <!-- SEARCH -->
+            <div class="d-none d-md-flex flex-grow-1 mx-4 position-relative" style="max-width: 36rem;">
+                <input 
+                    type="text" 
+                    placeholder="Tìm sản phẩm, thương hiệu..." 
+                    class="form-control bg-ivory border-0 rounded-0 px-4 py-2 shadow-none transition-all"
+                    style="color: var(--senvia-plum); font-size: 13px;"
+                />
+                <button class="btn position-absolute end-0 top-50 translate-middle-y text-plum hover-burgundy border-0 p-2 shadow-none">
+                    <i class="bi bi-search" style="font-size: 18px;"></i>
+                </button>
+            </div>
+
+            <!-- ICONS -->
+            <div class="d-flex align-items-center gap-3 gap-md-4 text-plum">
+                <button class="btn d-md-none text-plum p-0 border-0 shadow-none"><i class="bi bi-search" style="font-size: 20px;"></i></button>
+                <a th:href="@{/account/wishlist}" class="text-plum hover-burgundy transition-colors position-relative">
+                    <i class="bi bi-heart" style="font-size: 20px;"></i>
+                </a>
+                <a th:href="@{/login}" class="text-plum hover-burgundy transition-colors">
+                    <i class="bi bi-person" style="font-size: 20px;"></i>
+                </a>
+                <a th:href="@{/cart}" class="text-plum hover-burgundy transition-colors position-relative d-flex align-items-center gap-2 group">
+                    <div class="position-relative">
+                        <i class="bi bi-cart" style="font-size: 20px;"></i>
+                        <span class="position-absolute bg-burgundy text-white fw-bold d-flex align-items-center justify-content-center rounded-circle" style="font-size: 10px; width: 16px; height: 16px; top: -6px; right: -6px;">3</span>
+                    </div>
+                </a>
+            </div>
+        </div>
+
+        <!-- CATEGORY NAV -->
+        <nav class="container-fluid max-w-1440 px-3 px-md-4 mt-3 d-none d-md-block">
+            <ul class="list-unstyled d-flex align-items-center gap-4 gap-lg-5 mb-0 fw-medium text-uppercase" style="font-size: 12px; letter-spacing: 0.025em;">
+                <li class="position-relative category-nav-item">
+                    <a th:href="@{/products}" class="text-plum hover-burgundy transition-colors py-1 d-inline-block text-decoration-none">Mới về</a>
+                </li>
+                <li class="position-relative category-nav-item">
+                    <a th:href="@{/products}" class="text-plum hover-burgundy transition-colors py-1 d-inline-block text-decoration-none">Bán chạy</a>
+                </li>
+                <li class="position-relative category-nav-item">
+                    <a th:href="@{/products}" class="text-plum hover-burgundy transition-colors py-1 d-inline-block text-decoration-none">Thời trang</a>
+                </li>
+                <li class="position-relative category-nav-item">
+                    <a th:href="@{/products}" class="text-plum hover-burgundy transition-colors py-1 d-inline-block text-decoration-none">Làm đẹp</a>
+                </li>
+                <li class="position-relative category-nav-item">
+                    <a th:href="@{/products}" class="text-plum hover-burgundy transition-colors py-1 d-inline-block text-decoration-none">Nhà cửa</a>
+                </li>
+                <li class="position-relative category-nav-item">
+                    <a th:href="@{/products}" class="text-plum hover-burgundy transition-colors py-1 d-inline-block text-decoration-none">Công nghệ</a>
+                </li>
+                <li class="position-relative category-nav-item">
+                    <a th:href="@{/products}" class="text-plum hover-burgundy transition-colors py-1 d-inline-block text-decoration-none">Lifestyle</a>
+                </li>
+                <li class="position-relative category-nav-item">
+                    <a th:href="@{/products}" class="text-plum hover-burgundy transition-colors py-1 d-inline-block text-decoration-none">Phụ kiện</a>
+                </li>
+                <li class="position-relative category-nav-item">
+                    <a th:href="@{/products}" class="text-plum hover-burgundy transition-colors py-1 d-inline-block text-decoration-none">Thương hiệu</a>
+                </li>
+                <li class="position-relative">
+                    <a th:href="@{/products}" class="text-burgundy fw-bold hover-opacity transition-colors py-1 d-inline-block text-decoration-none">SALE</a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+</header>

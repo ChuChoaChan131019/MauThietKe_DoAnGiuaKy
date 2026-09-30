@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head :: head('Senvia - Đăng ký')}"></head>
+<body class="bg-white m-0 p-0" style="min-height: 100vh;">
+    <div class="row g-0 h-100" style="min-height: 100vh;">
+        <!-- Left Image -->
+        <div class="col-12 col-md-6 d-none d-md-block position-relative" style="background-color: var(--senvia-ivory);">
+            <a th:href="@{/}" class="position-absolute text-decoration-none d-flex align-items-center" style="top: 2.5rem; left: 3rem;">
+                <span class="text-serif fw-bold text-plum" style="font-size: 1.875rem; letter-spacing: 0.1em;">SEN</span>
+                <span class="text-serif fw-bold text-burgundy" style="font-size: 1.875rem; letter-spacing: 0.1em;">VIA</span>
+            </a>
+        </div>
+        
+        <!-- Right Form -->
+        <div class="col-12 col-md-6 d-flex align-items-center justify-content-center p-4 p-lg-5">
+            <div class="w-100" style="max-width: 400px;">
+                <a th:href="@{/}" class="d-block d-md-none text-decoration-none mb-5">
+                    <span class="text-serif fw-bold text-plum" style="font-size: 1.875rem; letter-spacing: 0.1em;">SEN</span>
+                    <span class="text-serif fw-bold text-burgundy" style="font-size: 1.875rem; letter-spacing: 0.1em;">VIA</span>
+                </a>
+
+                <h1 class="text-serif text-plum mb-3" style="font-size: 2.5rem;">Đăng ký</h1>
+                <p class="text-muted fw-light mb-5">Tạo tài khoản Senvia.</p>
+                
+                <form th:action="@{/login}" method="get" class="d-flex flex-column gap-3">
+                    <input type="text" name="fullName" class="form-control rounded-0 bg-transparent p-3 shadow-none" style="border: 1px solid var(--senvia-clay); color: var(--senvia-plum);" placeholder="Họ và tên" required />
+                    <input type="email" name="email" class="form-control rounded-0 bg-transparent p-3 shadow-none" style="border: 1px solid var(--senvia-clay); color: var(--senvia-plum);" placeholder="Email" required />
+                    <input type="password" name="password" class="form-control rounded-0 bg-transparent p-3 shadow-none" style="border: 1px solid var(--senvia-clay); color: var(--senvia-plum);" placeholder="Mật khẩu" required />
+                    
+                    <button type="submit" class="senvia-btn senvia-btn-primary w-100 border-0 text-white mt-3" style="background-color: var(--senvia-burgundy); font-size: 14px; letter-spacing: 0.1em;">
+                        Tạo tài khoản
+                    </button>
+                </form>
+                
+                <p class="mt-4 pt-2 text-muted" style="font-size: 14px;">
+                    Đã có tài khoản? <a th:href="@{/login}" class="text-plum fw-medium text-decoration-none border-bottom border-plum pb-1 hover-burgundy hover-border-burgundy transition-colors">Đăng nhập</a>
+                </p>
+            </div>
+        </div>
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script th:src="@{/js/main.js}"></script>
+</body>
+</html>
