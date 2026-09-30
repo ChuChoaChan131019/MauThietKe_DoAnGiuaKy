@@ -1,11 +1,11 @@
 <!DOCTYPE html>
 <html lang="vi" xmlns:th="http://www.thymeleaf.org">
 <head th:replace="~{fragments/head :: head('Senvia - Seller Center')}"></head>
-<body style="min-height: 100vh; background-color: var(--senvia-ivory);">
-    <div class="d-flex h-100" style="min-height: 100vh;">
-        <aside class="bg-white border-end p-4 d-none d-md-block" style="width: 16rem; border-color: var(--senvia-clay) !important;">
-            <h1 class="text-serif text-plum mb-5" style="font-size: 24px;">Seller Center</h1>
-            <ul class="list-unstyled d-flex flex-column gap-3" style="font-size: 14px;">
+<body class="seller-body">
+    <div class="d-flex h-100 seller-container">
+        <aside class="bg-white border-end p-4 d-none d-md-block seller-sidebar">
+            <h1 class="text-serif text-plum mb-5 seller-sidebar-title">Seller Center</h1>
+            <ul class="list-unstyled d-flex flex-column gap-3 seller-sidebar-list">
                 <li class="text-burgundy fw-medium cursor-pointer">Dashboard</li>
                 <li class="text-plum hover-burgundy transition-colors cursor-pointer">Sản phẩm</li>
                 <li class="text-plum hover-burgundy transition-colors cursor-pointer">Đơn hàng</li>
@@ -14,7 +14,7 @@
         
         <main class="flex-grow-1 p-4 p-md-5">
             <div class="bg-white p-4 p-md-5 shadow-sm mb-4">
-                <h2 class="fw-medium text-plum mb-4" style="font-size: 18px;">Tổng quan</h2>
+                <h2 class="fw-medium text-plum mb-4 seller-content-title">Tổng quan</h2>
             </div>
         </main>
     </div>

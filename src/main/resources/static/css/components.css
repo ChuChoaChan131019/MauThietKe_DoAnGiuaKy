@@ -122,3 +122,16 @@
 .category-nav-item:hover::after {
     transform: scaleX(1);
 }
+
+/* Product Card */
+.pc-img-container { aspect-ratio: 4/5; }
+.pc-badge-container { top: 0.5rem; left: 0.5rem; z-index: 10; }
+.pc-badge { font-size: 10px; }
+.pc-action-container { bottom: 0.5rem; z-index: 10; background-color: rgba(255,255,255,0.95); backdrop-filter: blur(4px); border: 1px solid rgba(232,207,196,0.5); }
+.pc-action-btn { font-size: 11px; letter-spacing: 0.1em; border-radius: 0; }
+.pc-heart-btn { top: 0.5rem; right: 0.5rem; z-index: 10; background-color: rgba(255,255,255,0.8) !important; width: 28px; height: 28px; }
+.pc-heart-icon { font-size: 14px; }
+.pc-brand { font-size: 11px; }
+.pc-name { font-size: 14px; }
+.pc-price { font-size: 14px; }
+.pc-old-price { font-size: 12px; }

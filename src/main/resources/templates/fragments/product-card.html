@@ -1,33 +1,33 @@
 <div th:fragment="product-card(product)" class="group d-flex flex-column w-100 h-100 position-relative">
-    <a th:href="@{/products/{id}(id=${product.id})}" class="d-block position-relative bg-ivory overflow-hidden mb-3 text-decoration-none" style="aspect-ratio: 4/5;">
+    <a th:href="@{/products/{id}(id=${product.id})}" class="d-block position-relative bg-ivory overflow-hidden mb-3 text-decoration-none pc-img-container">
         <img th:src="${product.image}" th:alt="${product.name}" class="w-100 h-100 object-fit-cover p-2 p-md-3 group-hover-scale-105 transition-transform" />
         
         <!-- Badges -->
-        <div class="position-absolute d-flex flex-column gap-1" style="top: 0.5rem; left: 0.5rem; z-index: 10;">
-            <span th:if="${product.isNew}" class="bg-white text-plum fw-bold text-uppercase px-2 py-1 shadow-sm" style="font-size: 10px;">Mới</span>
-            <span th:if="${product.discount > 0}" th:text="'-' + ${product.discount} + '%'" class="bg-burgundy text-white fw-bold text-uppercase px-2 py-1 shadow-sm" style="font-size: 10px;"></span>
+        <div class="position-absolute d-flex flex-column gap-1 pc-badge-container">
+            <span th:if="${product.isNew}" class="bg-white text-plum fw-bold text-uppercase px-2 py-1 shadow-sm pc-badge">Mới</span>
+            <span th:if="${product.discount > 0}" th:text="'-' + ${product.discount} + '%'" class="bg-burgundy text-white fw-bold text-uppercase px-2 py-1 shadow-sm pc-badge"></span>
         </div>
 
         <!-- Hover Action -->
-        <div class="position-absolute start-0 end-0 mx-2 text-center shadow-sm product-card-action" style="bottom: 0.5rem; z-index: 10; background-color: rgba(255,255,255,0.95); backdrop-filter: blur(4px); border: 1px solid rgba(232,207,196,0.5);">
-            <button class="btn w-100 text-burgundy fw-bold text-uppercase hover-burgundy transition-colors py-2 border-0 shadow-none" style="font-size: 11px; letter-spacing: 0.1em; border-radius: 0;">
+        <div class="position-absolute start-0 end-0 mx-2 text-center shadow-sm product-card-action pc-action-container">
+            <button class="btn w-100 text-burgundy fw-bold text-uppercase hover-burgundy transition-colors py-2 border-0 shadow-none pc-action-btn">
                 Thêm nhanh
             </button>
         </div>
 
-        <button class="btn position-absolute text-muted hover-burgundy product-card-heart bg-white p-1 rounded-circle border-0 shadow-none d-flex align-items-center justify-content-center" style="top: 0.5rem; right: 0.5rem; z-index: 10; background-color: rgba(255,255,255,0.8) !important; width: 28px; height: 28px;">
-            <i class="bi bi-heart" style="font-size: 14px;"></i>
+        <button class="btn position-absolute text-muted hover-burgundy product-card-heart bg-white p-1 rounded-circle border-0 shadow-none d-flex align-items-center justify-content-center pc-heart-btn">
+            <i class="bi bi-heart pc-heart-icon"></i>
         </button>
     </a>
 
     <div class="d-flex flex-column text-start">
-        <span class="text-uppercase text-muted fw-medium mb-1" style="font-size: 11px;" th:text="${product.brand}">BRAND</span>
-        <a th:href="@{/products/{id}(id=${product.id})}" class="text-plum fw-medium text-truncate w-100 text-decoration-none group-hover-burgundy transition-colors mb-1" style="font-size: 14px;" th:text="${product.name}">
+        <span class="text-uppercase text-muted fw-medium mb-1 pc-brand" th:text="${product.brand}">BRAND</span>
+        <a th:href="@{/products/{id}(id=${product.id})}" class="text-plum fw-medium text-truncate w-100 text-decoration-none group-hover-burgundy transition-colors mb-1 pc-name" th:text="${product.name}">
             Product Name
         </a>
         <div class="d-flex align-items-center gap-2">
-            <span class="fw-bold text-burgundy" style="font-size: 14px;" th:text="${#numbers.formatDecimal(product.price, 0, 'COMMA', 0, 'POINT')} + '₫'"></span>
-            <span th:if="${product.containsKey('oldPrice')}" class="text-muted text-decoration-line-through" style="font-size: 12px;" th:text="${#numbers.formatDecimal(product.oldPrice, 0, 'COMMA', 0, 'POINT')} + '₫'"></span>
+            <span class="fw-bold text-burgundy pc-price" th:text="${#numbers.formatDecimal(product.price, 0, 'COMMA', 0, 'POINT')} + '₫'"></span>
+            <span th:if="${product.containsKey('oldPrice')}" class="text-muted text-decoration-line-through pc-old-price" th:text="${#numbers.formatDecimal(product.oldPrice, 0, 'COMMA', 0, 'POINT')} + '₫'"></span>
         </div>
     </div>
 </div>

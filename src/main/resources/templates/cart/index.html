@@ -4,11 +4,11 @@
 <body>
     <div th:replace="~{fragments/header :: header}"></div>
     
-    <main class="w-100 bg-white py-5" style="min-height: 100vh;">
-        <div class="max-w-1440 mx-auto px-3 px-md-4" style="max-width: 1200px;">
+    <main class="w-100 bg-white py-5 cart-main-container">
+        <div class="max-w-1440 mx-auto px-3 px-md-4 cart-content-container">
             
-            <h1 class="fw-bold text-plum mb-5 border-bottom pb-4" style="font-size: 32px; border-color: var(--senvia-blush) !important;">
-                Giỏ hàng của bạn <span class="fw-normal text-muted" style="font-size: 16px;">(2 sản phẩm)</span>
+            <h1 class="fw-bold text-plum mb-5 border-bottom pb-4 cart-title">
+                Giỏ hàng của bạn <span class="fw-normal text-muted cart-count">(2 sản phẩm)</span>
             </h1>
             
             <div class="row gx-lg-5 gy-5">
@@ -16,40 +16,40 @@
                 <div class="col-12 col-lg-8">
                     
                     <!-- Item 1 -->
-                    <div class="d-flex gap-4 py-4 border-bottom position-relative" style="border-color: var(--senvia-blush) !important;">
-                        <button class="btn border-0 shadow-none position-absolute end-0 top-50 translate-middle-y text-muted hover-burgundy p-0" style="margin-top: -1.5rem;"><i class="bi bi-x-lg"></i></button>
-                        <div class="position-relative bg-ivory flex-shrink-0" style="width: 6rem; aspect-ratio: 4/5; border: 1px solid rgba(216,187,176,0.5);">
+                    <div class="d-flex gap-4 py-4 border-bottom position-relative cart-item-container">
+                        <button class="btn border-0 shadow-none position-absolute end-0 top-50 translate-middle-y text-muted hover-burgundy p-0 cart-item-remove-btn"><i class="bi bi-x-lg"></i></button>
+                        <div class="position-relative bg-ivory flex-shrink-0 cart-item-img-container">
                             <img src="https://images.unsplash.com/photo-1591561954557-26941169b49e?w=400&q=80" alt="Bag" class="w-100 h-100 object-fit-cover p-2" />
                         </div>
                         <div class="d-flex flex-column justify-content-between py-1">
                             <div>
-                                <div class="fw-bold text-uppercase text-muted mb-1" style="font-size: 11px; letter-spacing: 0.1em;">NOLA</div>
-                                <div class="fw-bold text-plum mb-2" style="font-size: 16px;">Canvas Tote Bag</div>
-                                <div class="fw-bold text-burgundy" style="font-size: 15px;">1.190.000đ</div>
+                                <div class="fw-bold text-uppercase text-muted mb-1 cart-item-brand">NOLA</div>
+                                <div class="fw-bold text-plum mb-2 cart-item-title">Canvas Tote Bag</div>
+                                <div class="fw-bold text-burgundy cart-item-price">1.190.000đ</div>
                             </div>
-                            <div class="d-flex align-items-center border border-clay" style="width: fit-content; height: 32px;">
+                            <div class="d-flex align-items-center border border-clay cart-item-qty-container">
                                 <button class="btn border-0 shadow-none text-plum hover-burgundy hover-bg-ivory d-flex align-items-center justify-content-center px-2 h-100"><i class="bi bi-dash"></i></button>
-                                <span class="fw-bold text-plum d-flex align-items-center justify-content-center border-start border-end border-clay h-100" style="font-size: 14px; width: 40px;">1</span>
+                                <span class="fw-bold text-plum d-flex align-items-center justify-content-center border-start border-end border-clay h-100 cart-item-qty-text">1</span>
                                 <button class="btn border-0 shadow-none text-plum hover-burgundy hover-bg-ivory d-flex align-items-center justify-content-center px-2 h-100"><i class="bi bi-plus"></i></button>
                             </div>
                         </div>
                     </div>
 
                     <!-- Item 2 -->
-                    <div class="d-flex gap-4 py-4 border-bottom position-relative" style="border-color: var(--senvia-blush) !important;">
-                        <button class="btn border-0 shadow-none position-absolute end-0 top-50 translate-middle-y text-muted hover-burgundy p-0" style="margin-top: -1.5rem;"><i class="bi bi-x-lg"></i></button>
-                        <div class="position-relative bg-ivory flex-shrink-0" style="width: 6rem; aspect-ratio: 4/5; border: 1px solid rgba(216,187,176,0.5);">
+                    <div class="d-flex gap-4 py-4 border-bottom position-relative cart-item-container">
+                        <button class="btn border-0 shadow-none position-absolute end-0 top-50 translate-middle-y text-muted hover-burgundy p-0 cart-item-remove-btn"><i class="bi bi-x-lg"></i></button>
+                        <div class="position-relative bg-ivory flex-shrink-0 cart-item-img-container">
                             <img src="https://images.unsplash.com/photo-1594035910387-fea47714263f?w=400&q=80" alt="Perfume" class="w-100 h-100 object-fit-cover p-2" />
                         </div>
                         <div class="d-flex flex-column justify-content-between py-1">
                             <div>
-                                <div class="fw-bold text-uppercase text-muted mb-1" style="font-size: 11px; letter-spacing: 0.1em;">MAISON 28</div>
-                                <div class="fw-bold text-plum mb-2" style="font-size: 16px;">Signature Parfum</div>
-                                <div class="fw-bold text-burgundy" style="font-size: 15px;">2.490.000đ</div>
+                                <div class="fw-bold text-uppercase text-muted mb-1 cart-item-brand">MAISON 28</div>
+                                <div class="fw-bold text-plum mb-2 cart-item-title">Signature Parfum</div>
+                                <div class="fw-bold text-burgundy cart-item-price">2.490.000đ</div>
                             </div>
-                            <div class="d-flex align-items-center border border-clay" style="width: fit-content; height: 32px;">
+                            <div class="d-flex align-items-center border border-clay cart-item-qty-container">
                                 <button class="btn border-0 shadow-none text-plum hover-burgundy hover-bg-ivory d-flex align-items-center justify-content-center px-2 h-100"><i class="bi bi-dash"></i></button>
-                                <span class="fw-bold text-plum d-flex align-items-center justify-content-center border-start border-end border-clay h-100" style="font-size: 14px; width: 40px;">1</span>
+                                <span class="fw-bold text-plum d-flex align-items-center justify-content-center border-start border-end border-clay h-100 cart-item-qty-text">1</span>
                                 <button class="btn border-0 shadow-none text-plum hover-burgundy hover-bg-ivory d-flex align-items-center justify-content-center px-2 h-100"><i class="bi bi-plus"></i></button>
                             </div>
                         </div>
@@ -58,24 +58,24 @@
 
                 <!-- Order Summary -->
                 <div class="col-12 col-lg-4">
-                    <div class="p-4 p-md-5" style="background-color: rgba(232,207,196,0.3); border: 1px solid rgba(216,187,176,0.5);">
-                        <h2 class="fw-bold text-plum border-bottom pb-3 mb-4" style="font-size: 20px; border-color: var(--senvia-clay) !important;">Tóm tắt đơn hàng</h2>
+                    <div class="p-4 p-md-5 cart-summary-container">
+                        <h2 class="fw-bold text-plum border-bottom pb-3 mb-4 cart-summary-title">Tóm tắt đơn hàng</h2>
                         
-                        <div class="d-flex justify-content-between mb-3 text-plum" style="font-size: 14px;">
+                        <div class="d-flex justify-content-between mb-3 text-plum cart-summary-row">
                             <span>Tạm tính</span>
                             <span class="fw-bold">3.680.000đ</span>
                         </div>
-                        <div class="d-flex justify-content-between mb-4 pb-4 border-bottom text-plum" style="font-size: 14px; border-color: var(--senvia-clay) !important;">
+                        <div class="d-flex justify-content-between mb-4 pb-4 border-bottom text-plum cart-summary-row cart-summary-row-divider">
                             <span>Phí vận chuyển</span>
                             <span class="fw-bold text-burgundy">Miễn phí</span>
                         </div>
                         
                         <div class="d-flex justify-content-between align-items-end mb-4 pb-2">
-                            <span class="fw-bold text-plum" style="font-size: 14px;">Tổng cộng</span>
-                            <span class="fw-bold text-burgundy" style="font-size: 24px;">3.680.000đ</span>
+                            <span class="fw-bold text-plum cart-summary-row">Tổng cộng</span>
+                            <span class="fw-bold text-burgundy cart-summary-total-price">3.680.000đ</span>
                         </div>
 
-                        <a th:href="@{/checkout}" class="senvia-btn senvia-btn-primary w-100 text-decoration-none border-0" style="background-color: var(--senvia-burgundy); padding: 1rem;">
+                        <a th:href="@{/checkout}" class="senvia-btn senvia-btn-primary w-100 text-decoration-none border-0 cart-checkout-btn">
                             Tiến hành thanh toán
                         </a>
                     </div>

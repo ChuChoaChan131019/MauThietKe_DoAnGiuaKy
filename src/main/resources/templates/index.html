@@ -15,26 +15,26 @@
                 </div>
                 
                 <!-- Right 40%: Soft Blush Box with Text -->
-                <div class="col-12 col-md-5 bg-blush d-flex flex-column justify-content-center px-4 px-lg-5 py-5 position-relative" style="background-color: var(--senvia-blush);">
-                    <span class="text-uppercase fw-bold text-burgundy mb-4" style="font-size: 11px; letter-spacing: 0.1em;">NEW SEASON / SENVIA</span>
-                    <h1 class="text-serif text-plum mb-4 hero-title" style="line-height: 1.1;">
+                <div class="col-12 col-md-5 bg-blush d-flex flex-column justify-content-center px-4 px-lg-5 py-5 position-relative home-hero-text-box">
+                    <span class="text-uppercase fw-bold text-burgundy mb-4 home-hero-tag">NEW SEASON / SENVIA</span>
+                    <h1 class="text-serif text-plum mb-4 hero-title home-hero-title">
                         Chọn điều<br />hợp với bạn.
                     </h1>
-                    <p class="text-plum mb-5 opacity-75" style="font-size: 15px; line-height: 1.6; max-width: 24rem;">
+                    <p class="text-plum mb-5 opacity-75 home-hero-desc">
                         Thời trang, làm đẹp, không gian sống và những lựa chọn mới được tuyển chọn mỗi ngày.
                     </p>
                     
                     <div class="d-flex flex-column flex-sm-row align-items-sm-center gap-4">
-                        <a th:href="@{/products}" class="senvia-btn senvia-btn-primary w-100 w-sm-auto text-decoration-none border-0" style="background-color: var(--senvia-burgundy);">
+                        <a th:href="@{/products}" class="senvia-btn senvia-btn-primary w-100 w-sm-auto text-decoration-none border-0 home-hero-btn">
                             Mua sắm ngay
                         </a>
-                        <a th:href="@{/products}" class="text-plum fw-bold text-uppercase text-decoration-none hover-burgundy pb-1 border-bottom border-plum hover-border-burgundy transition-colors" style="font-size: 12px; letter-spacing: 0.1em; width: fit-content;">
+                        <a th:href="@{/products}" class="text-plum fw-bold text-uppercase text-decoration-none hover-burgundy pb-1 border-bottom border-plum hover-border-burgundy transition-colors home-hero-link">
                             Khám phá hàng mới &rarr;
                         </a>
                     </div>
 
                     <!-- Overlapping Product Thumbnail -->
-                    <div class="d-none d-xl-block position-absolute bg-white border border-4 border-white shadow-lg" style="left: -4rem; bottom: 4rem; width: 8rem; aspect-ratio: 3/4;">
+                    <div class="d-none d-xl-block position-absolute bg-white border border-4 border-white shadow-lg home-hero-thumbnail">
                         <img src="https://images.unsplash.com/photo-1594035910387-fea47714263f?w=400&q=80" alt="Featured Item" class="w-100 h-100 object-fit-cover p-2 bg-ivory" />
                     </div>
                 </div>
@@ -44,14 +44,14 @@
         <!-- 03 POPULAR CATEGORIES -->
         <section class="w-100 max-w-1440 mx-auto px-3 px-md-4 py-5 mt-4">
             <div class="d-flex justify-content-between align-items-end mb-5">
-                <h2 class="fw-bold text-plum m-0" style="font-size: 24px;">Mua theo danh mục</h2>
-                <a th:href="@{/products}" class="text-burgundy fw-bold text-uppercase text-decoration-none hover-plum transition-colors" style="font-size: 12px;">Xem tất cả &rarr;</a>
+                <h2 class="fw-bold text-plum m-0 home-section-title">Mua theo danh mục</h2>
+                <a th:href="@{/products}" class="text-burgundy fw-bold text-uppercase text-decoration-none hover-plum transition-colors home-section-link">Xem tất cả &rarr;</a>
             </div>
             
-            <div class="d-flex overflow-x-auto gap-4 gap-lg-5 pb-3 pb-lg-0 hide-scrollbar category-container" style="justify-content: space-between;">
+            <div class="d-flex overflow-x-auto gap-4 gap-lg-5 pb-3 pb-lg-0 hide-scrollbar category-container justify-content-between">
                 <!-- Categories from controller -->
-                <a th:each="cat : ${categories}" th:href="@{/products}" class="group d-flex flex-column align-items-center text-decoration-none" style="min-width: 110px; max-width: 160px; width: 100%; cursor: pointer;">
-                    <div class="rounded-circle position-relative overflow-hidden bg-ivory category-circle category-item-box w-100" style="aspect-ratio: 1/1; margin-bottom: 16px; border: 1px solid rgba(166, 61, 99, 0.12); box-shadow: 0 6px 24px rgba(47, 35, 40, 0.07);">
+                <a th:each="cat : ${categories}" th:href="@{/products}" class="group d-flex flex-column align-items-center text-decoration-none home-cat-item">
+                    <div class="rounded-circle position-relative overflow-hidden bg-ivory category-circle category-item-box w-100 home-cat-circle">
                         <img th:src="${cat.img}" th:alt="${cat.name}" class="w-100 h-100 object-fit-cover category-image" />
                     </div>
                     <span class="fw-medium text-plum group-hover-burgundy transition-colors text-center category-title" th:text="${cat.name}"></span>
@@ -63,8 +63,8 @@
         <section class="w-100 py-5 bg-ivory">
             <div class="max-w-1440 mx-auto px-3 px-md-4">
                 <div class="d-flex justify-content-between align-items-end mb-5">
-                    <h2 class="fw-bold text-plum m-0" style="font-size: 24px;">Mới trên Senvia</h2>
-                    <a th:href="@{/products}" class="text-burgundy fw-bold text-uppercase text-decoration-none hover-plum transition-colors" style="font-size: 12px;">Tất cả hàng mới &rarr;</a>
+                    <h2 class="fw-bold text-plum m-0 home-section-title">Mới trên Senvia</h2>
+                    <a th:href="@{/products}" class="text-burgundy fw-bold text-uppercase text-decoration-none hover-plum transition-colors home-section-link">Tất cả hàng mới &rarr;</a>
                 </div>
                 
                 <div class="row g-4">
@@ -77,20 +77,20 @@
 
         <!-- 05 LARGE EDITORIAL CAMPAIGN -->
         <section class="w-100 max-w-1440 mx-auto px-3 px-md-4 py-5 my-4">
-            <div class="row g-0 bg-blush" style="min-height: 500px; background-color: var(--senvia-blush);">
-                <div class="col-12 col-md-6 position-relative" style="min-height: 300px;">
+            <div class="row g-0 bg-blush home-ed-container">
+                <div class="col-12 col-md-6 position-relative home-ed-img-col">
                     <img src="https://images.unsplash.com/photo-1445205170230-053b83016050?w=1000&q=80" alt="Editorial" class="w-100 h-100 object-fit-cover" />
                 </div>
                 <div class="col-12 col-md-6 d-flex flex-column justify-content-center px-4 px-lg-5 py-5">
-                    <span class="text-burgundy fw-bold text-uppercase mb-4" style="font-size: 11px; letter-spacing: 0.1em;">THE SENVIA EDIT</span>
-                    <h2 class="text-serif text-plum mb-4 editorial-title" style="line-height: 1.1;">
+                    <span class="text-burgundy fw-bold text-uppercase mb-4 home-ed-tag">THE SENVIA EDIT</span>
+                    <h2 class="text-serif text-plum mb-4 editorial-title home-ed-title">
                         Những lựa chọn<br />đáng để giữ lâu hơn.
                     </h2>
-                    <div class="bg-burgundy mb-4" style="width: 3rem; height: 4px;"></div>
-                    <p class="text-plum opacity-75 mb-5" style="font-size: 15px; line-height: 1.6;">
+                    <div class="bg-burgundy mb-4 home-ed-rule"></div>
+                    <p class="text-plum opacity-75 mb-5 home-ed-desc">
                         Bộ sưu tập tôn vinh chất liệu và phom dáng. Đầu tư vào những thiết kế không bị lỗi thời theo năm tháng.
                     </p>
-                    <a th:href="@{/products}" class="text-burgundy fw-bold text-uppercase text-decoration-none hover-plum transition-colors" style="font-size: 12px; letter-spacing: 0.1em;">
+                    <a th:href="@{/products}" class="text-burgundy fw-bold text-uppercase text-decoration-none hover-plum transition-colors home-ed-link">
                         Xem tuyển chọn &rarr;
                     </a>
                 </div>
@@ -101,10 +101,10 @@
         <section class="w-100 py-5 bg-white">
             <div class="max-w-1440 mx-auto px-3 px-md-4">
                 <div class="d-flex justify-content-between align-items-end mb-5">
-                    <h2 class="fw-bold text-plum m-0" style="font-size: 24px;">Được yêu thích</h2>
+                    <h2 class="fw-bold text-plum m-0 home-section-title">Được yêu thích</h2>
                     <div class="d-flex gap-2">
-                        <button class="btn border border-clay text-plum hover-burgundy hover-border-burgundy rounded-0 d-flex align-items-center justify-content-center p-0 transition-colors" style="width: 32px; height: 32px;">&larr;</button>
-                        <button class="btn border border-clay text-plum hover-burgundy hover-border-burgundy rounded-0 d-flex align-items-center justify-content-center p-0 transition-colors" style="width: 32px; height: 32px;">&rarr;</button>
+                        <button class="btn border border-clay text-plum hover-burgundy hover-border-burgundy rounded-0 d-flex align-items-center justify-content-center p-0 transition-colors home-nav-btn">&larr;</button>
+                        <button class="btn border border-clay text-plum hover-burgundy hover-border-burgundy rounded-0 d-flex align-items-center justify-content-center p-0 transition-colors home-nav-btn">&rarr;</button>
                     </div>
                 </div>
                 
@@ -117,24 +117,24 @@
         </section>
 
         <!-- 07 PROMOTIONAL STRIP -->
-        <section class="w-100 py-5" style="background-color: var(--senvia-plum);">
+        <section class="w-100 py-5 home-promo-section">
             <div class="max-w-1440 mx-auto px-3 px-md-4 row g-5 align-items-center">
                 <div class="col-12 col-md-6 d-flex flex-column align-items-start text-white">
-                    <h2 class="fw-bold mb-3" style="font-size: 28px;">SENVIA PRIVATE SALE</h2>
-                    <p class="mb-4" style="color: var(--senvia-blush); font-size: 16px;">Ưu đãi đến 30% cho tuyển chọn tuần này.</p>
-                    <a th:href="@{/products}" class="senvia-btn text-decoration-none text-white border-0 hover-text-plum" style="background-color: var(--senvia-burgundy);">
+                    <h2 class="fw-bold mb-3 home-promo-title">SENVIA PRIVATE SALE</h2>
+                    <p class="mb-4 home-promo-desc">Ưu đãi đến 30% cho tuyển chọn tuần này.</p>
+                    <a th:href="@{/products}" class="senvia-btn text-decoration-none text-white border-0 hover-text-plum home-promo-btn">
                         KHÁM PHÁ &rarr;
                     </a>
                 </div>
                 
                 <div class="col-12 col-md-6 d-flex gap-3 overflow-x-auto hide-scrollbar">
-                    <div class="position-relative bg-white border border-2 flex-shrink-0" style="width: 33.333%; min-width: 140px; aspect-ratio: 4/5; border-color: var(--senvia-burgundy) !important;">
+                    <div class="position-relative bg-white border border-2 flex-shrink-0 home-promo-img1">
                         <img src="https://images.unsplash.com/photo-1591561954557-26941169b49e?w=400&q=80" alt="Promo 1" class="w-100 h-100 object-fit-cover p-2" />
                     </div>
-                    <div class="position-relative bg-white flex-shrink-0" style="width: 33.333%; min-width: 140px; aspect-ratio: 4/5;">
+                    <div class="position-relative bg-white flex-shrink-0 home-promo-img">
                         <img src="https://images.unsplash.com/photo-1507473885765-e6ed057f782c?w=400&q=80" alt="Promo 2" class="w-100 h-100 object-fit-cover p-2" />
                     </div>
-                    <div class="position-relative bg-white flex-shrink-0" style="width: 33.333%; min-width: 140px; aspect-ratio: 4/5;">
+                    <div class="position-relative bg-white flex-shrink-0 home-promo-img">
                         <img src="https://images.unsplash.com/photo-1505691938895-1758d7feb511?w=400&q=80" alt="Promo 3" class="w-100 h-100 object-fit-cover p-2" />
                     </div>
                 </div>
@@ -144,16 +144,16 @@
         <!-- 08 SHOP BY LIFESTYLE -->
         <section class="w-100 py-5 bg-ivory">
             <div class="max-w-1440 mx-auto px-3 px-md-4 my-4">
-                <h2 class="fw-bold text-plum mb-5" style="font-size: 24px;">Chọn theo phong cách</h2>
+                <h2 class="fw-bold text-plum mb-5 home-section-title">Chọn theo phong cách</h2>
                 
                 <div class="row g-4 lifestyle-grid">
                     <!-- Large Panel -->
                     <div class="col-12 col-md-6">
                         <a th:href="@{/products}" class="position-relative group overflow-hidden bg-black d-block w-100 h-100 lifestyle-panel-large text-decoration-none">
-                            <img src="https://images.unsplash.com/photo-1513694203232-719a280e022f?w=1000&q=80" alt="Everyday Minimal" class="w-100 h-100 object-fit-cover opacity-75 group-hover-opacity-100 group-hover-scale-105 transition-all" style="transition-duration: 700ms;" />
-                            <div class="position-absolute text-white" style="bottom: 2rem; left: 2rem;">
-                                <h3 class="fw-bold mb-2" style="font-size: 24px;">Everyday Minimal</h3>
-                                <span class="fw-medium text-uppercase border-bottom border-white pb-1 hover-text-blush hover-border-blush transition-colors" style="font-size: 12px; letter-spacing: 0.1em;">Khám phá</span>
+                            <img src="https://images.unsplash.com/photo-1513694203232-719a280e022f?w=1000&q=80" alt="Everyday Minimal" class="w-100 h-100 object-fit-cover opacity-75 group-hover-opacity-100 group-hover-scale-105 transition-all home-ls-img" />
+                            <div class="position-absolute text-white home-ls-box-lg">
+                                <h3 class="fw-bold mb-2 home-ls-title-lg">Everyday Minimal</h3>
+                                <span class="fw-medium text-uppercase border-bottom border-white pb-1 hover-text-blush hover-border-blush transition-colors home-ls-link-lg">Khám phá</span>
                             </div>
                         </a>
                     </div>
@@ -161,17 +161,17 @@
                     <!-- Two smaller panels -->
                     <div class="col-12 col-md-6 d-flex flex-column gap-4 lifestyle-panel-small">
                         <a th:href="@{/products}" class="position-relative group overflow-hidden bg-black d-block w-100 flex-grow-1 text-decoration-none">
-                            <img src="https://images.unsplash.com/photo-1475179532958-3602fc5ce64a?w=800&q=80" alt="City Essentials" class="w-100 h-100 object-fit-cover opacity-75 group-hover-opacity-100 group-hover-scale-105 transition-all" style="transition-duration: 700ms;" />
-                            <div class="position-absolute text-white" style="bottom: 1.5rem; left: 1.5rem;">
-                                <h3 class="fw-bold mb-2" style="font-size: 20px;">City Essentials</h3>
-                                <span class="fw-medium text-uppercase border-bottom border-white pb-1 hover-text-blush transition-colors" style="font-size: 11px; letter-spacing: 0.1em;">Mua ngay</span>
+                            <img src="https://images.unsplash.com/photo-1475179532958-3602fc5ce64a?w=800&q=80" alt="City Essentials" class="w-100 h-100 object-fit-cover opacity-75 group-hover-opacity-100 group-hover-scale-105 transition-all home-ls-img" />
+                            <div class="position-absolute text-white home-ls-box-sm">
+                                <h3 class="fw-bold mb-2 home-ls-title-sm">City Essentials</h3>
+                                <span class="fw-medium text-uppercase border-bottom border-white pb-1 hover-text-blush transition-colors home-ls-link-sm">Mua ngay</span>
                             </div>
                         </a>
                         <a th:href="@{/products}" class="position-relative group overflow-hidden bg-black d-block w-100 flex-grow-1 text-decoration-none">
-                            <img src="https://images.unsplash.com/photo-1497215728101-856f4ea42174?w=800&q=80" alt="Soft Living" class="w-100 h-100 object-fit-cover opacity-75 group-hover-opacity-100 group-hover-scale-105 transition-all" style="transition-duration: 700ms;" />
-                            <div class="position-absolute text-white" style="bottom: 1.5rem; left: 1.5rem;">
-                                <h3 class="fw-bold mb-2" style="font-size: 20px;">Soft Living</h3>
-                                <span class="fw-medium text-uppercase border-bottom border-white pb-1 hover-text-blush transition-colors" style="font-size: 11px; letter-spacing: 0.1em;">Mua ngay</span>
+                            <img src="https://images.unsplash.com/photo-1497215728101-856f4ea42174?w=800&q=80" alt="Soft Living" class="w-100 h-100 object-fit-cover opacity-75 group-hover-opacity-100 group-hover-scale-105 transition-all home-ls-img" />
+                            <div class="position-absolute text-white home-ls-box-sm">
+                                <h3 class="fw-bold mb-2 home-ls-title-sm">Soft Living</h3>
+                                <span class="fw-medium text-uppercase border-bottom border-white pb-1 hover-text-blush transition-colors home-ls-link-sm">Mua ngay</span>
                             </div>
                         </a>
                     </div>
@@ -180,16 +180,16 @@
         </section>
 
         <!-- 09 BRAND SELECTION -->
-        <section class="w-100 py-5" style="background-color: rgba(232, 207, 196, 0.3); border-top: 1px solid rgba(216, 187, 176, 0.3); border-bottom: 1px solid rgba(216, 187, 176, 0.3);">
+        <section class="w-100 py-5 home-brand-section">
             <div class="max-w-1440 mx-auto px-3 px-md-4 d-flex flex-column align-items-center my-3">
-                <h2 class="fw-bold text-uppercase text-muted mb-5" style="font-size: 14px; letter-spacing: 0.1em;">Thương hiệu nổi bật</h2>
+                <h2 class="fw-bold text-uppercase text-muted mb-5 home-brand-title">Thương hiệu nổi bật</h2>
                 <div class="d-flex flex-wrap justify-content-center gap-4 gap-md-5 opacity-75">
-                    <span class="text-serif fw-bold text-plum hover-burgundy transition-colors" style="font-size: 28px; letter-spacing: 0.1em; cursor: pointer;">NOLA</span>
-                    <span class="text-serif fw-bold text-plum hover-burgundy transition-colors" style="font-size: 28px; letter-spacing: 0.1em; cursor: pointer;">MORI</span>
-                    <span class="text-serif fw-bold text-plum hover-burgundy transition-colors" style="font-size: 28px; letter-spacing: 0.1em; cursor: pointer;">ASTER</span>
-                    <span class="text-serif fw-bold text-plum hover-burgundy transition-colors" style="font-size: 28px; letter-spacing: 0.1em; cursor: pointer;">KANSO</span>
-                    <span class="text-serif fw-bold text-plum hover-burgundy transition-colors" style="font-size: 28px; letter-spacing: 0.1em; cursor: pointer;">LINEA</span>
-                    <span class="text-serif fw-bold text-plum hover-burgundy transition-colors" style="font-size: 28px; letter-spacing: 0.1em; cursor: pointer;">MAISON 28</span>
+                    <span class="text-serif fw-bold text-plum hover-burgundy transition-colors home-brand-item">NOLA</span>
+                    <span class="text-serif fw-bold text-plum hover-burgundy transition-colors home-brand-item">MORI</span>
+                    <span class="text-serif fw-bold text-plum hover-burgundy transition-colors home-brand-item">ASTER</span>
+                    <span class="text-serif fw-bold text-plum hover-burgundy transition-colors home-brand-item">KANSO</span>
+                    <span class="text-serif fw-bold text-plum hover-burgundy transition-colors home-brand-item">LINEA</span>
+                    <span class="text-serif fw-bold text-plum hover-burgundy transition-colors home-brand-item">MAISON 28</span>
                 </div>
             </div>
         </section>
@@ -197,9 +197,9 @@
         <!-- 10 FOR YOU -->
         <section class="w-100 py-5 bg-white">
             <div class="max-w-1440 mx-auto px-3 px-md-4 my-4">
-                <h2 class="fw-bold text-plum mb-5 text-center" style="font-size: 24px;">Dành cho bạn</h2>
+                <h2 class="fw-bold text-plum mb-5 text-center home-section-title">Dành cho bạn</h2>
                 <div class="row g-4">
-                    <div class="col-6 col-md-3 col-lg-2-4" th:each="product, iterStat : ${products}" th:if="${iterStat.index < 5}" style="width: 20%;">
+                    <div class="col-6 col-md-3 col-lg-2-4 home-fy-col" th:each="product, iterStat : ${products}" th:if="${iterStat.index < 5}">
                         <div th:replace="~{fragments/product-card :: product-card(${product})}"></div>
                     </div>
                 </div>
@@ -207,14 +207,14 @@
         </section>
 
         <!-- 11 NEWSLETTER -->
-        <section class="w-100 py-5 bg-blush" style="background-color: var(--senvia-blush);">
-            <div class="mx-auto px-3 px-md-4 text-center d-flex flex-column align-items-center my-4" style="max-width: 800px;">
-                <h2 class="text-serif text-plum mb-3" style="font-size: 36px;">Senvia, trong hộp thư của bạn.</h2>
-                <p class="text-plum opacity-75 mb-5" style="font-size: 15px;">Hàng mới, ưu đãi và những lựa chọn đáng chú ý.</p>
+        <section class="w-100 py-5 home-nl-section">
+            <div class="mx-auto px-3 px-md-4 text-center d-flex flex-column align-items-center my-4 home-nl-container">
+                <h2 class="text-serif text-plum mb-3 home-nl-title">Senvia, trong hộp thư của bạn.</h2>
+                <p class="text-plum opacity-75 mb-5 home-nl-desc">Hàng mới, ưu đãi và những lựa chọn đáng chú ý.</p>
                 
-                <form class="d-flex w-100 bg-white p-1" style="max-width: 450px;">
-                    <input type="email" placeholder="Địa chỉ email" class="flex-grow-1 border-0 bg-transparent px-4 py-3 shadow-none text-plum placeholder-muted" style="font-size: 14px; outline: none;" required />
-                    <button type="submit" class="senvia-btn border-0 text-white hover-bg-plum transition-colors" style="background-color: var(--senvia-burgundy); padding: 0.75rem 1.5rem;">Đăng ký</button>
+                <form class="d-flex w-100 bg-white p-1 home-nl-form">
+                    <input type="email" placeholder="Địa chỉ email" class="flex-grow-1 border-0 bg-transparent px-4 py-3 shadow-none text-plum placeholder-muted home-nl-input" required />
+                    <button type="submit" class="senvia-btn border-0 text-white hover-bg-plum transition-colors home-nl-btn">Đăng ký</button>
                 </form>
             </div>
         </section>

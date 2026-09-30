@@ -8,14 +8,14 @@
         <div class="max-w-1440 mx-auto px-3 px-md-4">
           
             <!-- Top Bar -->
-            <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-end mb-5 border-bottom pb-4" style="border-color: var(--senvia-blush) !important;">
+            <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-end mb-5 border-bottom pb-4 products-top-bar">
                 <div>
-                    <div class="text-uppercase fw-medium mb-3 text-muted" style="font-size: 11px; letter-spacing: 0.1em;">Trang chủ / Sản phẩm</div>
-                    <h1 class="fw-bold text-plum m-0" style="font-size: 32px;">Tất cả sản phẩm <span class="fw-normal text-muted ms-2" style="font-size: 16px;">(128)</span></h1>
+                    <div class="text-uppercase fw-medium mb-3 text-muted products-breadcrumb">Trang chủ / Sản phẩm</div>
+                    <h1 class="fw-bold text-plum m-0 products-title">Tất cả sản phẩm <span class="fw-normal text-muted ms-2 products-count">(128)</span></h1>
                 </div>
                 
                 <div class="mt-4 mt-md-0">
-                    <select class="form-select bg-white text-plum fw-bold rounded-0 shadow-none" style="font-size: 13px; border: 1px solid var(--senvia-clay); width: 200px; cursor: pointer;">
+                    <select class="form-select bg-white text-plum fw-bold rounded-0 shadow-none products-sort">
                         <option>Sắp xếp: Mới nhất</option>
                         <option>Giá: Thấp đến cao</option>
                         <option>Giá: Cao xuống thấp</option>
@@ -27,11 +27,11 @@
                 
                 <!-- LEFT FILTER - 240px -->
                 <aside class="col-12 col-lg-3 col-xl-2 mb-5 mb-lg-0">
-                    <div class="d-flex flex-column gap-5 sticky-top" style="top: 100px;">
+                    <div class="d-flex flex-column gap-5 sticky-top products-sidebar">
                         
                         <div>
-                            <h3 class="fw-bold text-plum mb-4" style="font-size: 14px;">Danh mục</h3>
-                            <ul class="list-unstyled d-flex flex-column gap-3 text-plum" style="font-size: 14px;">
+                            <h3 class="fw-bold text-plum mb-4 products-sidebar-title">Danh mục</h3>
+                            <ul class="list-unstyled d-flex flex-column gap-3 text-plum products-sidebar-list">
                                 <li class="fw-bold text-burgundy cursor-pointer">Tất cả sản phẩm</li>
                                 <li class="hover-burgundy transition-colors cursor-pointer py-1">Thời trang</li>
                                 <li class="hover-burgundy transition-colors cursor-pointer py-1">Làm đẹp</li>
@@ -40,29 +40,29 @@
                             </ul>
                         </div>
 
-                        <div class="border-top pt-4" style="border-color: var(--senvia-blush) !important;">
-                            <h3 class="fw-bold text-plum mb-4" style="font-size: 14px;">Thương hiệu</h3>
-                            <ul class="list-unstyled d-flex flex-column gap-3 text-plum" style="font-size: 14px;">
+                        <div class="border-top pt-4 products-sidebar-divider">
+                            <h3 class="fw-bold text-plum mb-4 products-sidebar-title">Thương hiệu</h3>
+                            <ul class="list-unstyled d-flex flex-column gap-3 text-plum products-sidebar-list">
                                 <li class="hover-burgundy transition-colors cursor-pointer d-flex justify-content-between align-items-center">
                                     <div class="form-check m-0 d-flex align-items-center gap-2">
-                                        <input type="checkbox" class="form-check-input m-0 rounded-0" style="border-color: var(--senvia-clay); cursor: pointer;" />
-                                        <label class="form-check-label" style="cursor: pointer;">NOLA</label>
+                                        <input type="checkbox" class="form-check-input m-0 rounded-0 products-filter-checkbox" />
+                                        <label class="form-check-label products-filter-label">NOLA</label>
                                     </div>
-                                    <span class="text-muted" style="font-size: 12px;">(12)</span>
+                                    <span class="text-muted products-filter-count">(12)</span>
                                 </li>
                                 <li class="hover-burgundy transition-colors cursor-pointer d-flex justify-content-between align-items-center">
                                     <div class="form-check m-0 d-flex align-items-center gap-2">
-                                        <input type="checkbox" class="form-check-input m-0 rounded-0" style="border-color: var(--senvia-clay); cursor: pointer;" />
-                                        <label class="form-check-label" style="cursor: pointer;">MORI</label>
+                                        <input type="checkbox" class="form-check-input m-0 rounded-0 products-filter-checkbox" />
+                                        <label class="form-check-label products-filter-label">MORI</label>
                                     </div>
-                                    <span class="text-muted" style="font-size: 12px;">(8)</span>
+                                    <span class="text-muted products-filter-count">(8)</span>
                                 </li>
                                 <li class="hover-burgundy transition-colors cursor-pointer d-flex justify-content-between align-items-center">
                                     <div class="form-check m-0 d-flex align-items-center gap-2">
-                                        <input type="checkbox" class="form-check-input m-0 rounded-0" style="border-color: var(--senvia-clay); cursor: pointer;" />
-                                        <label class="form-check-label" style="cursor: pointer;">MAISON 28</label>
+                                        <input type="checkbox" class="form-check-input m-0 rounded-0 products-filter-checkbox" />
+                                        <label class="form-check-label products-filter-label">MAISON 28</label>
                                     </div>
-                                    <span class="text-muted" style="font-size: 12px;">(15)</span>
+                                    <span class="text-muted products-filter-count">(15)</span>
                                 </li>
                             </ul>
                         </div>
@@ -82,12 +82,12 @@
                     </div>
                     
                     <!-- Pagination -->
-                    <div class="d-flex justify-content-center mt-5 pt-5 border-top" style="border-color: var(--senvia-blush) !important;">
+                    <div class="d-flex justify-content-center mt-5 pt-5 border-top products-pagination-container">
                         <div class="d-flex gap-2">
-                            <button class="btn border border-clay text-plum hover-burgundy hover-border-burgundy rounded-0 d-flex align-items-center justify-content-center p-0 transition-colors" style="width: 40px; height: 40px;">1</button>
-                            <button class="btn border-0 text-white rounded-0 d-flex align-items-center justify-content-center p-0 fw-bold" style="background-color: var(--senvia-burgundy); width: 40px; height: 40px;">2</button>
-                            <button class="btn border border-clay text-plum hover-burgundy hover-border-burgundy rounded-0 d-flex align-items-center justify-content-center p-0 transition-colors" style="width: 40px; height: 40px;">3</button>
-                            <button class="btn border border-clay text-plum hover-burgundy hover-border-burgundy rounded-0 d-flex align-items-center justify-content-center p-0 transition-colors" style="width: 40px; height: 40px;">&rarr;</button>
+                            <button class="btn border border-clay text-plum hover-burgundy hover-border-burgundy rounded-0 d-flex align-items-center justify-content-center p-0 transition-colors products-page-btn">1</button>
+                            <button class="btn border-0 text-white rounded-0 d-flex align-items-center justify-content-center p-0 fw-bold products-page-btn-active">2</button>
+                            <button class="btn border border-clay text-plum hover-burgundy hover-border-burgundy rounded-0 d-flex align-items-center justify-content-center p-0 transition-colors products-page-btn">3</button>
+                            <button class="btn border border-clay text-plum hover-burgundy hover-border-burgundy rounded-0 d-flex align-items-center justify-content-center p-0 transition-colors products-page-btn">&rarr;</button>
                         </div>
                     </div>
                 </div>

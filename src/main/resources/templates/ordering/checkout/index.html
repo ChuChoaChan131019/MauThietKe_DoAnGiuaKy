@@ -1,43 +1,43 @@
 <!DOCTYPE html>
 <html lang="vi" xmlns:th="http://www.thymeleaf.org">
 <head th:replace="~{fragments/head :: head('Senvia - Thanh toán')}"></head>
-<body class="bg-white" style="min-height: 100vh;">
+<body class="bg-white checkout-main-container">
     
-    <header class="py-4 px-4 d-flex justify-content-center border-bottom" style="border-color: var(--senvia-ivory) !important;">
-        <a th:href="@{/}" class="text-decoration-none text-serif" style="font-size: 1.875rem; letter-spacing: 0.1em;">
-            <span style="color: var(--senvia-plum);">SEN</span><span style="color: var(--senvia-burgundy);">VIA</span>
+    <header class="py-4 px-4 d-flex justify-content-center border-bottom checkout-header">
+        <a th:href="@{/}" class="text-decoration-none text-serif checkout-header-logo">
+            <span class="text-plum">SEN</span><span class="text-burgundy">VIA</span>
         </a>
     </header>
     
-    <main class="max-w-1440 mx-auto px-3 px-md-4 py-5" style="max-width: 1200px;">
+    <main class="max-w-1440 mx-auto px-3 px-md-4 py-5 checkout-content-container">
         <div class="row gx-lg-5 gy-5">
             <div class="col-12 col-md-7">
-                <h2 class="text-serif text-plum mb-4" style="font-size: 24px;">Thông tin liên hệ</h2>
-                <input class="form-control rounded-0 bg-transparent p-3 mb-5 shadow-none" style="border: 1px solid var(--senvia-clay); color: var(--senvia-plum);" placeholder="Email" />
+                <h2 class="text-serif text-plum mb-4 checkout-h2">Thông tin liên hệ</h2>
+                <input class="form-control rounded-0 bg-transparent p-3 mb-5 shadow-none checkout-input-custom" placeholder="Email" />
                 
-                <h2 class="text-serif text-plum mb-4" style="font-size: 24px;">Địa chỉ giao hàng</h2>
+                <h2 class="text-serif text-plum mb-4 checkout-h2">Địa chỉ giao hàng</h2>
                 <div class="row g-3">
                     <div class="col-6">
-                        <input class="form-control rounded-0 bg-transparent p-3 shadow-none" style="border: 1px solid var(--senvia-clay); color: var(--senvia-plum);" placeholder="Họ" />
+                        <input class="form-control rounded-0 bg-transparent p-3 shadow-none checkout-input-custom" placeholder="Họ" />
                     </div>
                     <div class="col-6">
-                        <input class="form-control rounded-0 bg-transparent p-3 shadow-none" style="border: 1px solid var(--senvia-clay); color: var(--senvia-plum);" placeholder="Tên" />
+                        <input class="form-control rounded-0 bg-transparent p-3 shadow-none checkout-input-custom" placeholder="Tên" />
                     </div>
                     <div class="col-12">
-                        <input class="form-control rounded-0 bg-transparent p-3 shadow-none" style="border: 1px solid var(--senvia-clay); color: var(--senvia-plum);" placeholder="Địa chỉ" />
+                        <input class="form-control rounded-0 bg-transparent p-3 shadow-none checkout-input-custom" placeholder="Địa chỉ" />
                     </div>
                     <div class="col-12 mt-4">
-                        <button class="senvia-btn senvia-btn-primary w-100 border-0 text-white" style="background-color: var(--senvia-burgundy);">Tiếp tục thanh toán</button>
+                        <button class="senvia-btn senvia-btn-primary w-100 border-0 text-white checkout-submit-btn">Tiếp tục thanh toán</button>
                     </div>
                 </div>
             </div>
             
             <div class="col-12 col-md-5">
-                <div class="p-4 p-md-5 bg-ivory h-100">
-                    <h3 class="text-serif text-plum mb-4" style="font-size: 20px;">Đơn hàng của bạn</h3>
-                    <div class="border-top pt-4 d-flex justify-content-between" style="border-color: var(--senvia-clay) !important;">
+                <div class="p-4 p-md-5 h-100 checkout-summary-container">
+                    <h3 class="text-serif text-plum mb-4 checkout-summary-title">Đơn hàng của bạn</h3>
+                    <div class="border-top pt-4 d-flex justify-content-between checkout-summary-divider">
                         <span class="fw-bold text-plum">Tổng cộng</span>
-                        <span class="fw-bold text-burgundy" style="font-size: 18px;">1.190.000₫</span>
+                        <span class="fw-bold text-burgundy checkout-total-price">1.190.000₫</span>
                     </div>
                 </div>
             </div>

@@ -1,11 +1,11 @@
 <!DOCTYPE html>
 <html lang="vi" xmlns:th="http://www.thymeleaf.org">
 <head th:replace="~{fragments/head :: head('Senvia - Admin')}"></head>
-<body style="min-height: 100vh; background-color: #f9fafb;">
-    <div class="d-flex h-100" style="min-height: 100vh;">
-        <aside class="text-white p-4 d-none d-md-block" style="width: 16rem; background-color: var(--senvia-plum);">
-            <h1 class="text-serif mb-5" style="font-size: 24px;">Admin</h1>
-            <ul class="list-unstyled d-flex flex-column gap-3" style="font-size: 14px;">
+<body class="admin-body">
+    <div class="d-flex h-100 admin-container">
+        <aside class="text-white p-4 d-none d-md-block admin-sidebar">
+            <h1 class="text-serif mb-5 admin-sidebar-title">Admin</h1>
+            <ul class="list-unstyled d-flex flex-column gap-3 admin-sidebar-list">
                 <li class="text-white fw-medium cursor-pointer">Dashboard</li>
                 <li class="text-white-50 hover-text-white transition-colors cursor-pointer">Users</li>
                 <li class="text-white-50 hover-text-white transition-colors cursor-pointer">Shops</li>
@@ -13,7 +13,7 @@
         </aside>
         
         <main class="flex-grow-1 p-4 p-md-5">
-            <h2 class="text-serif text-plum" style="font-size: 24px;">Quản trị hệ thống</h2>
+            <h2 class="text-serif text-plum admin-content-title">Quản trị hệ thống</h2>
         </main>
     </div>
     

@@ -1,0 +1,6 @@
+/* Account Styles */
+.account-main-container { max-width: 1480px; }
+.account-sidebar { width: 16rem; border-color: var(--senvia-ivory) !important; min-height: 50vh; }
+.account-sidebar-title { font-size: 24px; }
+.account-sidebar-list { font-size: 14px; }
+.account-content-title { font-size: 20px; }
