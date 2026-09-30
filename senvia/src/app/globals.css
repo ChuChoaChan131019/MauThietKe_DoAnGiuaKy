@@ -1,0 +1,45 @@
+@import "tailwindcss";
+
+@theme {
+  --color-senvia-ivory: #F7F1EC;
+  --color-senvia-white: #FFFFFF;
+  --color-senvia-plum: #2F2328;
+  --color-senvia-burgundy: #A63D63;
+  --color-senvia-blush: #E8CFC4;
+  --color-senvia-clay: #D8BBB0;
+  --color-senvia-muted: #8D7C77;
+  --color-senvia-champagne: #B9936B;
+  
+  --font-sans: var(--font-inter);
+  --font-serif: var(--font-playfair);
+}
+
+:root {
+  --background: #F7F1EC;
+  --foreground: #2F2328;
+}
+
+body {
+  background-color: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans), sans-serif;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+.text-balance { text-wrap: balance; }
+.text-pretty { text-wrap: pretty; }
+.no-scrollbar::-webkit-scrollbar { display: none; }
+.no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+.senvia-rule {
+  border-color: rgba(47,35,40,0.18);
+}
+.senvia-rule-burgundy {
+  border-color: #A63D63;
+}
+
+.vertical-text {
+  writing-mode: vertical-rl;
+  transform: rotate(180deg);
+}
