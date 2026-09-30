@@ -1,0 +1,68 @@
+/* Authentication Pages Styles (Login / Register) */
+
+.auth-page {
+    min-height: 100vh;
+}
+
+.auth-overlay {
+    background-color: rgba(47, 35, 40, 0.2);
+}
+
+.auth-logo {
+    top: 2.5rem;
+    left: 3rem;
+}
+
+.auth-logo-text {
+    font-size: 1.875rem;
+    letter-spacing: 0.1em;
+}
+
+.auth-logo-shadow {
+    text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+.auth-form-container {
+    max-width: 400px;
+}
+
+.auth-welcome-text {
+    font-size: 10px;
+    letter-spacing: 0.3em;
+}
+
+.auth-title {
+    font-size: 3rem;
+}
+
+.auth-title-sm {
+    font-size: 2.5rem;
+}
+
+.auth-label {
+    font-size: 11px;
+    letter-spacing: 0.1em;
+}
+
+.auth-input {
+    border-color: var(--senvia-blush) !important;
+    font-size: 14px;
+}
+
+.auth-input-register {
+    border: 1px solid var(--senvia-clay);
+    color: var(--senvia-plum);
+}
+
+.auth-submit-btn {
+    font-size: 14px;
+    letter-spacing: 0.1em;
+}
+
+.auth-footer-text {
+    font-size: 14px;
+}
+
+.auth-forgot-link {
+    letter-spacing: normal;
+}

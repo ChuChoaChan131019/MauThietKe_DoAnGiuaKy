@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head :: head('Senvia - Admin')}"></head>
+<body class="admin-body">
+    <div class="d-flex h-100 admin-container">
+        <aside class="text-white p-4 d-none d-md-block admin-sidebar">
+            <h1 class="text-serif mb-5 admin-sidebar-title">Admin</h1>
+            <ul class="list-unstyled d-flex flex-column gap-3 admin-sidebar-list">
+                <li class="text-white fw-medium cursor-pointer">Dashboard</li>
+                <li class="text-white-50 hover-text-white transition-colors cursor-pointer">Users</li>
+                <li class="text-white-50 hover-text-white transition-colors cursor-pointer">Shops</li>
+            </ul>
+        </aside>
+        
+        <main class="flex-grow-1 p-4 p-md-5">
+            <h2 class="text-serif text-plum admin-content-title">Quản trị hệ thống</h2>
+        </main>
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

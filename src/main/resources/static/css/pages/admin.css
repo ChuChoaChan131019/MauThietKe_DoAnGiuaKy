@@ -1,0 +1,7 @@
+/* Admin Styles */
+.admin-body { min-height: 100vh; background-color: #f9fafb; }
+.admin-container { min-height: 100vh; }
+.admin-sidebar { width: 16rem; background-color: var(--senvia-plum); }
+.admin-sidebar-title { font-size: 24px; }
+.admin-sidebar-list { font-size: 14px; }
+.admin-content-title { font-size: 24px; }

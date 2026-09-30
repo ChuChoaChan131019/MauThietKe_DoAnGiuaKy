@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head :: head('Senvia - Tài khoản')}"></head>
+<body>
+    <div th:replace="~{fragments/header :: header}"></div>
+    
+    <main class="w-100 max-w-1440 mx-auto px-3 px-md-4 py-5 d-flex gap-5 account-main-container">
+        <aside class="d-none d-md-block border-end pe-4 account-sidebar">
+            <h2 class="text-serif text-plum mb-4 account-sidebar-title">Tài khoản</h2>
+            <ul class="list-unstyled d-flex flex-column gap-3 text-muted account-sidebar-list">
+                <li class="text-burgundy fw-medium cursor-pointer">Tổng quan</li>
+                <li class="hover-burgundy transition-colors cursor-pointer">Đơn hàng</li>
+                <li class="hover-burgundy transition-colors cursor-pointer">Wishlist</li>
+                <li class="hover-burgundy transition-colors cursor-pointer">Địa chỉ</li>
+            </ul>
+        </aside>
+        
+        <div class="flex-grow-1">
+            <h3 class="text-plum mb-3 account-content-title">Xin chào, User</h3>
+            <p class="text-muted">Quản lý thông tin tài khoản của bạn tại đây.</p>
+        </div>
+    </main>
+    
+    <div th:replace="~{fragments/footer :: footer}"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script th:src="@{/js/main.js}"></script>
+</body>
+</html>

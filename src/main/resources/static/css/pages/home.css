@@ -1,0 +1,77 @@
+/* Product Card specifics */
+.product-card-action {
+    opacity: 0;
+    transform: translateY(0.5rem);
+    transition: all 300ms ease;
+}
+
+.product-card-heart {
+    opacity: 0;
+    transition: all 300ms ease;
+}
+
+.group:hover .product-card-action {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.group:hover .product-card-heart {
+    opacity: 1;
+}
+
+.object-fit-cover {
+    object-fit: cover;
+}
+
+/* Home Page Specifics */
+.home-hero-text-box { background-color: var(--senvia-blush); }
+.home-hero-tag { font-size: 11px; letter-spacing: 0.1em; }
+.home-hero-title { line-height: 1.1; }
+.home-hero-desc { font-size: 15px; line-height: 1.6; max-width: 24rem; }
+.home-hero-btn { background-color: var(--senvia-burgundy); }
+.home-hero-link { font-size: 12px; letter-spacing: 0.1em; width: fit-content; }
+.home-hero-thumbnail { left: -4rem; bottom: 4rem; width: 8rem; aspect-ratio: 3/4; }
+
+.home-section-title { font-size: 24px; }
+.home-section-link { font-size: 12px; }
+.home-cat-item { min-width: 110px; max-width: 160px; width: 100%; cursor: pointer; }
+.home-cat-circle { aspect-ratio: 1/1; margin-bottom: 16px; border: 1px solid rgba(166, 61, 99, 0.12); box-shadow: 0 6px 24px rgba(47, 35, 40, 0.07); }
+
+.home-ed-container { min-height: 500px; background-color: var(--senvia-blush); }
+.home-ed-img-col { min-height: 300px; }
+.home-ed-tag { font-size: 11px; letter-spacing: 0.1em; }
+.home-ed-title { line-height: 1.1; }
+.home-ed-rule { width: 3rem; height: 4px; }
+.home-ed-desc { font-size: 15px; line-height: 1.6; }
+.home-ed-link { font-size: 12px; letter-spacing: 0.1em; }
+
+.home-nav-btn { width: 32px; height: 32px; }
+
+.home-promo-section { background-color: var(--senvia-plum); }
+.home-promo-title { font-size: 28px; }
+.home-promo-desc { color: var(--senvia-blush); font-size: 16px; }
+.home-promo-btn { background-color: var(--senvia-burgundy); }
+.home-promo-img1 { width: 33.333%; min-width: 140px; aspect-ratio: 4/5; border-color: var(--senvia-burgundy) !important; }
+.home-promo-img { width: 33.333%; min-width: 140px; aspect-ratio: 4/5; }
+
+.home-ls-img { transition-duration: 700ms; }
+.home-ls-title-lg { font-size: 24px; }
+.home-ls-link-lg { font-size: 12px; letter-spacing: 0.1em; }
+.home-ls-box-lg { bottom: 2rem; left: 2rem; }
+.home-ls-box-sm { bottom: 1.5rem; left: 1.5rem; }
+.home-ls-title-sm { font-size: 20px; }
+.home-ls-link-sm { font-size: 11px; letter-spacing: 0.1em; }
+
+.home-brand-section { background-color: rgba(232, 207, 196, 0.3); border-top: 1px solid rgba(216, 187, 176, 0.3); border-bottom: 1px solid rgba(216, 187, 176, 0.3); }
+.home-brand-title { font-size: 14px; letter-spacing: 0.1em; }
+.home-brand-item { font-size: 28px; letter-spacing: 0.1em; cursor: pointer; }
+
+.home-fy-col { width: 20%; }
+
+.home-nl-section { background-color: var(--senvia-blush); }
+.home-nl-container { max-width: 800px; }
+.home-nl-title { font-size: 36px; }
+.home-nl-desc { font-size: 15px; }
+.home-nl-form { max-width: 450px; }
+.home-nl-input { font-size: 14px; outline: none; }
+.home-nl-btn { background-color: var(--senvia-burgundy); padding: 0.75rem 1.5rem; }

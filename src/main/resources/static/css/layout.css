@@ -1,0 +1,31 @@
+/* Header Styles */
+.header-z { z-index: 50; }
+.header-top-bar { font-size: 11px; letter-spacing: 0.025em; background-color: var(--senvia-plum); }
+.header-top-text { color: var(--senvia-blush); }
+.header-main { z-index: 50; border-color: rgba(232,207,196,0.5) !important; }
+.header-logo-text { font-size: 1.875rem; letter-spacing: 0.15em; color: var(--senvia-plum); }
+.header-logo-text-accent { font-size: 1.875rem; letter-spacing: 0.15em; color: var(--senvia-burgundy); }
+.header-search-container { max-width: 36rem; }
+.header-search-input { color: var(--senvia-plum); font-size: 13px; }
+.header-icon-sm { font-size: 18px; }
+.header-icon-lg { font-size: 20px; }
+.header-cart-badge { font-size: 10px; width: 16px; height: 16px; top: -6px; right: -6px; }
+.header-nav-list { font-size: 12px; letter-spacing: 0.025em; }
+
+/* Footer Styles */
+.footer-container { background-color: var(--senvia-ivory); }
+.footer-title { font-size: 14px; letter-spacing: 0.1em; }
+.footer-link { font-size: 14px; }
+.footer-text { font-size: 14px; }
+.footer-bottom { border-color: rgba(216,187,176,0.5) !important; }
+.footer-bottom-text { font-size: 12px; }
+
+/* Footer Extracted */
+.footer-logo-text { font-size: 1.875rem; letter-spacing: 0.2em; }
+.footer-logo-text-accent { font-size: 1.875rem; letter-spacing: 0.2em; color: var(--senvia-burgundy); }
+.footer-desc { color: var(--senvia-blush); font-size: 13px; max-width: 20rem; }
+.footer-heading { font-size: 10px; letter-spacing: 0.2em; color: var(--senvia-clay); }
+.footer-list { font-size: 13px; }
+.footer-link { color: var(--senvia-blush); }
+.footer-social-list { font-size: 11px; letter-spacing: 0.2em; }
+.footer-bottom-bar { border-top: 1px solid rgba(216,187,176,0.2); font-size: 10px; letter-spacing: 0.2em; color: var(--senvia-blush); }

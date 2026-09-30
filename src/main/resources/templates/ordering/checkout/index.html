@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head :: head('Senvia - Thanh toán')}"></head>
+<body class="bg-white checkout-main-container">
+    
+    <header class="py-4 px-4 d-flex justify-content-center border-bottom checkout-header">
+        <a th:href="@{/}" class="text-decoration-none text-serif checkout-header-logo">
+            <span class="text-plum">SEN</span><span class="text-burgundy">VIA</span>
+        </a>
+    </header>
+    
+    <main class="max-w-1440 mx-auto px-3 px-md-4 py-5 checkout-content-container">
+        <div class="row gx-lg-5 gy-5">
+            <div class="col-12 col-md-7">
+                <h2 class="text-serif text-plum mb-4 checkout-h2">Thông tin liên hệ</h2>
+                <input class="form-control rounded-0 bg-transparent p-3 mb-5 shadow-none checkout-input-custom" placeholder="Email" />
+                
+                <h2 class="text-serif text-plum mb-4 checkout-h2">Địa chỉ giao hàng</h2>
+                <div class="row g-3">
+                    <div class="col-6">
+                        <input class="form-control rounded-0 bg-transparent p-3 shadow-none checkout-input-custom" placeholder="Họ" />
+                    </div>
+                    <div class="col-6">
+                        <input class="form-control rounded-0 bg-transparent p-3 shadow-none checkout-input-custom" placeholder="Tên" />
+                    </div>
+                    <div class="col-12">
+                        <input class="form-control rounded-0 bg-transparent p-3 shadow-none checkout-input-custom" placeholder="Địa chỉ" />
+                    </div>
+                    <div class="col-12 mt-4">
+                        <button class="senvia-btn senvia-btn-primary w-100 border-0 text-white checkout-submit-btn">Tiếp tục thanh toán</button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-12 col-md-5">
+                <div class="p-4 p-md-5 h-100 checkout-summary-container">
+                    <h3 class="text-serif text-plum mb-4 checkout-summary-title">Đơn hàng của bạn</h3>
+                    <div class="border-top pt-4 d-flex justify-content-between checkout-summary-divider">
+                        <span class="fw-bold text-plum">Tổng cộng</span>
+                        <span class="fw-bold text-burgundy checkout-total-price">1.190.000₫</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script th:src="@{/js/main.js}"></script>
+</body>
+</html>

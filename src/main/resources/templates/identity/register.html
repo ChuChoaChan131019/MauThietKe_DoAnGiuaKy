@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <th:block th:replace="~{fragments/head :: head('Senvia - Đăng ký')}"></th:block>
+    <link rel="stylesheet" th:href="@{/css/pages/auth.css}">
+</head>
+<body class="bg-white m-0 p-0 auth-page">
+    <div class="row g-0 h-100 auth-page">
+        <!-- Left Image -->
+        <div class="col-12 col-md-6 d-none d-md-block position-relative bg-ivory">
+            <a th:href="@{/}" class="position-absolute text-decoration-none d-flex align-items-center auth-logo">
+                <span class="text-serif fw-bold text-plum auth-logo-text">SEN</span>
+                <span class="text-serif fw-bold text-burgundy auth-logo-text">VIA</span>
+            </a>
+        </div>
+        
+        <!-- Right Form -->
+        <div class="col-12 col-md-6 d-flex align-items-center justify-content-center p-4 p-lg-5">
+            <div class="w-100 auth-form-container">
+                <a th:href="@{/}" class="d-block d-md-none text-decoration-none mb-5">
+                    <span class="text-serif fw-bold text-plum auth-logo-text">SEN</span>
+                    <span class="text-serif fw-bold text-burgundy auth-logo-text">VIA</span>
+                </a>
+
+                <h1 class="text-serif text-plum mb-3 auth-title-sm">Đăng ký</h1>
+                <p class="text-muted fw-light mb-5">Tạo tài khoản Senvia.</p>
+                
+                <form th:action="@{/login}" method="get" class="d-flex flex-column gap-3">
+                    <input type="text" name="fullName" class="form-control rounded-0 bg-transparent p-3 shadow-none auth-input-register" placeholder="Họ và tên" required />
+                    <input type="email" name="email" class="form-control rounded-0 bg-transparent p-3 shadow-none auth-input-register" placeholder="Email" required />
+                    <input type="password" name="password" class="form-control rounded-0 bg-transparent p-3 shadow-none auth-input-register" placeholder="Mật khẩu" required />
+                    
+                    <button type="submit" class="senvia-btn senvia-btn-primary w-100 border-0 text-white mt-3 bg-burgundy auth-submit-btn">
+                        Tạo tài khoản
+                    </button>
+                </form>
+                
+                <p class="mt-4 pt-2 text-muted auth-footer-text">
+                    Đã có tài khoản? <a th:href="@{/login}" class="text-plum fw-medium text-decoration-none border-bottom border-plum pb-1 hover-burgundy hover-border-burgundy transition-colors">Đăng nhập</a>
+                </p>
+            </div>
+        </div>
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script th:src="@{/js/main.js}"></script>
+</body>
+</html>

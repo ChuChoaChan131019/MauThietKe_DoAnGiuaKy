@@ -1,0 +1,7 @@
+/* Seller Styles */
+.seller-body { min-height: 100vh; background-color: var(--senvia-ivory); }
+.seller-container { min-height: 100vh; }
+.seller-sidebar { width: 16rem; border-color: var(--senvia-clay) !important; }
+.seller-sidebar-title { font-size: 24px; }
+.seller-sidebar-list { font-size: 14px; }
+.seller-content-title { font-size: 18px; }

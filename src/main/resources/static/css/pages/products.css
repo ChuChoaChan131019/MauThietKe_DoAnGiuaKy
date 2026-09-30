@@ -1,0 +1,45 @@
+/* Products Page Styles */
+.products-top-bar { border-color: var(--senvia-blush) !important; }
+.products-breadcrumb { font-size: 11px; letter-spacing: 0.1em; }
+.products-title { font-size: 32px; }
+.products-count { font-size: 16px; }
+.products-sort { font-size: 13px; border: 1px solid var(--senvia-clay); width: 200px; cursor: pointer; }
+
+.products-sidebar { top: 100px; }
+.products-sidebar-title { font-size: 14px; }
+.products-sidebar-list { font-size: 14px; }
+.products-sidebar-divider { border-color: var(--senvia-blush) !important; }
+.products-filter-checkbox { border-color: var(--senvia-clay); cursor: pointer; }
+.products-filter-label { cursor: pointer; }
+.products-filter-count { font-size: 12px; }
+
+.products-pagination-container { border-color: var(--senvia-blush) !important; }
+.products-page-btn { width: 40px; height: 40px; }
+.products-page-btn-active { background-color: var(--senvia-burgundy); width: 40px; height: 40px; }
+
+/* Product Detail Styles */
+.product-detail-container { max-width: 1536px; }
+.product-detail-thumbnails-container { width: 100%; max-width: 6rem; }
+.product-detail-thumbnail-active { aspect-ratio: 4/5; width: 6rem; border: 1px solid var(--senvia-burgundy); }
+.product-detail-thumbnail { aspect-ratio: 4/5; width: 6rem; }
+.product-detail-main-img-container { aspect-ratio: 4/5; }
+.product-detail-main-img { transition-duration: 1000ms; }
+
+.product-detail-info-col { top: 100px; height: fit-content; }
+.product-detail-brand { font-size: 10px; letter-spacing: 0.2em; }
+.product-detail-title { font-size: clamp(2.25rem, 4vw, 3rem); line-height: 1.1; }
+.product-detail-price { font-size: 24px; }
+.product-detail-desc { font-size: 15px; }
+
+.product-detail-option-title { font-size: 11px; letter-spacing: 0.1em; }
+.product-detail-option-btn { font-size: 14px; }
+
+.product-detail-qty-container { height: 56px; }
+.product-detail-qty-text { width: 40px; }
+
+.product-detail-add-btn { background-color: var(--senvia-plum); letter-spacing: 0.1em; font-size: 14px; }
+.product-detail-heart-btn { width: 56px; }
+.product-detail-heart-icon { font-size: 20px; }
+
+.product-detail-section-divider { border-color: var(--senvia-ivory) !important; }
+.product-detail-section-title { font-size: 14px; letter-spacing: 0.1em; }

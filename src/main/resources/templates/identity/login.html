@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <th:block th:replace="~{fragments/head :: head('Senvia - Đăng nhập')}"></th:block>
+    <link rel="stylesheet" th:href="@{/css/pages/auth.css}">
+</head>
+<body class="bg-white m-0 p-0 auth-page">
+    <div class="row g-0 h-100 auth-page">
+        <!-- Left Image -->
+        <div class="col-12 col-lg-6 d-none d-lg-block position-relative">
+            <img src="https://images.unsplash.com/photo-1490481651871-ab68de25d43d?w=1200&q=80" alt="Login Lifestyle" class="w-100 h-100 object-fit-cover" />
+            <div class="position-absolute top-0 start-0 w-100 h-100 auth-overlay"></div>
+            <a th:href="@{/}" class="position-absolute text-decoration-none d-flex align-items-center auth-logo">
+                <span class="text-serif fw-bold text-white auth-logo-text auth-logo-shadow">SEN</span>
+                <span class="text-serif fw-bold auth-logo-text auth-logo-shadow text-clay">VIA</span>
+            </a>
+        </div>
+        
+        <!-- Right Form -->
+        <div class="col-12 col-lg-6 d-flex align-items-center justify-content-center p-4 p-lg-5">
+            <div class="w-100 auth-form-container">
+                <a th:href="@{/}" class="d-block d-lg-none text-decoration-none mb-5">
+                    <span class="text-serif fw-bold text-plum auth-logo-text">SEN</span>
+                    <span class="text-serif fw-bold text-burgundy auth-logo-text">VIA</span>
+                </a>
+
+                <span class="text-uppercase fw-bold text-burgundy d-block mb-3 auth-welcome-text">Welcome Back</span>
+                <h1 class="text-serif text-plum mb-3 auth-title">Đăng nhập</h1>
+                <p class="text-muted fw-light mb-5">Truy cập vào tài khoản Senvia để quản lý đơn hàng và lưu lại những sản phẩm yêu thích.</p>
+                
+                <form th:action="@{/}" method="get" class="d-flex flex-column gap-4">
+                    <div class="position-relative">
+                        <label class="text-uppercase text-muted d-block mb-2 auth-label">Email</label>
+                        <input type="email" name="username" class="form-control rounded-0 border-0 border-bottom bg-transparent shadow-none px-0 py-2 text-plum transition-colors auth-input" required />
+                    </div>
+                    <div class="position-relative">
+                        <label class="text-uppercase text-muted d-flex justify-content-between mb-2 auth-label">
+                            Mật khẩu
+                            <a href="#" class="text-burgundy text-decoration-none hover-text-plum text-capitalize auth-forgot-link">Quên mật khẩu?</a>
+                        </label>
+                        <input type="password" name="password" class="form-control rounded-0 border-0 border-bottom bg-transparent shadow-none px-0 py-2 text-plum transition-colors auth-input" required />
+                    </div>
+                    
+                    <button type="submit" class="senvia-btn senvia-btn-primary w-100 border-0 text-white mt-4 shadow bg-plum auth-submit-btn">
+                        Đăng nhập
+                    </button>
+                </form>
+                
+                <p class="mt-5 pt-3 text-center text-muted auth-footer-text">
+                    Chưa có tài khoản? <a th:href="@{/register}" class="text-plum fw-medium text-decoration-none border-bottom border-plum pb-1 hover-burgundy hover-border-burgundy transition-colors">Đăng ký ngay</a>
+                </p>
+            </div>
+        </div>
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script th:src="@{/js/main.js}"></script>
+</body>
+</html>
