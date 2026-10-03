@@ -25,18 +25,34 @@
                 <h1 class="text-serif text-plum mb-3 auth-title-sm">Đăng ký</h1>
                 <p class="text-muted fw-light mb-5">Tạo tài khoản Senvia.</p>
                 
-                <form th:action="@{/login}" method="get" class="d-flex flex-column gap-3">
-                    <input type="text" name="fullName" class="form-control rounded-0 bg-transparent p-3 shadow-none auth-input-register" placeholder="Họ và tên" required />
-                    <input type="email" name="email" class="form-control rounded-0 bg-transparent p-3 shadow-none auth-input-register" placeholder="Email" required />
-                    <input type="password" name="password" class="form-control rounded-0 bg-transparent p-3 shadow-none auth-input-register" placeholder="Mật khẩu" required />
+                <div th:if="${param.error}" class="alert alert-danger border-0 rounded-0 small mb-4">
+                    <i class="bi bi-exclamation-circle me-1"></i> Email đã tồn tại hoặc mật khẩu không khớp.
+                </div>
+
+                <!-- Mockup form, using POST, preventing real submit and validating -->
+                <form action="#" method="post" class="d-flex flex-column gap-3" onsubmit="event.preventDefault(); const p1 = this.password.value; const p2 = this.confirmPassword.value; if(p1 !== p2) { this.querySelector('.invalid-feedback').classList.remove('d-none'); } else { alert('Mockup: Đăng ký thành công!'); window.location.href='/login?registered=true'; }">
+                    <div>
+                        <input type="text" name="fullName" class="form-control rounded-0 bg-transparent p-3 shadow-none auth-input-register" placeholder="Họ và tên" required />
+                    </div>
+                    <div>
+                        <input type="email" name="email" class="form-control rounded-0 bg-transparent p-3 shadow-none auth-input-register" placeholder="Email" required />
+                    </div>
+                    <div>
+                        <input type="password" name="password" class="form-control rounded-0 bg-transparent p-3 shadow-none auth-input-register" placeholder="Mật khẩu" required />
+                    </div>
+                    <div>
+                        <input type="password" name="confirmPassword" class="form-control rounded-0 bg-transparent p-3 shadow-none auth-input-register" placeholder="Xác nhận mật khẩu" required />
+                        <!-- Client side error message mockup -->
+                        <div class="invalid-feedback d-none d-block text-danger mt-1 small">Mật khẩu không khớp</div>
+                    </div>
                     
-                    <button type="submit" class="senvia-btn senvia-btn-primary w-100 border-0 text-white mt-3 bg-burgundy auth-submit-btn">
+                    <button type="submit" class="senvia-btn senvia-btn-primary w-100 border-0 text-white mt-3 bg-burgundy auth-submit-btn hover-bg-plum transition-colors p-3 fw-bold">
                         Tạo tài khoản
                     </button>
                 </form>
                 
-                <p class="mt-4 pt-2 text-muted auth-footer-text">
-                    Đã có tài khoản? <a th:href="@{/login}" class="text-plum fw-medium text-decoration-none border-bottom border-plum pb-1 hover-burgundy hover-border-burgundy transition-colors">Đăng nhập</a>
+                <p class="mt-4 pt-2 text-muted auth-footer-text text-center">
+                    Đã có tài khoản? <a th:href="@{/login}" class="text-plum fw-bold text-decoration-none border-bottom border-plum pb-1 hover-burgundy hover-border-burgundy transition-colors">Đăng nhập</a>
                 </p>
             </div>
         </div>

@@ -8,6 +8,38 @@ public class SellerController {
 
     @GetMapping("/seller")
     public String seller() {
-        return "merchant/seller/index";
+        return "redirect:/merchant/dashboard";
     }
+
+    @GetMapping("/merchant/shop-public")
+    public String shopPublic() { return "merchant/shop-public"; }
+
+    @GetMapping("/merchant/register")
+    public String merchantRegister() { return "merchant/register"; }
+
+    @GetMapping("/merchant/shop-status")
+    public String merchantShopStatus() {
+        return "merchant/shop-status";
+    }
+
+    @GetMapping("/merchant/dashboard")
+    public String merchantDashboard() { return "merchant/dashboard"; }
+
+    @GetMapping("/merchant/products")
+    public String merchantProducts() { return "merchant/products"; }
+
+    @GetMapping("/merchant/products/add")
+    public String merchantProductAdd() { return "merchant/product-add"; }
+
+    @GetMapping("/merchant/products/edit")
+    public String merchantProductEdit() { return "merchant/product-edit"; }
+
+    
+    public String merchantOrders() { return "ordering/seller-orders"; }
+
+    
+    public String merchantOrderDetail() { return "ordering/seller-order-detail"; }
+
+    @GetMapping("/merchant/profile")
+    public String merchantProfile() { return "merchant/shop-info"; }
 }

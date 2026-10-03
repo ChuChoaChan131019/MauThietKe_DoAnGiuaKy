@@ -28,9 +28,14 @@
                 <h1 class="text-serif text-plum mb-3 auth-title">Đăng nhập</h1>
                 <p class="text-muted fw-light mb-5">Truy cập vào tài khoản Senvia để quản lý đơn hàng và lưu lại những sản phẩm yêu thích.</p>
                 
-                <form th:action="@{/}" method="get" class="d-flex flex-column gap-4">
+                <div th:if="${param.error}" class="alert alert-danger border-0 rounded-0 small mb-4">
+                    <i class="bi bi-exclamation-circle me-1"></i> Thông tin đăng nhập không chính xác hoặc tài khoản đã bị khóa.
+                </div>
+                
+                <!-- Mockup form, using POST, but returning to homepage in real scenario -->
+                <form action="#" method="post" class="d-flex flex-column gap-4" onsubmit="event.preventDefault(); const email = this.username.value; if(email === 'locked@test.com') { window.location.href='/login?locked=true'; } else if (email === 'error@test.com') { window.location.href='/login?error=true'; } else { window.location.href='/?loggedIn=true'; }">
                     <div class="position-relative">
-                        <label class="text-uppercase text-muted d-block mb-2 auth-label">Email</label>
+                        <label class="text-uppercase text-muted d-block mb-2 auth-label">Email (Nhập error@test.com hoặc locked@test.com để test lỗi)</label>
                         <input type="email" name="username" class="form-control rounded-0 border-0 border-bottom bg-transparent shadow-none px-0 py-2 text-plum transition-colors auth-input" required />
                     </div>
                     <div class="position-relative">
@@ -41,7 +46,7 @@
                         <input type="password" name="password" class="form-control rounded-0 border-0 border-bottom bg-transparent shadow-none px-0 py-2 text-plum transition-colors auth-input" required />
                     </div>
                     
-                    <button type="submit" class="senvia-btn senvia-btn-primary w-100 border-0 text-white mt-4 shadow bg-plum auth-submit-btn">
+                    <button type="submit" class="senvia-btn senvia-btn-primary w-100 border-0 text-white mt-4 shadow bg-plum auth-submit-btn hover-bg-burgundy transition-colors">
                         Đăng nhập
                     </button>
                 </form>
@@ -57,3 +62,6 @@
     <script th:src="@{/js/main.js}"></script>
 </body>
 </html>
+
+
+
