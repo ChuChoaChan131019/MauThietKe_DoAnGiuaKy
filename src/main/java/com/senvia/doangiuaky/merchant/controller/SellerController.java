@@ -2,6 +2,8 @@ package com.senvia.doangiuaky.merchant.controller;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.ui.Model;
 
 @Controller
 public class SellerController {
@@ -18,7 +20,8 @@ public class SellerController {
     public String merchantRegister() { return "merchant/register"; }
 
     @GetMapping("/merchant/shop-status")
-    public String merchantShopStatus() {
+    public String merchantShopStatus(@RequestParam(required = false, defaultValue = "PENDING") String shopStatus, Model model) {
+        model.addAttribute("shopStatus", shopStatus);
         return "merchant/shop-status";
     }
 

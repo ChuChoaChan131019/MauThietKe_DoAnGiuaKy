@@ -28,6 +28,10 @@
 .home-hero-tag { font-size: 11px; letter-spacing: 0.1em; }
 .home-hero-title { line-height: 1.1; }
 .home-hero-desc { font-size: 15px; line-height: 1.6; max-width: 24rem; }
+@media (max-width: 575.98px) {
+    .home-hero-text-box { min-width: 0; padding-left: 1.25rem !important; padding-right: 1.25rem !important; }
+    .home-hero-desc { width: 100%; max-width: 100%; overflow-wrap: break-word; }
+}
 .home-hero-btn { background-color: var(--senvia-burgundy); }
 .home-hero-link { font-size: 12px; letter-spacing: 0.1em; width: fit-content; }
 .home-hero-thumbnail { left: -4rem; bottom: 4rem; width: 8rem; aspect-ratio: 3/4; }

@@ -18,6 +18,7 @@ public class MockModelInterceptor implements HandlerInterceptor {
 
             // Shop status: null, PENDING, REJECTED, APPROVED, LOCKED
             String shopStatus = request.getParameter("shopStatus");
+            if (shopStatus == null) shopStatus = "PENDING";
             modelAndView.addObject("shopStatus", shopStatus);
 
             // Notifications
