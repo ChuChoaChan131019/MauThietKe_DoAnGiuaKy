@@ -1,80 +1,133 @@
 <!DOCTYPE html>
 <html lang="vi" xmlns:th="http://www.thymeleaf.org">
-<head th:replace="~{fragments/head :: head('Senvia - ' + ${product.name})}"></head>
+<head th:replace="~{fragments/head :: head('Senvia - Chi tiết sản phẩm')}"></head>
 <body>
     <div th:replace="~{fragments/header :: header}"></div>
     
-    <main class="w-100 mx-auto px-3 px-md-4 py-5 product-detail-container">
-        <div class="row gx-lg-5 gy-5">
+    <main class="w-100 bg-white py-5">
+        <div class="max-w-1440 mx-auto px-3 px-md-4">
             
-            <!-- Gallery - 65% on lg -->
-            <div class="col-12 col-lg-7 d-flex flex-column-reverse flex-md-row gap-3">
-                <!-- Thumbnails -->
-                <div class="d-flex flex-md-column gap-3 overflow-x-auto overflow-md-visible product-detail-thumbnails-container">
-                    <div class="position-relative bg-ivory cursor-pointer flex-shrink-0 product-detail-thumbnail-active">
-                        <img th:src="${product.image}" alt="Thumbnail 1" class="w-100 h-100 object-fit-cover" />
+            <div class="text-uppercase fw-medium mb-4 text-muted small"><a th:href="@{/}" class="text-decoration-none text-muted hover-burgundy transition-colors">Trang chủ</a> / <a th:href="@{/products}" class="text-decoration-none text-muted hover-burgundy transition-colors">Sản phẩm</a> / <span th:text="${product.name}">Canvas Tote Bag</span></div>
+
+            <div class="row gx-lg-5 mb-5">
+                <!-- Product Images -->
+                <div class="col-12 col-md-6 mb-4 mb-md-0">
+                    <div class="position-relative bg-ivory mb-3 border border-clay">
+                        <img th:src="${product.image}" alt="Product Main" class="w-100 h-100 object-fit-cover" style="aspect-ratio: 4/5;" />
                     </div>
-                    <div class="position-relative bg-ivory cursor-pointer opacity-50 hover-opacity transition-colors flex-shrink-0 product-detail-thumbnail">
-                        <img th:src="${product.image}" alt="Thumbnail 2" class="w-100 h-100 object-fit-cover" />
-                    </div>
-                    <div class="position-relative bg-ivory cursor-pointer opacity-50 hover-opacity transition-colors flex-shrink-0 product-detail-thumbnail">
-                        <img th:src="${product.image}" alt="Thumbnail 3" class="w-100 h-100 object-fit-cover" />
+                    <div class="d-flex gap-3 overflow-x-auto hide-scrollbar">
+                        <img th:src="${product.image}" class="bg-ivory border border-clay cursor-pointer" style="width: 80px; height: 80px; object-fit: cover;" alt="Thumb 1">
+                        <img src="https://images.unsplash.com/photo-1594035910387-fea47714263f?w=200&q=80" class="bg-ivory border border-clay cursor-pointer opacity-50 hover-opacity transition-colors" style="width: 80px; height: 80px; object-fit: cover;" alt="Thumb 2">
+                        <img src="https://images.unsplash.com/photo-1602810318383-e386cc2a3ccf?w=200&q=80" class="bg-ivory border border-clay cursor-pointer opacity-50 hover-opacity transition-colors" style="width: 80px; height: 80px; object-fit: cover;" alt="Thumb 3">
                     </div>
                 </div>
-                <!-- Main Image -->
-                <div class="position-relative flex-grow-1 bg-ivory overflow-hidden product-detail-main-img-container">
-                    <img th:src="${product.image}" alt="Main product" class="w-100 h-100 object-fit-cover hover-scale-105 transition-transform product-detail-main-img" />
+                
+                <!-- Product Info -->
+                <div class="col-12 col-md-6 d-flex flex-column">
+                    <div class="mb-3 d-flex justify-content-between align-items-center">
+                        <div class="fw-bold text-uppercase text-muted" th:text="${product.brand}">NOLA</div>
+                        <!-- Average Rating Mockup -->
+                        <div class="d-flex align-items-center gap-1 text-warning">
+                            <i class="bi bi-star-fill"></i>
+                            <i class="bi bi-star-fill"></i>
+                            <i class="bi bi-star-fill"></i>
+                            <i class="bi bi-star-fill"></i>
+                            <i class="bi bi-star-half"></i>
+                            <span class="text-muted small ms-1" th:text="'(' + ${product.rating} + '/5.0 - ' + ${product.reviewCount} + ' đánh giá)'">(4.5/5.0 - 24 đánh giá)</span>
+                        </div>
+                    </div>
+                    <h1 class="fw-bold text-plum mb-3" style="font-size: 2.5rem;" th:text="${product.name}">Canvas Tote Bag</h1>
+                    <div class="fw-bold text-burgundy mb-4" style="font-size: 1.5rem;" th:text="${#numbers.formatDecimal(product.price, 0, 'COMMA', 0, 'POINT')} + 'đ'">1.190.000đ</div>
+                    
+                    <p class="text-muted mb-4 pb-4 border-bottom border-clay" style="line-height: 1.8;">
+                        <span th:text="${product.description}">Túi tote...</span>
+                    </p>
+
+                    <!-- Stock Status Mockup -->
+                    <div class="mb-4">
+                        <span th:if="${product.stock == 0}" class="badge bg-danger rounded-0 px-3 py-2 fs-6">Hết hàng</span>
+                        <span th:unless="${product.stock == 0}" class="badge bg-success rounded-0 px-3 py-2 fs-6" th:text="'Còn hàng (' + ${product.stock} + ' sản phẩm)'">Còn hàng (45 sản phẩm)</span>
+                    </div>
+
+                    <!-- Shop Info Link Mockup -->
+                    <div class="mb-4 d-flex align-items-center gap-3 bg-ivory p-3 border border-clay">
+                        <div class="rounded-circle bg-white border border-clay d-flex align-items-center justify-content-center" style="width: 50px; height: 50px;">
+                            <i class="bi bi-shop text-plum fs-4"></i>
+                        </div>
+                        <div>
+                            <div class="fw-bold text-plum" th:text="${product.brand} + ' Store'">MORI Store</div>
+                            <div class="text-muted small">Tham gia từ 2023 | 98% đánh giá tích cực</div>
+                        </div>
+                        <a th:href="@{/merchant/shop-public}" class="btn border border-plum text-plum hover-bg-plum hover-text-white rounded-0 px-3 py-1 ms-auto transition-colors small">Xem Shop</a>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <div class="fw-bold text-plum mb-2">Số lượng</div>
+                        <div class="d-flex align-items-center border border-clay" style="width: 120px; height: 45px;">
+                            <button class="btn border-0 shadow-none text-plum hover-burgundy hover-bg-ivory d-flex align-items-center justify-content-center h-100" style="width: 40px;"><i class="bi bi-dash"></i></button>
+                            <span class="fw-bold text-plum d-flex align-items-center justify-content-center border-start border-end border-clay h-100 flex-grow-1">1</span>
+                            <button class="btn border-0 shadow-none text-plum hover-burgundy hover-bg-ivory d-flex align-items-center justify-content-center h-100" style="width: 40px;"><i class="bi bi-plus"></i></button>
+                        </div>
+                    </div>
+                    
+                    <div class="d-flex gap-3 mt-auto">
+                        <button class="senvia-btn senvia-btn-outline flex-shrink-0 d-flex align-items-center justify-content-center" style="width: 50px;" onclick="alert('Đã thêm vào danh sách yêu thích')"><i class="bi bi-heart"></i></button>
+                        <button class="senvia-btn senvia-btn-primary flex-grow-1 d-flex justify-content-center align-items-center border-0" onclick="alert('Mockup: Đã thêm vào giỏ hàng')">
+                            Thêm vào giỏ hàng
+                        </button>
+                    </div>
                 </div>
             </div>
 
-            <!-- Info - 35% on lg -->
-            <div class="col-12 col-lg-5 d-flex flex-column pt-3 sticky-top product-detail-info-col">
-                <div class="d-flex justify-content-between align-items-center mb-3">
-                    <span class="text-uppercase text-muted product-detail-brand" th:text="${product.brand}">BRAND</span>
-                    <button class="btn border-0 shadow-none text-muted hover-plum p-0"><i class="bi bi-share"></i></button>
-                </div>
+            <!-- Review Section Mockup -->
+                        <div class="mt-5 pt-5 border-top border-clay">
+                <h3 class="fw-bold text-plum mb-4">Đánh giá sản phẩm</h3>
                 
-                <h1 class="text-serif text-plum mb-4 product-detail-title" th:text="${product.name}">Product Name</h1>
-                
-                <div class="fw-medium text-burgundy mb-5 product-detail-price" th:text="${#numbers.formatDecimal(product.price, 0, 'COMMA', 0, 'POINT')} + '₫'">Price</div>
-                
-                <p class="text-muted fw-light lh-lg mb-5 product-detail-desc">
-                    Sự pha trộn tinh tế giữa nốt hương hoa nhài thanh khiết và xạ hương ấm áp. Một lựa chọn hoàn hảo để bắt đầu ngày mới với phong thái tự tin và hiện đại.
-                </p>
-
-                <div class="mb-5">
-                    <h4 class="text-uppercase text-plum mb-3 fw-bold product-detail-option-title">Dung tích</h4>
-                    <div class="d-flex gap-3">
-                        <button class="btn border-plum text-plum rounded-0 fw-medium px-4 py-2 product-detail-option-btn">50ml</button>
-                        <button class="btn border-clay text-muted rounded-0 fw-medium px-4 py-2 hover-border-plum transition-colors product-detail-option-btn">100ml</button>
+                <div class="row gx-lg-5" th:if="${product.reviewCount > 0}">
+                    <div class="col-md-4 mb-4 mb-md-0">
+                        <div class="bg-ivory p-4 border border-clay text-center">
+                            <h2 class="display-4 fw-bold text-plum mb-0" th:text="${product.rating}">4.5</h2>
+                            <div class="text-warning fs-5 mb-2">
+                                <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-half"></i>
+                            </div>
+                            <div class="text-muted small" th:text="'Dựa trên ' + ${product.reviewCount} + ' đánh giá'">Dựa trên 24 đánh giá</div>
+                        </div>
+                    </div>
+                    <div class="col-md-8">
+                        <div class="d-flex flex-column gap-4">
+                            <!-- Review Loop -->
+                            <div class="border-bottom border-clay pb-4" th:each="review : ${product.reviews}">
+                                <div class="d-flex justify-content-between mb-2">
+                                    <div class="fw-bold text-plum" th:text="${review.user}">Nguyễn Văn A</div>
+                                    <div class="text-muted small" th:text="${review.date}">24/10/2023</div>
+                                </div>
+                                <div class="text-warning small mb-2">
+                                    <i class="bi bi-star-fill" th:each="i : ${#numbers.sequence(1, review.rating)}"></i><i class="bi bi-star" th:if="${review.rating < 5}" th:each="i : ${#numbers.sequence(1, 5 - review.rating)}"></i>
+                                </div>
+                                <p class="text-muted mb-0" th:text="${review.content}">Túi đẹp, chất vải dày dặn đúng như mô tả. Giao hàng nhanh chóng.</p>
+                            </div>
+                        </div>
+                        <div class="text-center mt-4">
+                            <button class="btn border border-plum text-plum hover-bg-plum hover-text-white rounded-0 px-4 py-2 transition-colors">Xem thêm đánh giá</button>
+                        </div>
                     </div>
                 </div>
-
-                <div class="d-flex align-items-center gap-3 mb-4">
-                    <div class="d-flex align-items-center border border-clay product-detail-qty-container">
-                        <button class="btn border-0 shadow-none text-muted hover-bg-ivory h-100 d-flex align-items-center justify-content-center px-3" onclick="updateQty(-1)"><i class="bi bi-dash"></i></button>
-                        <span id="qty" class="text-plum fw-medium text-center product-detail-qty-text">1</span>
-                        <button class="btn border-0 shadow-none text-muted hover-bg-ivory h-100 d-flex align-items-center justify-content-center px-3" onclick="updateQty(1)"><i class="bi bi-plus"></i></button>
-                    </div>
-                    <button class="btn rounded-0 text-white flex-grow-1 fw-medium text-uppercase shadow transition-colors h-100 product-detail-add-btn">
-                        Thêm vào giỏ
-                    </button>
-                    <button class="btn rounded-0 border border-clay text-plum hover-burgundy hover-border-burgundy h-100 transition-colors d-flex align-items-center justify-content-center product-detail-heart-btn">
-                        <i class="bi bi-heart product-detail-heart-icon"></i>
-                    </button>
+                <div th:unless="${product.reviewCount > 0}" class="text-center py-5 bg-ivory border border-clay">
+                    <i class="bi bi-chat-square-text text-muted mb-3 d-block" style="font-size: 2rem;"></i>
+                    <p class="text-muted mb-0">Chưa có đánh giá nào cho sản phẩm này.</p>
                 </div>
+            </div>
 
-                <div class="mt-5 pt-4 border-top product-detail-section-divider">
-                    <div class="d-flex justify-content-between align-items-center cursor-pointer group mb-4">
-                        <span class="text-uppercase fw-medium text-plum product-detail-section-title">Chi tiết sản phẩm</span>
-                        <i class="bi bi-plus text-muted group-hover-plum"></i>
-                    </div>
-                    <div class="d-flex justify-content-between align-items-center cursor-pointer group border-top pt-4 product-detail-section-divider">
-                        <span class="text-uppercase fw-medium text-plum product-detail-section-title">Vận chuyển & Đổi trả</span>
-                        <i class="bi bi-plus text-muted group-hover-plum"></i>
+            <!-- Related Products -->
+            <div class="mt-5 pt-5 border-top border-clay">
+                <h3 class="fw-bold text-plum mb-4 text-center">Có thể bạn cũng thích</h3>
+                <div class="row g-3 g-md-4">
+                    <div class="col-6 col-md-3" th:each="related : ${relatedProducts}">
+                        <div th:replace="~{fragments/product-card :: product-card(${related})}"></div>
                     </div>
                 </div>
             </div>
+
         </div>
     </main>
     
@@ -82,14 +135,7 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script th:src="@{/js/main.js}"></script>
-    <script>
-        function updateQty(change) {
-            const qtyEl = document.getElementById('qty');
-            let qty = parseInt(qtyEl.innerText);
-            qty += change;
-            if (qty < 1) qty = 1;
-            qtyEl.innerText = qty;
-        }
-    </script>
 </body>
 </html>
+
+

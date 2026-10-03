@@ -11,4 +11,7 @@ public class ShoppingController {
     public String cart(Model model) {
         return "cart/index";
     }
+
+    @GetMapping("/account/wishlist")
+    public String wishlist() { return "shopping/wishlist"; }
 }

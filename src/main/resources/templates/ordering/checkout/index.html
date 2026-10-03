@@ -1,50 +1,125 @@
 <!DOCTYPE html>
 <html lang="vi" xmlns:th="http://www.thymeleaf.org">
 <head th:replace="~{fragments/head :: head('Senvia - Thanh toán')}"></head>
-<body class="bg-white checkout-main-container">
+<body>
+    <div th:replace="~{fragments/header :: header}"></div>
     
-    <header class="py-4 px-4 d-flex justify-content-center border-bottom checkout-header">
-        <a th:href="@{/}" class="text-decoration-none text-serif checkout-header-logo">
-            <span class="text-plum">SEN</span><span class="text-burgundy">VIA</span>
-        </a>
-    </header>
-    
-    <main class="max-w-1440 mx-auto px-3 px-md-4 py-5 checkout-content-container">
-        <div class="row gx-lg-5 gy-5">
-            <div class="col-12 col-md-7">
-                <h2 class="text-serif text-plum mb-4 checkout-h2">Thông tin liên hệ</h2>
-                <input class="form-control rounded-0 bg-transparent p-3 mb-5 shadow-none checkout-input-custom" placeholder="Email" />
-                
-                <h2 class="text-serif text-plum mb-4 checkout-h2">Địa chỉ giao hàng</h2>
-                <div class="row g-3">
-                    <div class="col-6">
-                        <input class="form-control rounded-0 bg-transparent p-3 shadow-none checkout-input-custom" placeholder="Họ" />
-                    </div>
-                    <div class="col-6">
-                        <input class="form-control rounded-0 bg-transparent p-3 shadow-none checkout-input-custom" placeholder="Tên" />
-                    </div>
-                    <div class="col-12">
-                        <input class="form-control rounded-0 bg-transparent p-3 shadow-none checkout-input-custom" placeholder="Địa chỉ" />
-                    </div>
-                    <div class="col-12 mt-4">
-                        <button class="senvia-btn senvia-btn-primary w-100 border-0 text-white checkout-submit-btn">Tiếp tục thanh toán</button>
-                    </div>
-                </div>
-            </div>
+    <main class="w-100 bg-white py-5">
+        <div class="max-w-1440 mx-auto px-3 px-md-4">
             
-            <div class="col-12 col-md-5">
-                <div class="p-4 p-md-5 h-100 checkout-summary-container">
-                    <h3 class="text-serif text-plum mb-4 checkout-summary-title">Đơn hàng của bạn</h3>
-                    <div class="border-top pt-4 d-flex justify-content-between checkout-summary-divider">
-                        <span class="fw-bold text-plum">Tổng cộng</span>
-                        <span class="fw-bold text-burgundy checkout-total-price">1.190.000₫</span>
+            <h1 class="fw-bold text-plum mb-5 border-bottom pb-4">Thanh toán</h1>
+            
+            <form th:action="@{/checkout/success}" method="get" class="row gx-lg-5 gy-5">
+                <!-- Delivery & Payment Info -->
+                <div class="col-12 col-lg-7">
+                    
+                    <!-- Checkout Error Warning Mockup -->
+                    <div th:if="${param.error}" class="alert alert-danger border-0 rounded-0 mb-4 text-dark">
+                        <i class="bi bi-exclamation-circle me-2"></i> Lỗi thanh toán: Một sản phẩm trong giỏ hàng vừa hết hàng hoặc thay đổi giá. Vui lòng kiểm tra lại.
+                    </div>
+
+                    <h4 class="fw-bold text-plum mb-4 pb-2 border-bottom">Thông tin giao hàng</h4>
+                    
+                    <div class="row g-3 mb-5">
+                        <div class="col-12 col-md-6">
+                            <label class="form-label text-uppercase fw-medium text-plum small mb-2">Họ và tên *</label>
+                            <input type="text" class="form-control bg-ivory border-0 rounded-0 px-4 py-3 shadow-none text-plum" value="Nguyễn Văn A" required>
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <label class="form-label text-uppercase fw-medium text-plum small mb-2">Số điện thoại *</label>
+                            <input type="tel" class="form-control bg-ivory border-0 rounded-0 px-4 py-3 shadow-none text-plum" value="0901234567" required>
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label text-uppercase fw-medium text-plum small mb-2">Địa chỉ chi tiết *</label>
+                            <input type="text" class="form-control bg-ivory border-0 rounded-0 px-4 py-3 shadow-none text-plum" value="123 Lê Lợi, Q.1, TP. HCM" required>
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label text-uppercase fw-medium text-plum small mb-2">Ghi chú (Tùy chọn)</label>
+                            <textarea class="form-control bg-ivory border-0 rounded-0 px-4 py-3 shadow-none text-plum" rows="2" placeholder="Lưu ý giao hàng..."></textarea>
+                        </div>
+                    </div>
+
+                    <h4 class="fw-bold text-plum mb-4 pb-2 border-bottom">Phương thức thanh toán</h4>
+                    <div class="d-flex flex-column gap-3 mb-5">
+                        <label class="border border-clay p-3 d-flex align-items-center gap-3 cursor-pointer hover-bg-ivory transition-colors">
+                            <input type="radio" name="paymentMethod" value="COD" class="form-check-input mt-0 rounded-circle" checked required>
+                            <div>
+                                <div class="fw-bold text-plum">Thanh toán khi nhận hàng (COD)</div>
+                                <div class="text-muted small">Thanh toán bằng tiền mặt khi giao hàng</div>
+                            </div>
+                        </label>
+                        <label class="border border-clay p-3 d-flex align-items-center gap-3 cursor-pointer hover-bg-ivory transition-colors">
+                            <input type="radio" name="paymentMethod" value="TRANSFER" class="form-check-input mt-0 rounded-circle" required>
+                            <div>
+                                <div class="fw-bold text-plum">Chuyển khoản ngân hàng</div>
+                                <div class="text-muted small">Chuyển khoản trực tiếp vào tài khoản ngân hàng của cửa hàng</div>
+                            </div>
+                        </label>
                     </div>
                 </div>
-            </div>
+
+                <!-- Order Summary by Shop -->
+                <div class="col-12 col-lg-5">
+                    <div class="p-4 p-md-5 bg-ivory border border-clay position-sticky" style="top: 100px;">
+                        <h4 class="fw-bold text-plum border-bottom pb-3 mb-4">Đơn hàng của bạn</h4>
+                        
+                        <!-- Shop 1 Order -->
+                        <div class="mb-4 pb-4 border-bottom border-clay">
+                            <div class="fw-bold text-plum mb-3"><i class="bi bi-shop me-2"></i>NOLA Official</div>
+                            <div class="d-flex justify-content-between mb-3">
+                                <div class="d-flex gap-2">
+                                    <span class="text-muted">1x</span>
+                                    <span class="text-plum">Canvas Tote Bag</span>
+                                </div>
+                                <span class="fw-bold text-plum">1.190.000đ</span>
+                            </div>
+                            <div class="d-flex justify-content-between mb-2 small text-muted">
+                                <span>Phí vận chuyển (NOLA Official)</span>
+                                <span>20.000đ</span>
+                            </div>
+                        </div>
+
+                        <!-- Shop 2 Order -->
+                        <div class="mb-4 pb-4 border-bottom border-clay">
+                            <div class="fw-bold text-plum mb-3"><i class="bi bi-shop me-2"></i>MORI Store</div>
+                            <div class="d-flex justify-content-between mb-3">
+                                <div class="d-flex gap-2">
+                                    <span class="text-muted">2x</span>
+                                    <span class="text-plum">Linen Shirt</span>
+                                </div>
+                                <span class="fw-bold text-plum">1.780.000đ</span>
+                            </div>
+                            <div class="d-flex justify-content-between mb-2 small text-muted">
+                                <span>Phí vận chuyển (MORI Store)</span>
+                                <span>30.000đ</span>
+                            </div>
+                        </div>
+                        
+                        <div class="d-flex justify-content-between mb-3 text-plum">
+                            <span>Tổng tiền hàng</span>
+                            <span class="fw-bold">2.970.000đ</span>
+                        </div>
+                        <div class="d-flex justify-content-between mb-4 pb-4 border-bottom text-plum">
+                            <span>Tổng phí vận chuyển</span>
+                            <span class="fw-bold">50.000đ</span>
+                        </div>
+                        
+                        <div class="d-flex justify-content-between align-items-end mb-4">
+                            <span class="fw-bold text-plum">Tổng cộng</span>
+                            <span class="fw-bold text-burgundy fs-4">3.020.000đ</span>
+                        </div>
+
+                        <button type="submit" class="btn bg-burgundy text-white w-100 text-decoration-none border-0 rounded-0 py-3 fw-bold hover-bg-plum transition-colors">
+                            Xác nhận đặt hàng
+                        </button>
+                    </div>
+                </div>
+
+            </form>
         </div>
     </main>
     
+    <div th:replace="~{fragments/footer :: footer}"></div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-    <script th:src="@{/js/main.js}"></script>
 </body>
 </html>
