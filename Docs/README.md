@@ -1,50 +1,64 @@
 # Tài liệu dự án E-commerce Marketplace
 
-Thư mục này tập hợp tài liệu kỹ thuật và quy ước cộng tác của dự án. Nội dung được cập nhật cùng với mã nguồn; mọi thay đổi ảnh hưởng đến kiến trúc, cơ sở dữ liệu hoặc quy trình phát triển phải cập nhật tài liệu liên quan trong cùng pull request.
+[← README chính](../README.md)
 
-[← Quay lại README chính](../README.md)
+Thư mục này là mục lục cho tài liệu nghiệp vụ, kỹ thuật và cộng tác. Mỗi loại thông tin có một nguồn chuẩn; tài liệu khác chỉ tóm tắt và liên kết đến nguồn đó.
 
-AI và thành viên sử dụng AI phải đọc [AGENTS.md](../AGENTS.md) trước khi bắt đầu công việc.
+## Bắt đầu nhanh
 
-## Danh mục tài liệu
-
-| Tài liệu | Nội dung |
+| Nhu cầu | Đọc tài liệu |
 | --- | --- |
-| [AGENTS.md](../AGENTS.md) | Thứ tự đọc, nguồn sự thật và quy tắc bắt buộc dành cho AI |
-| [SRS.md](SRS.md) | Đặc tả yêu cầu phần mềm phiên bản 1.3 |
-| [DEVELOPMENT_PLAYBOOK.md](DEVELOPMENT_PLAYBOOK.md) | Quy trình thực hiện một feature từ issue đến pull request |
-| [TEAM.md](TEAM.md) | Thành viên, vai trò và phạm vi phụ trách |
-| [SETUP.md](SETUP.md) | Yêu cầu môi trường, cấu hình và cách chạy dự án |
-| [ARCHITECTURE.md](ARCHITECTURE.md) | Kiến trúc phân lớp, package và mẫu thiết kế |
-| [PROJECT_STRUCTURE_GUIDE.md](PROJECT_STRUCTURE_GUIDE.md) | Bản đồ thư mục, trách nhiệm package và vị trí đặt từng loại code/test |
-| [MODULE_OWNERSHIP.md](MODULE_OWNERSHIP.md) | Ranh giới, quyền sở hữu và phụ thuộc giữa năm module |
-| [DATABASE.md](DATABASE.md) | Mô hình dữ liệu, quan hệ và quy tắc toàn vẹn |
-| [GIT_WORKFLOW.md](GIT_WORKFLOW.md) | Chiến lược nhánh, commit và pull request |
-| [CONTRIBUTING.md](CONTRIBUTING.md) | Quy trình đóng góp và tiêu chuẩn hoàn thành công việc |
+| Hiểu dự án và chạy nhanh | [README chính](../README.md) |
+| Cài môi trường, database, Cloudinary | [SETUP.md](SETUP.md) |
+| Xem yêu cầu và tiêu chí nghiệm thu | [SRS.md](SRS.md) |
+| Xem kiến trúc và dependency | [ARCHITECTURE.md](ARCHITECTURE.md) |
+| Xác định chủ module/bảng | [MODULE_OWNERSHIP.md](MODULE_OWNERSHIP.md) |
+| Xác định vị trí đặt code/test | [PROJECT_STRUCTURE_GUIDE.md](PROJECT_STRUCTURE_GUIDE.md) |
+| Thực hiện một feature | [DEVELOPMENT_PLAYBOOK.md](DEVELOPMENT_PLAYBOOK.md) |
+| Tạo branch, commit và pull request | [GIT_WORKFLOW.md](GIT_WORKFLOW.md) |
+| Kiểm tra tiêu chuẩn hoàn thành | [CONTRIBUTING.md](CONTRIBUTING.md) |
+| Xem thành viên và người review | [TEAM.md](TEAM.md) |
+| Xem phân công chi tiết | [PHAN_CONG_CONG_VIEC.md](PHAN_CONG_CONG_VIEC.md) |
+| Làm việc bằng AI | [AGENTS.md](../AGENTS.md) |
 
-## Hướng dẫn theo module
+## Nguồn sự thật
 
-| Module | Hướng dẫn | Requirement chính |
+| Nội dung | File chuẩn |
+| --- | --- |
+| Yêu cầu nghiệp vụ, business rule, acceptance criteria | [SRS.md](SRS.md) |
+| Kiến trúc, dependency, design pattern | [ARCHITECTURE.md](ARCHITECTURE.md) |
+| Chủ module và bảng dữ liệu | [MODULE_OWNERSHIP.md](MODULE_OWNERSHIP.md) |
+| Thành viên, MSSV, nhóm trưởng, người review | [TEAM.md](TEAM.md) |
+| Công việc cụ thể từng thành viên | [PHAN_CONG_CONG_VIEC.md](PHAN_CONG_CONG_VIEC.md) |
+| Thiết kế database và migration | [DATABASE.md](DATABASE.md) |
+| Quy trình triển khai feature | [DEVELOPMENT_PLAYBOOK.md](DEVELOPMENT_PLAYBOOK.md) |
+| Quy tắc Git và pull request | [GIT_WORKFLOW.md](GIT_WORKFLOW.md) |
+| Tiêu chuẩn code/test/Definition of Done | [CONTRIBUTING.md](CONTRIBUTING.md) |
+
+## Hướng dẫn module
+
+| Module | Guide | Requirement |
 | --- | --- | --- |
-| `identity` | [IDENTITY_GUIDE.md](modules/IDENTITY_GUIDE.md) | AUTH 01–08 |
 | `merchant` | [MERCHANT_GUIDE.md](modules/MERCHANT_GUIDE.md) | SHOP 01–10, PROD 01–11 |
-| `shopping` | [SHOPPING_GUIDE.md](modules/SHOPPING_GUIDE.md) | CART 01–07, FAV 01–03 |
 | `ordering` | [ORDERING_GUIDE.md](modules/ORDERING_GUIDE.md) | PAY 01–08, ORDER 01–09 |
+| `shopping` | [SHOPPING_GUIDE.md](modules/SHOPPING_GUIDE.md) | CART 01–07, FAV 01–03 và Buyer Order History |
+| `identity` | [IDENTITY_GUIDE.md](modules/IDENTITY_GUIDE.md) | AUTH 01–08 |
 | `engagement` | [ENGAGEMENT_GUIDE.md](modules/ENGAGEMENT_GUIDE.md) | NOTI 01–07, REV 01–04, STAT 01–05 |
 
-## Thông tin tổng quan
+## Thứ tự đọc đề xuất
 
-- **Tên dự án:** E-commerce Marketplace
-- **Môn học:** Mẫu thiết kế
-- **Nhóm:** 2
-- **Giảng viên hướng dẫn:** Đoàn Minh Khuê
-- **Trạng thái:** Đang phát triển
-- **Ngôn ngữ chính:** Java 21
-- **Framework:** Spring Boot 4.1.1
+Thành viên mới:
 
-## Nguyên tắc cập nhật
+```text
+README → TEAM → SRS → ARCHITECTURE → MODULE_OWNERSHIP
+       → CONTRIBUTING → DEVELOPMENT_PLAYBOOK → module guide → GIT_WORKFLOW
+```
 
-1. Không đưa mật khẩu, API key, token hoặc dữ liệu cá nhân thật vào tài liệu.
-2. Dùng đường dẫn tương đối khi liên kết giữa các tài liệu trong repository.
-3. Khi thay đổi package, bảng dữ liệu hoặc quy trình Git, phải cập nhật tài liệu tương ứng.
-4. Nội dung chưa được nhóm thống nhất phải đánh dấu `TODO` và ghi người chịu trách nhiệm.
+AI phải bắt đầu từ [AGENTS.md](../AGENTS.md) và tuân thủ thứ tự đọc ghi trong file đó.
+
+## Quy tắc cập nhật
+
+- Không ghi secret hoặc dữ liệu cá nhân thật vào tài liệu.
+- Dùng đường dẫn tương đối giữa các file trong repository.
+- Khi hành vi, contract, schema hoặc quy trình thay đổi, cập nhật đúng file nguồn chuẩn.
+- Không chép lại một nội dung dài ở nhiều file; ưu tiên tóm tắt và dẫn liên kết.

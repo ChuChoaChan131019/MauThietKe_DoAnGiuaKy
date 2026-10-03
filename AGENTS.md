@@ -1,96 +1,86 @@
 # Hướng dẫn bắt buộc dành cho AI
 
-File này là điểm bắt đầu cho mọi công cụ AI làm việc trong repository. Phạm vi áp dụng là toàn bộ dự án. Không sửa mã nguồn trước khi hoàn thành phần “Thứ tự đọc bắt buộc”.
+Đây là entrypoint cho mọi công cụ AI làm việc trong repository. Không sửa source trước khi hoàn thành thứ tự đọc và xác định rõ phạm vi task.
 
 ## 1. Thứ tự đọc bắt buộc
 
-1. `AGENTS.md` — quy tắc làm việc với AI.
-2. `README.md` — mục tiêu, công nghệ và cách chạy dự án.
-3. `Docs/SRS.md` — yêu cầu nghiệp vụ và tiêu chí nghiệm thu.
-4. `Docs/ARCHITECTURE.md` — kiến trúc, package và hướng phụ thuộc.
-5. `Docs/PROJECT_STRUCTURE_GUIDE.md` — chức năng từng thư mục và vị trí đặt code/test.
-6. `Docs/MODULE_OWNERSHIP.md` — module, bảng và tài nguyên do từng thành viên sở hữu.
-7. `Docs/DEVELOPMENT_PLAYBOOK.md` — quy trình thực hiện một feature.
+1. `AGENTS.md`.
+2. `README.md`.
+3. `Docs/SRS.md`.
+4. `Docs/ARCHITECTURE.md`.
+5. `Docs/PROJECT_STRUCTURE_GUIDE.md`.
+6. `Docs/MODULE_OWNERSHIP.md`.
+7. `Docs/DEVELOPMENT_PLAYBOOK.md`.
 8. Guide của module liên quan trong `Docs/modules/`.
-9. Source code, test và cấu hình hiện tại liên quan trực tiếp đến task.
+9. Source, test và cấu hình hiện tại liên quan trực tiếp.
+10. `Docs/PHAN_CONG_CONG_VIEC.md` khi task liên quan phân công hoặc tích hợp thành viên.
 
-Sau khi đọc, phải xác định được requirement ID, module sở hữu, dependency, acceptance criteria và phạm vi file dự kiến thay đổi.
+Trước khi sửa phải xác định requirement ID, module/bảng sở hữu, dependency, acceptance criteria, public contract và phạm vi file.
 
 ## 2. Nguồn sự thật
 
-| Nội dung | Nguồn chuẩn |
+| Nội dung | File chuẩn |
 | --- | --- |
-| Yêu cầu nghiệp vụ | `Docs/SRS.md` |
+| Yêu cầu và acceptance criteria | `Docs/SRS.md` |
 | Kiến trúc và dependency | `Docs/ARCHITECTURE.md` |
-| Vị trí đặt file và trách nhiệm thư mục | `Docs/PROJECT_STRUCTURE_GUIDE.md` |
-| Quyền sở hữu module/bảng | `Docs/MODULE_OWNERSHIP.md` |
-| Quy trình triển khai | `Docs/DEVELOPMENT_PLAYBOOK.md` |
-| Quy tắc Git và pull request | `Docs/GIT_WORKFLOW.md` |
-| Tiêu chuẩn hoàn thành | `Docs/CONTRIBUTING.md` và guide module |
-| Hành vi đã triển khai | Source code và test hiện tại |
+| Vị trí đặt code/test | `Docs/PROJECT_STRUCTURE_GUIDE.md` |
+| Module và bảng sở hữu | `Docs/MODULE_OWNERSHIP.md` |
+| Quy trình feature | `Docs/DEVELOPMENT_PLAYBOOK.md` |
+| Git, commit và PR | `Docs/GIT_WORKFLOW.md` |
+| Tiêu chuẩn code/test/DoD | `Docs/CONTRIBUTING.md` |
+| Thành viên và review | `Docs/TEAM.md` |
+| Công việc chi tiết | `Docs/PHAN_CONG_CONG_VIEC.md` |
+| Hành vi đã triển khai | Source và test hiện tại |
 
-Nếu task, tài liệu và code mâu thuẫn, không tự chọn ngầm. Nêu rõ điểm mâu thuẫn, ảnh hưởng và yêu cầu người dùng hoặc chủ module xác nhận trước khi thay đổi ngoài phạm vi.
+Nếu task, tài liệu và code mâu thuẫn, nêu rõ điểm mâu thuẫn và ảnh hưởng; không tự thay đổi ngoài phạm vi đã được xác nhận.
 
-## 3. Tổng quan dự án
-
-- Java 21, Spring Boot 4.1.1, Maven Wrapper.
-- Spring MVC, Thymeleaf, Spring Security, Spring Data JPA.
-- PostgreSQL/Supabase và Cloudinary.
-- Kiến trúc modular monolith, package gốc `com.senvia.doangiuaky`.
-- State Pattern cho shop, Strategy Pattern cho payment, Spring Event/Observer cho notification.
-
-## 4. Bản đồ module
-
-| Module | Phạm vi | Guide |
-| --- | --- | --- |
-| `identity` | Tài khoản, xác thực, phân quyền; bảng `users` | `Docs/modules/IDENTITY_GUIDE.md` |
-| `merchant` | Shop, category, product, image; State Pattern | `Docs/modules/MERCHANT_GUIDE.md` |
-| `shopping` | Cart, cart item, favorite | `Docs/modules/SHOPPING_GUIDE.md` |
-| `ordering` | Checkout, order, payment, history; Strategy Pattern | `Docs/modules/ORDERING_GUIDE.md` |
-| `engagement` | Notification, review, admin view, report; Observer | `Docs/modules/ENGAGEMENT_GUIDE.md` |
-| `common` | Thành phần kỹ thuật thật sự dùng chung | Thành viên 1 quản lý |
-
-## 5. Ranh giới kiến trúc bắt buộc
+## 3. Ranh giới bắt buộc
 
 - Chỉ sửa module nằm trong phạm vi task.
-- Module khác chỉ được sử dụng qua contract trong `<module>.api`.
+- Module khác chỉ được dùng contract trong `<module>.api`.
 - Không import Entity, Repository hoặc Service nội bộ chéo module.
-- Không chuyển nghiệp vụ của một module vào `common`.
-- Controller không gọi Repository trực tiếp và không chứa nghiệp vụ phức tạp.
+- Không chuyển business rule riêng module vào `common`.
+- Controller không gọi Repository trực tiếp hoặc chứa nghiệp vụ phức tạp.
 - DTO không để lộ password hash, token hoặc trường nội bộ.
-- Tiền tệ dùng `BigDecimal`, không dùng `float` hoặc `double`.
+- Tiền tệ dùng `BigDecimal`.
+- Nghiệp vụ nhiều bảng phải có transaction/rollback phù hợp.
+- Ownership shop, cart, order, notification và review phải kiểm tra ở backend.
 - State đặt trong `merchant.state`; Strategy trong `ordering.strategy`; listener trong `engagement.event`.
-- Template và static asset phải nằm trong thư mục module sở hữu.
-- Không tạo abstraction, class khung hoặc dependency mới khi chưa có nhu cầu cụ thể từ task.
-- Không sửa `pom.xml`, `application.properties`, fragment/common asset nếu task không yêu cầu; thay đổi các file này phải được nêu rõ.
+- Template và static asset đặt trong thư mục module sở hữu.
+- Không tạo abstraction, package hoặc dependency mới khi chưa có nhu cầu cụ thể.
+- Không sửa `pom.xml`, `application.properties`, common fragment/asset nếu task không yêu cầu; mọi thay đổi phải được nêu rõ và review.
 
-## 6. Bảo mật và dữ liệu
+## 4. Bảo mật và dữ liệu
 
-- Không commit secret, password, token, Cloudinary API secret hoặc chuỗi kết nối thật.
+- Không commit secret, password, token, Cloudinary API secret hoặc connection string thật.
 - Không ghi thông tin xác thực vào log, exception hoặc response.
 - Không dùng dữ liệu cá nhân thật trong seed/demo.
-- Không commit `target/`, file IDE hoặc file cấu hình cá nhân.
-- Mọi quyền sở hữu shop, cart, order, notification và review phải được kiểm tra ở backend.
+- Không commit `target/`, file IDE hoặc cấu hình cá nhân.
+- Không xóa/vô hiệu test hoặc auto-configuration chỉ để che lỗi môi trường.
 
-## 7. Quy trình thực hiện task
+## 5. Quy trình thực hiện task
 
-1. Đọc tài liệu bắt buộc và guide module.
-2. Tìm implementation hiện tại trước khi đề xuất thay đổi.
-3. Xác định requirement/business rule và các trường hợp lỗi.
-4. Nêu kế hoạch ngắn cùng phạm vi file tác động.
-5. Triển khai theo vertical slice: migration → entity/repository → DTO/service → API/event → controller/view → test.
-6. Giữ thay đổi nhỏ và không sửa file không liên quan.
+1. Đọc tài liệu và implementation hiện tại.
+2. Xác định requirement, business rule, actor, luồng chính và ngoại lệ.
+3. Nêu kế hoạch ngắn và phạm vi file.
+4. Nếu có dependency, thống nhất public contract/event trước.
+5. Triển khai vertical slice: migration → entity/repository → DTO/service → API/event → controller/view → test.
+6. Giữ diff nhỏ, không sửa file không liên quan.
 7. Chạy test phù hợp và kiểm tra ranh giới module.
-8. Cập nhật tài liệu trong cùng thay đổi nếu hành vi, cấu hình hoặc contract thay đổi.
-9. Báo cáo file đã sửa, test đã chạy và blocker còn lại.
+8. Cập nhật đúng tài liệu nguồn khi hành vi/contract/config thay đổi.
+9. Báo cáo file sửa, test đã chạy và blocker.
 
-## 8. Lệnh kiểm tra
+Quy trình chi tiết xem `Docs/DEVELOPMENT_PLAYBOOK.md`.
+
+## 6. Lệnh kiểm tra
 
 Windows:
 
 ```powershell
 .\mvnw.cmd test
 .\mvnw.cmd clean package
+git status
+git diff --check
 ```
 
 Linux/macOS:
@@ -98,24 +88,27 @@ Linux/macOS:
 ```bash
 ./mvnw test
 ./mvnw clean package
+git status
+git diff --check
 ```
 
-Test tải ApplicationContext cần datasource PostgreSQL hoặc test database đã cấu hình. Không che lỗi cấu hình bằng cách xóa test hoặc vô hiệu hóa auto-configuration nếu task không yêu cầu.
+Test ApplicationContext cần datasource/test database phù hợp.
 
-## 9. Definition of Done cho AI
+## 7. Definition of Done cho AI
 
 - Đáp ứng acceptance criteria và requirement liên quan.
-- Không vi phạm ownership hoặc hướng phụ thuộc.
-- Validation, phân quyền, transaction và xử lý lỗi phù hợp.
-- Test mới/hiện có chạy ở mức có thể; mọi lỗi còn lại được báo rõ.
-- Không có secret hoặc file sinh tự động trong thay đổi.
-- Tài liệu và public contract được cập nhật khi cần.
+- Không vi phạm ownership hoặc dependency.
+- Validation, authorization, transaction và xử lý lỗi phù hợp.
+- Test liên quan chạy ở mức có thể; lỗi còn lại được báo rõ.
+- Không có secret hoặc file sinh tự động.
+- Public contract và tài liệu được cập nhật khi cần.
+- Chỉ báo hoàn thành khi không còn công việc bắt buộc trong phạm vi task.
 
-## 10. Prompt khởi đầu khuyến nghị
+## 8. Prompt khởi đầu
 
 ```text
 Đọc AGENTS.md và toàn bộ tài liệu bắt buộc trước.
-Sau đó thực hiện issue <id> thuộc module <module>.
+Thực hiện issue <id> thuộc module <module>.
 Nêu requirement, phạm vi file và kế hoạch trước khi sửa.
 Không thay đổi ngoài phạm vi nếu chưa báo rõ.
 ```

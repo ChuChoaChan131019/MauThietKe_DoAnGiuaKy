@@ -1,30 +1,29 @@
 # Quy trình Git
 
+Tài liệu này là nguồn chuẩn cho branch, commit, pull request, review và merge. Quy trình triển khai feature nằm tại [DEVELOPMENT_PLAYBOOK.md](DEVELOPMENT_PLAYBOOK.md); tiêu chuẩn chất lượng nằm tại [CONTRIBUTING.md](CONTRIBUTING.md).
+
 ## 1. Mô hình nhánh
 
 ```text
 main
   └── develop
-       ├── feature/identity/<issue>-<slug>
-       ├── feature/merchant/<issue>-<slug>
-       ├── feature/shopping/<issue>-<slug>
-       ├── feature/ordering/<issue>-<slug>
-       ├── feature/engagement/<issue>-<slug>
-       └── fix/<module>/<issue>-<slug>
+       ├── feature/<module>/<issue>-<slug>
+       ├── fix/<module>/<issue>-<slug>
+       └── docs/<issue>-<slug>
 ```
 
 | Nhánh | Mục đích |
 | --- | --- |
 | `main` | Phiên bản ổn định, có thể trình diễn |
-| `develop` | Tích hợp các tính năng đã được review |
-| `feature/<module>/*` | Phát triển một tính năng trong module sở hữu |
-| `fix/<module>/*` | Sửa lỗi trên nhánh phát triển |
-| `docs/*` | Thay đổi tài liệu không kèm tính năng |
-| `hotfix/*` | Sửa khẩn cấp từ `main` nếu cần |
+| `develop` | Tích hợp thay đổi đã review |
+| `feature/<module>/*` | Feature mới |
+| `fix/<module>/*` | Sửa lỗi |
+| `docs/*` | Chỉ thay đổi tài liệu |
+| `hotfix/*` | Sửa khẩn cấp từ `main` khi nhóm thống nhất |
 
 Không push trực tiếp lên `main` hoặc `develop`.
 
-## 2. Tạo nhánh làm việc
+## 2. Tạo và đồng bộ branch
 
 ```bash
 git checkout develop
@@ -32,72 +31,9 @@ git pull origin develop
 git checkout -b feature/merchant/12-create-product
 ```
 
-Tên nhánh dùng chữ thường, chứa module và mã issue; các từ trong slug ngăn cách bằng dấu gạch ngang.
+Tên branch dùng chữ thường, có module, issue và slug ngăn bằng dấu gạch ngang.
 
-## 3. Quy ước commit
-
-Định dạng:
-
-```text
-<type>(<scope>): <mô tả ngắn>
-```
-
-Các loại thường dùng:
-
-| Type | Ý nghĩa |
-| --- | --- |
-| `feat` | Thêm chức năng |
-| `fix` | Sửa lỗi |
-| `docs` | Thay đổi tài liệu |
-| `test` | Thêm hoặc sửa kiểm thử |
-| `refactor` | Tái cấu trúc không đổi hành vi |
-| `chore` | Cấu hình, dependency hoặc tác vụ bảo trì |
-| `style` | Định dạng không ảnh hưởng hành vi |
-
-Ví dụ:
-
-```text
-feat(identity): add user login flow
-fix(ordering): prevent invalid status transition
-docs(setup): add Supabase configuration guide
-test(ordering): cover COD payment strategy
-```
-
-Mỗi commit nên nhỏ, hoàn chỉnh và chỉ tập trung vào một mục đích.
-
-## 4. Pull request
-
-Mỗi pull request phải có:
-
-- Issue hoặc task liên quan.
-- Tóm tắt thay đổi.
-- Cách kiểm thử.
-- Ảnh giao diện nếu có thay đổi UI.
-- Migration nếu thay đổi schema.
-- Cập nhật tài liệu nếu thay đổi hành vi hoặc cấu hình.
-- Chủ module review nếu thay đổi public contract, entity, repository, migration hoặc tài nguyên của module đó.
-- Thành viên 1 review nếu sửa `common`, `pom.xml`, `application.properties`, fragment hoặc static common.
-
-Trước khi tạo pull request:
-
-```bash
-./mvnw test
-git status
-git diff develop...HEAD
-```
-
-Trên Windows dùng `.\mvnw.cmd test`.
-
-## 5. Review và merge
-
-1. Ít nhất một thành viên khác review; bắt buộc có chủ module khi thay đổi chéo module.
-2. Tất cả kiểm thử tự động phải thành công.
-3. Không còn comment yêu cầu sửa chưa xử lý.
-4. Không có secret, file build hoặc cấu hình cá nhân trong diff.
-5. Ưu tiên squash merge để lịch sử `develop` gọn.
-6. Xóa feature branch sau khi merge thành công.
-
-## 6. Đồng bộ khi có xung đột
+Trước khi mở PR, đồng bộ `develop` trên chính feature branch:
 
 ```bash
 git checkout develop
@@ -106,4 +42,66 @@ git checkout feature/merchant/12-create-product
 git merge develop
 ```
 
-Giải quyết xung đột trên feature branch, chạy lại kiểm thử rồi mới push. Không dùng `git push --force` lên nhánh dùng chung.
+Giải quyết conflict, chạy lại test rồi mới push. Không force-push nhánh dùng chung.
+
+## 3. Commit
+
+Định dạng:
+
+```text
+<type>(<scope>): <mô tả ngắn>
+```
+
+| Type | Dùng khi |
+| --- | --- |
+| `feat` | Thêm chức năng |
+| `fix` | Sửa lỗi |
+| `docs` | Thay đổi tài liệu |
+| `test` | Thêm/sửa test |
+| `refactor` | Tái cấu trúc không đổi hành vi |
+| `chore` | Cấu hình, dependency, bảo trì |
+| `style` | Chỉ định dạng |
+
+Ví dụ:
+
+```text
+feat(merchant): add product creation flow
+fix(ordering): prevent duplicate stock refund
+test(shopping): cover cart quantity validation
+docs(team): update member assignments
+```
+
+Mỗi commit nhỏ, chạy được và tập trung vào một mục đích. Không commit secret, `target/`, file IDE hoặc cấu hình cá nhân.
+
+## 4. Pull request
+
+PR phải có:
+
+- Issue/task và requirement liên quan.
+- Tóm tắt phạm vi thay đổi.
+- Danh sách file hoặc module bị tác động.
+- Cách kiểm thử và kết quả.
+- Ảnh UI nếu giao diện thay đổi.
+- Migration nếu schema thay đổi.
+- Ghi chú contract/config/tài nguyên chung nếu có.
+- Tài liệu cập nhật khi hành vi thay đổi.
+
+Trước khi mở PR:
+
+```powershell
+.\mvnw.cmd test
+git status
+git diff develop...HEAD
+```
+
+## 5. Review và merge
+
+- Ít nhất một người khác review.
+- Thay đổi chéo module cần chủ module liên quan review.
+- Public contract cần cả bên cung cấp và bên sử dụng review.
+- Tài nguyên common/config cần Doàn Trương Duy Khang review.
+- Test phải thành công và mọi comment yêu cầu sửa phải được xử lý.
+- Không merge khi diff còn secret, file build hoặc cấu hình cá nhân.
+- Ưu tiên squash merge và xóa feature branch sau khi merge.
+
+Người review và ownership hiện hành xem [TEAM.md](TEAM.md) và [MODULE_OWNERSHIP.md](MODULE_OWNERSHIP.md).
