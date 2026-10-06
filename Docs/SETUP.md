@@ -56,6 +56,26 @@ export SPRING_DATASOURCE_PASSWORD="your_password"
 export SPRING_JPA_HIBERNATE_DDL_AUTO="validate"
 ```
 
+### 3.1. Kết nối Supabase dùng chung
+
+Nhóm sử dụng PostgreSQL của Supabase cho môi trường tích hợp. Người tạo project thực hiện:
+
+1. Tạo một project Supabase dùng chung cho nhóm và lưu Database Password ở nơi an toàn.
+2. Trong project, chọn **Connect** và dùng **Session pooler**. Lấy `Host`, `Port`, `Database` và `User` từ phần connection parameters.
+3. Không tạo bảng thủ công bằng Table Editor. Bảng phải được tạo bằng migration của module sở hữu.
+4. Mỗi thành viên cấu hình biến môi trường trên máy của mình. Ví dụ PowerShell:
+
+```powershell
+$env:SPRING_DATASOURCE_URL="jdbc:postgresql://<POOLER_HOST>:5432/postgres?sslmode=require"
+$env:SPRING_DATASOURCE_USERNAME="postgres.<PROJECT_REF>"
+$env:SPRING_DATASOURCE_PASSWORD="<DATABASE_PASSWORD>"
+$env:SPRING_JPA_HIBERNATE_DDL_AUTO="validate"
+```
+
+Thay các giá trị trong dấu `<...>` bằng thông tin thật của project. Các lệnh `$env:` chỉ có hiệu lực trong cửa sổ PowerShell hiện tại; cần chạy lại khi mở terminal mới. Không đưa password hoặc connection string có password vào source code, issue, ảnh chụp hay Git.
+
+Nếu chỉ chạy unit test hoặc phát triển khi chưa có schema tích hợp, có thể dùng cấu hình H2 mặc định của repository. Khi chạy ứng dụng với Supabase, cần bảo đảm migration đã được chạy theo đúng thứ tự.
+
 ## 4. Cấu hình Cloudinary
 
 Khi chức năng upload ảnh được triển khai, dùng biến môi trường thay cho giá trị thật trong repository:
@@ -98,6 +118,8 @@ src/main/resources/db/migration
 ```
 
 Quy tắc đặt tên, review và dữ liệu mẫu xem [DATABASE.md](DATABASE.md). Không chỉnh trực tiếp schema dùng chung mà không có migration tương ứng.
+
+Chủ module tạo migration cho các bảng thuộc module mình. `identity` tạo `users` trước; các module có khóa ngoại tới `users` cần được review và chạy sau khi bảng này tồn tại. Khi repository chưa có công cụ migration tự động, người quản lý môi trường chạy từng file SQL trên Supabase SQL Editor theo thứ tự tên phiên bản, sau khi đã review.
 
 ## 7. Lỗi thường gặp
 
