@@ -2,13 +2,13 @@
 
 ## 1. Yêu cầu môi trường
 
-| Thành phần | Yêu cầu                               |
-| ------------ | --------------------------------------- |
-| JDK          | Java 21                                 |
-| Build        | Maven Wrapper đi kèm repository       |
-| Database     | H2 local/test hoặc PostgreSQL/Supabase |
-| Lưu ảnh    | Cloudinary khi triển khai upload       |
-| Công cụ    | Git và IDE hỗ trợ Java 21            |
+| Thành phần | Yêu cầu |
+| --- | --- |
+| JDK | Java 21 |
+| Build | Maven Wrapper đi kèm repository |
+| Database | H2 local/test hoặc PostgreSQL/Supabase |
+| Lưu ảnh | Cloudinary khi triển khai upload |
+| Công cụ | Git và IDE hỗ trợ Java 21 |
 
 Kiểm tra:
 
@@ -31,14 +31,14 @@ cd doangiuaky
 
 Không ghi thông tin đăng nhập thật vào source code hoặc Git.
 
-| Biến môi trường               | Ý nghĩa                                | Ví dụ                                        |
-| --------------------------------- | ---------------------------------------- | ---------------------------------------------- |
-| `SPRING_DATASOURCE_URL`         | JDBC URL                                 | `jdbc:postgresql://localhost:5432/ecommerce` |
-| `SPRING_DATASOURCE_USERNAME`    | Database user                            | `postgres`                                   |
-| `SPRING_DATASOURCE_PASSWORD`    | Database password                        | `your_password`                              |
-| `SPRING_JPA_HIBERNATE_DDL_AUTO` | Chính sách schema                      | `validate`                                   |
-| `INITIAL_ADMIN_EMAIL`           | Email khởi tạo Admin (tùy chọn)      | `admin@example.test`                         |
-| `INITIAL_ADMIN_PASSWORD`        | Mật khẩu Admin khởi tạo (tùy chọn) | Chỉ cung cấp qua môi trường               |
+| Biến môi trường | Ý nghĩa | Ví dụ |
+| --- | --- | --- |
+| `SPRING_DATASOURCE_URL` | JDBC URL | `jdbc:postgresql://localhost:5432/ecommerce` |
+| `SPRING_DATASOURCE_USERNAME` | Database user | `postgres` |
+| `SPRING_DATASOURCE_PASSWORD` | Database password | `your_password` |
+| `SPRING_JPA_HIBERNATE_DDL_AUTO` | Chính sách schema | `validate` |
+| `INITIAL_ADMIN_EMAIL` | Email khởi tạo Admin (tùy chọn) | `admin@example.test` |
+| `INITIAL_ADMIN_PASSWORD` | Mật khẩu Admin khởi tạo (tùy chọn) | Chỉ cung cấp qua môi trường |
 
 PowerShell:
 
