@@ -101,7 +101,7 @@ CLOUDINARY_API_KEY=mauthietke
 CLOUDINARY_API_SECRET=<cấu hình riêng trên máy/server, không commit>
 ```
 
-Các biến trên được ánh xạ vào `app.cloudinary.*`. Thiếu cấu hình không ngăn ứng dụng khởi động, nhưng thao tác upload sẽ báo lỗi cấu hình rõ ràng. Không đưa API secret vào log, issue, ảnh chụp hoặc dữ liệu demo.
+Các biến trên được ánh xạ vào `app.cloudinary.*`. Nếu khai báo bằng lệnh `$env:` thì biến chỉ tồn tại trong cửa sổ PowerShell hiện tại; mở terminal mới cần khai báo lại. Nếu lưu trong Windows Environment Variables hoặc Environment Variables của server thì chỉ cần cấu hình một lần, không cần nhập lại mỗi lần chạy ứng dụng. Thiếu cấu hình không ngăn ứng dụng khởi động, nhưng thao tác upload sẽ báo lỗi cấu hình rõ ràng. Không đưa API secret vào log, issue, ảnh chụp hoặc dữ liệu demo.
 
 ## 5. Chạy và đóng gói
 
