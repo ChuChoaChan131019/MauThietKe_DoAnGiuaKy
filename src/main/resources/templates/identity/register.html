@@ -28,22 +28,26 @@
                 <div th:if="${param.error}" class="alert alert-danger border-0 rounded-0 small mb-4">
                     <i class="bi bi-exclamation-circle me-1"></i> Email đã tồn tại hoặc mật khẩu không khớp.
                 </div>
+                <div th:if="${param.registered}" class="alert alert-success border-0 rounded-0 small mb-4">
+                    Đăng ký thành công. Vui lòng đăng nhập.
+                </div>
 
-                <!-- Mockup form, using POST, preventing real submit and validating -->
-                <form action="#" method="post" class="d-flex flex-column gap-3" onsubmit="event.preventDefault(); const p1 = this.password.value; const p2 = this.confirmPassword.value; if(p1 !== p2) { this.querySelector('.invalid-feedback').classList.remove('d-none'); } else { alert('Mockup: Đăng ký thành công!'); window.location.href='/login?registered=true'; }">
+                <form th:action="@{/register}" th:object="${registrationForm}" method="post" class="d-flex flex-column gap-3">
                     <div>
-                        <input type="text" name="fullName" class="form-control rounded-0 bg-transparent p-3 shadow-none auth-input-register" placeholder="Họ và tên" required />
+                        <input type="text" th:field="*{fullName}" class="form-control rounded-0 bg-transparent p-3 shadow-none auth-input-register" placeholder="Họ và tên" autocomplete="name" required />
+                        <div th:if="${#fields.hasErrors('fullName')}" th:errors="*{fullName}" class="text-danger mt-1 small"></div>
                     </div>
                     <div>
-                        <input type="email" name="email" class="form-control rounded-0 bg-transparent p-3 shadow-none auth-input-register" placeholder="Email" required />
+                        <input type="email" th:field="*{email}" class="form-control rounded-0 bg-transparent p-3 shadow-none auth-input-register" placeholder="Email" autocomplete="email" required />
+                        <div th:if="${#fields.hasErrors('email')}" th:errors="*{email}" class="text-danger mt-1 small"></div>
                     </div>
                     <div>
-                        <input type="password" name="password" class="form-control rounded-0 bg-transparent p-3 shadow-none auth-input-register" placeholder="Mật khẩu" required />
+                        <input type="password" name="password" class="form-control rounded-0 bg-transparent p-3 shadow-none auth-input-register" placeholder="Mật khẩu" autocomplete="new-password" minlength="8" maxlength="72" required />
+                        <div th:if="${#fields.hasErrors('password')}" th:errors="*{password}" class="text-danger mt-1 small"></div>
                     </div>
                     <div>
-                        <input type="password" name="confirmPassword" class="form-control rounded-0 bg-transparent p-3 shadow-none auth-input-register" placeholder="Xác nhận mật khẩu" required />
-                        <!-- Client side error message mockup -->
-                        <div class="invalid-feedback d-none d-block text-danger mt-1 small">Mật khẩu không khớp</div>
+                        <input type="password" name="confirmPassword" class="form-control rounded-0 bg-transparent p-3 shadow-none auth-input-register" placeholder="Xác nhận mật khẩu" autocomplete="new-password" required />
+                        <div th:if="${#fields.hasErrors('confirmPassword')}" th:errors="*{confirmPassword}" class="text-danger mt-1 small"></div>
                     </div>
                     
                     <button type="submit" class="senvia-btn senvia-btn-primary w-100 border-0 text-white mt-3 bg-burgundy auth-submit-btn hover-bg-plum transition-colors p-3 fw-bold">

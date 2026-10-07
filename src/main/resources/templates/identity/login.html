@@ -31,19 +31,23 @@
                 <div th:if="${param.error}" class="alert alert-danger border-0 rounded-0 small mb-4">
                     <i class="bi bi-exclamation-circle me-1"></i> Thông tin đăng nhập không chính xác hoặc tài khoản đã bị khóa.
                 </div>
-                
-                <!-- Mockup form, using POST, but returning to homepage in real scenario -->
-                <form action="#" method="post" class="d-flex flex-column gap-4" onsubmit="event.preventDefault(); const email = this.username.value; if(email === 'locked@test.com') { window.location.href='/login?locked=true'; } else if (email === 'error@test.com') { window.location.href='/login?error=true'; } else { window.location.href='/?loggedIn=true'; }">
+                <div th:if="${param.registered}" class="alert alert-success border-0 rounded-0 small mb-4">
+                    Đăng ký thành công. Vui lòng đăng nhập.
+                </div>
+                <div th:if="${param.logout}" class="alert alert-success border-0 rounded-0 small mb-4">
+                    Bạn đã đăng xuất.
+                </div>
+
+                <form th:action="@{/login}" method="post" class="d-flex flex-column gap-4">
                     <div class="position-relative">
-                        <label class="text-uppercase text-muted d-block mb-2 auth-label">Email (Nhập error@test.com hoặc locked@test.com để test lỗi)</label>
-                        <input type="email" name="username" class="form-control rounded-0 border-0 border-bottom bg-transparent shadow-none px-0 py-2 text-plum transition-colors auth-input" required />
+                        <label for="username" class="text-uppercase text-muted d-block mb-2 auth-label">Email</label>
+                        <input id="username" type="email" name="username" autocomplete="username" class="form-control rounded-0 border-0 border-bottom bg-transparent shadow-none px-0 py-2 text-plum transition-colors auth-input" required />
                     </div>
                     <div class="position-relative">
                         <label class="text-uppercase text-muted d-flex justify-content-between mb-2 auth-label">
                             Mật khẩu
-                            <a href="#" class="text-burgundy text-decoration-none hover-text-plum text-capitalize auth-forgot-link">Quên mật khẩu?</a>
                         </label>
-                        <input type="password" name="password" class="form-control rounded-0 border-0 border-bottom bg-transparent shadow-none px-0 py-2 text-plum transition-colors auth-input" required />
+                        <input type="password" name="password" autocomplete="current-password" class="form-control rounded-0 border-0 border-bottom bg-transparent shadow-none px-0 py-2 text-plum transition-colors auth-input" required />
                     </div>
                     
                     <button type="submit" class="senvia-btn senvia-btn-primary w-100 border-0 text-white mt-4 shadow bg-plum auth-submit-btn hover-bg-burgundy transition-colors">
@@ -62,6 +66,5 @@
     <script th:src="@{/js/main.js}"></script>
 </body>
 </html>
-
 
 

@@ -543,7 +543,7 @@ Cơ sở dữ liệu sử dụng Supabase PostgreSQL. Tên bảng dùng số nhi
 
 | **Bảng**          | **Mục đích**             | **Trường chính dự kiến**                                                                                                                                |
 | ------------------------ | --------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| users                    | Tài khoản                       | id, full\_name, email, password\_hash, phone, address, avatar\_url, avatar\_public\_id, role, account\_status                                                      |
+| users                    | Tài khoản                       | id, full\_name, email, password\_hash, phone, address, avatar\_url, avatar\_public\_id, role, account\_status, lock\_reason, locked\_by, locked\_at |
 | shops                    | Gian hàng và yêu cầu mở shop | id, owner\_id, shop\_name, description, logo\_url, logo\_public\_id, phone, address, status, rejection\_reason, approved\_by, lock\_reason, locked\_by, locked\_at |
 | categories               | Danh mục                         | id, name, description, active                                                                                                                                      |
 | products                 | Sản phẩm                        | id, shop\_id, category\_id, name, description, price, stock\_quantity, status                                                                                      |
@@ -580,6 +580,9 @@ Lưu tài khoản dùng chung của người mua, chủ gian hàng và quản tr
 | avatar\_public\_id      | VARCHAR(255)              | NULL                       | Mã ảnh Cloudinary để thay thế hoặc xóa ảnh.                                                                                      |
 | role                    | VARCHAR(20)               | NOT NULL, DEFAULT 'USER'   | Vai trò hệ thống gồm USER hoặc ADMIN.                                                                                               |
 | account\_status         | VARCHAR(20)               | NOT NULL, DEFAULT 'ACTIVE' | Trạng thái tài khoản gồm ACTIVE hoặc LOCKED.                                                                                       |
+| lock\_reason            | VARCHAR(500)             | NULL                       | Lý do Admin khóa tài khoản USER; được xóa khi mở khóa.                                                                            |
+| locked\_by              | BIGINT                   | NULL, FK users(id)         | Admin thực hiện khóa tài khoản.                                                                                                   |
+| locked\_at              | TIMESTAMPTZ              | NULL                       | Thời điểm tài khoản bị khóa.                                                                                                      |
 | created\_at             | TIMESTAMPTZ               | NOT NULL, DEFAULT NOW()    | Thời điểm tạo tài khoản.                                                                                                           |
 | updated\_at             | TIMESTAMPTZ               | NOT NULL, DEFAULT NOW()    | Thời điểm cập nhật gần nhất.                                                                                                      |
 
@@ -788,6 +791,7 @@ Lưu danh sách sản phẩm mà người dùng đánh dấu để xem lại sau
 ### 7.2 Ràng buộc dữ liệu
 
 - users.email được trim, chuyển chữ thường và có unique index trên LOWER(email).
+- Tài khoản LOCKED lưu lý do, Admin khóa và thời điểm; mở khóa xóa metadata khóa.
 - shops.owner\_id là duy nhất để bảo đảm một người dùng chỉ có một gian hàng.
 - favorites có ràng buộc duy nhất trên cặp user\_id và product\_id.
 - reviews có ràng buộc duy nhất trên order\_item\_id.

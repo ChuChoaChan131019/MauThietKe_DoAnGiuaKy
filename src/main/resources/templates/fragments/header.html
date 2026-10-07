@@ -38,44 +38,46 @@
                 </button>
                 <button class="btn d-md-none text-plum p-0 border-0 shadow-none"><i class="bi bi-search header-icon-lg"></i></button>
                 
-                <a th:href="@{/account/notifications}" class="text-plum hover-burgundy transition-colors position-relative d-none d-md-block">
+                <a th:if="${role != null}" th:href="@{/account/notifications}" class="text-plum hover-burgundy transition-colors position-relative d-none d-md-block">
                     <i class="bi bi-bell header-icon-lg"></i>
                     <span th:if="${unreadNotifications != null && unreadNotifications > 0}" th:text="${unreadNotifications}" class="position-absolute bg-burgundy text-white fw-bold d-flex align-items-center justify-content-center rounded-circle header-cart-badge" style="top: -5px; right: -5px;"></span>
                 </a>
 
-                <a th:href="@{/account/wishlist}" class="text-plum hover-burgundy transition-colors position-relative d-none d-md-block">
+                <a th:if="${role == 'USER'}" th:href="@{/account/wishlist}" class="text-plum hover-burgundy transition-colors position-relative d-none d-md-block">
                     <i class="bi bi-heart header-icon-lg"></i>
                 </a>
                 
-                <!-- User Dropdown (Conditional rendering based on role) -->
-                <div class="dropdown">
+                <div th:if="${role != null}" class="dropdown">
                     <a href="#" class="text-plum hover-burgundy transition-colors d-flex align-items-center text-decoration-none" data-bs-toggle="dropdown">
                         <i class="bi bi-person header-icon-lg"></i>
                     </a>
                     <ul class="dropdown-menu dropdown-menu-end border-clay rounded-0 shadow-sm mt-2">
-                        <!-- Default USER Menu -->
                         <li><a class="dropdown-item fw-bold border-bottom pb-2 mb-2" th:href="@{/account/profile}">Hồ sơ của tôi</a></li>
-                        <li><a class="dropdown-item" th:href="@{/account/orders}">Đơn mua</a></li>
+                        <li th:if="${role == 'USER'}"><a class="dropdown-item" th:href="@{/account/orders}">Đơn mua</a></li>
                         
-                        <!-- Seller Menu based on shopStatus -->
-                        <li th:if="${shopStatus == 'APPROVED'}"><a class="dropdown-item text-burgundy" th:href="@{/merchant/dashboard}">Kênh người bán</a></li>
-                        <li th:if="${shopStatus == 'PENDING' || shopStatus == 'REJECTED' || shopStatus == 'LOCKED'}"><a class="dropdown-item text-warning" th:href="@{/merchant/shop-status}">Trạng thái mở Shop</a></li>
+                        <li th:if="${role == 'USER' && shopStatus == 'APPROVED'}"><a class="dropdown-item text-burgundy" th:href="@{/merchant/dashboard}">Kênh người bán</a></li>
+                        <li th:if="${role == 'USER' && (shopStatus == 'PENDING' || shopStatus == 'REJECTED' || shopStatus == 'LOCKED')}"><a class="dropdown-item text-warning" th:href="@{/merchant/shop-status}">Trạng thái mở Shop</a></li>
                         
-                        <!-- Admin Menu -->
                         <li th:if="${role == 'ADMIN'}"><a class="dropdown-item text-burgundy" th:href="@{/admin/dashboard}">Quản trị viên</a></li>
+                        <li th:if="${role == 'ADMIN'}"><a class="dropdown-item" th:href="@{/identity/admin/accounts}">Quản lý tài khoản</a></li>
                         
-                        <!-- Become Seller Link (if not a seller or pending) -->
                         <li th:if="${shopStatus == null && role != 'ADMIN'}"><a class="dropdown-item" th:href="@{/merchant/register}">Đăng ký bán hàng</a></li>
                         
                         <li><hr class="dropdown-divider"></li>
                         <li>
-                            <!-- Mockup logout -->
-                            <a class="dropdown-item text-danger" href="javascript:alert('Đây là chức năng Đăng xuất mockup. Backend chưa xử lý.');">Đăng xuất</a>
+                            <form th:action="@{/logout}" method="post">
+                                <button class="dropdown-item text-danger" type="submit">Đăng xuất</button>
+                            </form>
                         </li>
                     </ul>
                 </div>
 
-                <a th:href="@{/cart}" class="text-plum hover-burgundy transition-colors position-relative d-flex align-items-center gap-2 group">
+                <div th:if="${role == null}" class="d-flex align-items-center gap-3">
+                    <a th:href="@{/login}" class="text-plum text-decoration-none">Đăng nhập</a>
+                    <a th:href="@{/register}" class="text-plum text-decoration-none">Đăng ký</a>
+                </div>
+
+                <a th:if="${role == 'USER'}" th:href="@{/cart}" class="text-plum hover-burgundy transition-colors position-relative d-flex align-items-center gap-2 group">
                     <div class="position-relative">
                         <i class="bi bi-cart header-icon-lg"></i>
                         <span class="position-absolute bg-burgundy text-white fw-bold d-flex align-items-center justify-content-center rounded-circle header-cart-badge">3</span>
@@ -88,8 +90,8 @@
         <div class="collapse d-md-none border-top mt-3" id="mobileNav">
             <div class="bg-ivory p-3">
                 <a th:href="@{/products}" class="d-block py-2 text-plum text-decoration-none fw-medium border-bottom">Sản phẩm</a>
-                <a th:href="@{/account/wishlist}" class="d-block py-2 text-plum text-decoration-none fw-medium border-bottom">Yêu thích</a>
-                <a th:href="@{/account/notifications}" class="d-block py-2 text-plum text-decoration-none fw-medium border-bottom">
+                <a th:if="${role == 'USER'}" th:href="@{/account/wishlist}" class="d-block py-2 text-plum text-decoration-none fw-medium border-bottom">Yêu thích</a>
+                <a th:if="${role != null}" th:href="@{/account/notifications}" class="d-block py-2 text-plum text-decoration-none fw-medium border-bottom">
                     Thông báo <span th:if="${unreadNotifications != null && unreadNotifications > 0}" th:text="${unreadNotifications}" class="badge bg-burgundy ms-1"></span>
                 </a>
             </div>

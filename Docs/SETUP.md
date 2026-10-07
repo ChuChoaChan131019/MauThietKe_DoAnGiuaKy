@@ -37,6 +37,8 @@ Không ghi thông tin đăng nhập thật vào source code hoặc Git.
 | `SPRING_DATASOURCE_USERNAME` | Database user | `postgres` |
 | `SPRING_DATASOURCE_PASSWORD` | Database password | `your_password` |
 | `SPRING_JPA_HIBERNATE_DDL_AUTO` | Chính sách schema | `validate` |
+| `INITIAL_ADMIN_EMAIL` | Email khởi tạo Admin (tùy chọn) | `admin@example.test` |
+| `INITIAL_ADMIN_PASSWORD` | Mật khẩu Admin khởi tạo (tùy chọn) | Chỉ cung cấp qua môi trường |
 
 PowerShell:
 
@@ -56,9 +58,11 @@ export SPRING_DATASOURCE_PASSWORD="your_password"
 export SPRING_JPA_HIBERNATE_DDL_AUTO="validate"
 ```
 
+Để khởi tạo Admin đầu tiên sau khi migration tạo bảng `users`, đặt `INITIAL_ADMIN_EMAIL` và `INITIAL_ADMIN_PASSWORD` trong môi trường chạy. Có thể đặt `INITIAL_ADMIN_FULL_NAME`; mặc định là `Platform Administrator`. Tài khoản chỉ được tạo khi email chưa tồn tại; nếu email đã thuộc USER, ứng dụng dừng khởi động và không tự nâng quyền.
+
 ## 4. Cấu hình Cloudinary
 
-Khi chức năng upload ảnh được triển khai, dùng biến môi trường thay cho giá trị thật trong repository:
+Upload ảnh đại diện dùng biến môi trường; không lưu thông tin xác thực thật trong repository:
 
 ```text
 CLOUDINARY_CLOUD_NAME
@@ -66,7 +70,7 @@ CLOUDINARY_API_KEY
 CLOUDINARY_API_SECRET
 ```
 
-Tên biến cuối cùng phải khớp cấu hình ứng dụng tại thời điểm tích hợp. Không đưa API secret vào log, issue, ảnh chụp hoặc dữ liệu demo.
+Các biến trên được ánh xạ vào `app.cloudinary.*`. Thiếu cấu hình không ngăn ứng dụng khởi động, nhưng thao tác upload sẽ báo lỗi cấu hình rõ ràng. Không đưa API secret vào log, issue, ảnh chụp hoặc dữ liệu demo.
 
 ## 5. Chạy và đóng gói
 
@@ -98,6 +102,7 @@ src/main/resources/db/migration
 ```
 
 Quy tắc đặt tên, review và dữ liệu mẫu xem [DATABASE.md](DATABASE.md). Không chỉnh trực tiếp schema dùng chung mà không có migration tương ứng.
+Flyway tự chạy migration trong thư mục vendor của database (`h2` hoặc `postgresql`) và `classpath:db/migration` khi ứng dụng khởi động.
 
 ## 7. Lỗi thường gặp
 

@@ -11,9 +11,11 @@
 
 Identity sở hữu account, authentication, profile, role/status và Spring Security; Khang review tài nguyên common/config.
 
+Trang quản trị tài khoản Identity được đặt tại `/identity/admin/accounts` để không xung đột route mock hiện có thuộc `engagement`.
+
 ## Public contract
 
-`identity.api` cung cấp user ID, tên công khai, role, account status, kiểm tra user ACTIVE và danh sách Admin ACTIVE. Không công bố password hash, User Entity/Repository hoặc principal nội bộ.
+`identity.api` cung cấp `IdentityApi.findUser`, `userExists`, `isUserActive` và `findActiveAdmins`. DTO `UserSummary` chỉ có user ID, tên công khai, role và account status; không công bố password hash, User Entity/Repository hoặc principal nội bộ.
 
 ## Thứ tự feature
 
@@ -34,6 +36,7 @@ Identity sở hữu account, authentication, profile, role/status và Spring Sec
 - Đổi password yêu cầu password hiện tại đúng.
 - Admin không mua hàng, không tự khóa và không khóa tài khoản ADMIN.
 - Khóa user bắt buộc lý do, người khóa và thời điểm.
+- Phạm vi TV4 chỉ cho khóa/mở khóa `USER`; điểm này chặt hơn AUTH 08 trong SRS, vốn chỉ cấm khóa Admin ACTIVE cuối cùng.
 - Owner LOCKED làm catalog ẩn và shop ngừng nhận order mới.
 
 ## Kiểm thử/bàn giao
