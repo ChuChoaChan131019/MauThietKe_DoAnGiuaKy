@@ -2,13 +2,13 @@
 
 ## 1. Yêu cầu môi trường
 
-| Thành phần | Yêu cầu |
-| --- | --- |
-| JDK | Java 21 |
-| Build | Maven Wrapper đi kèm repository |
-| Database | H2 local/test hoặc PostgreSQL/Supabase |
-| Lưu ảnh | Cloudinary khi triển khai upload |
-| Công cụ | Git và IDE hỗ trợ Java 21 |
+| Thành phần | Yêu cầu                               |
+| ------------ | --------------------------------------- |
+| JDK          | Java 21                                 |
+| Build        | Maven Wrapper đi kèm repository       |
+| Database     | H2 local/test hoặc PostgreSQL/Supabase |
+| Lưu ảnh    | Cloudinary khi triển khai upload       |
+| Công cụ    | Git và IDE hỗ trợ Java 21            |
 
 Kiểm tra:
 
@@ -31,14 +31,14 @@ cd doangiuaky
 
 Không ghi thông tin đăng nhập thật vào source code hoặc Git.
 
-| Biến môi trường | Ý nghĩa | Ví dụ |
-| --- | --- | --- |
-| `SPRING_DATASOURCE_URL` | JDBC URL | `jdbc:postgresql://localhost:5432/ecommerce` |
-| `SPRING_DATASOURCE_USERNAME` | Database user | `postgres` |
-| `SPRING_DATASOURCE_PASSWORD` | Database password | `your_password` |
-| `SPRING_JPA_HIBERNATE_DDL_AUTO` | Chính sách schema | `validate` |
-| `INITIAL_ADMIN_EMAIL` | Email khởi tạo Admin (tùy chọn) | `admin@example.test` |
-| `INITIAL_ADMIN_PASSWORD` | Mật khẩu Admin khởi tạo (tùy chọn) | Chỉ cung cấp qua môi trường |
+| Biến môi trường               | Ý nghĩa                                | Ví dụ                                        |
+| --------------------------------- | ---------------------------------------- | ---------------------------------------------- |
+| `SPRING_DATASOURCE_URL`         | JDBC URL                                 | `jdbc:postgresql://localhost:5432/ecommerce` |
+| `SPRING_DATASOURCE_USERNAME`    | Database user                            | `postgres`                                   |
+| `SPRING_DATASOURCE_PASSWORD`    | Database password                        | `your_password`                              |
+| `SPRING_JPA_HIBERNATE_DDL_AUTO` | Chính sách schema                      | `validate`                                   |
+| `INITIAL_ADMIN_EMAIL`           | Email khởi tạo Admin (tùy chọn)      | `admin@example.test`                         |
+| `INITIAL_ADMIN_PASSWORD`        | Mật khẩu Admin khởi tạo (tùy chọn) | Chỉ cung cấp qua môi trường               |
 
 PowerShell:
 
@@ -101,6 +101,16 @@ CLOUDINARY_CLOUD_NAME=cewdqekr
 CLOUDINARY_API_KEY=mauthietke
 CLOUDINARY_API_SECRET=<cấu hình riêng trên máy/server, không commit>
 ```
+
+PowerShell:
+
+```powershell
+$env:CLOUDINARY_CLOUD_NAME="cewdqekr"
+$env:CLOUDINARY_API_KEY="mauthietke"
+$env:CLOUDINARY_API_SECRET="<CLOUDINARY_API_SECRET>"
+```
+
+Thay `<CLOUDINARY_API_SECRET>` bằng API Secret lấy tại **Cloudinary → Settings → API Keys**.
 
 Các biến trên được ánh xạ vào `app.cloudinary.*`. Nếu khai báo bằng lệnh `$env:` thì biến chỉ tồn tại trong cửa sổ PowerShell hiện tại; mở terminal mới cần khai báo lại. Nếu lưu trong Windows Environment Variables hoặc Environment Variables của server thì chỉ cần cấu hình một lần, không cần nhập lại mỗi lần chạy ứng dụng. Thiếu cấu hình không ngăn ứng dụng khởi động, nhưng thao tác upload sẽ báo lỗi cấu hình rõ ràng. Không đưa API secret vào log, issue, ảnh chụp hoặc dữ liệu demo.
 
