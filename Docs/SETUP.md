@@ -93,6 +93,14 @@ CLOUDINARY_API_KEY
 CLOUDINARY_API_SECRET
 ```
 
+Thông tin dùng chung hiện tại:
+
+```text
+CLOUDINARY_CLOUD_NAME=cewdqekr
+CLOUDINARY_API_KEY=mauthietke
+CLOUDINARY_API_SECRET=<cấu hình riêng trên máy/server, không commit>
+```
+
 Các biến trên được ánh xạ vào `app.cloudinary.*`. Thiếu cấu hình không ngăn ứng dụng khởi động, nhưng thao tác upload sẽ báo lỗi cấu hình rõ ràng. Không đưa API secret vào log, issue, ảnh chụp hoặc dữ liệu demo.
 
 ## 5. Chạy và đóng gói
