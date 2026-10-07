@@ -6,7 +6,7 @@
 | --- | --- |
 | JDK | Java 21 |
 | Build | Maven Wrapper đi kèm repository |
-| Database | PostgreSQL hoặc Supabase PostgreSQL |
+| Database | H2 local/test hoặc PostgreSQL/Supabase |
 | Lưu ảnh | Cloudinary khi triển khai upload |
 | Công cụ | Git và IDE hỗ trợ Java 21 |
 
@@ -123,7 +123,7 @@ chmod +x mvnw
 ./mvnw clean package
 ```
 
-Ứng dụng mặc định chạy tại `http://localhost:8080`. File JAR được tạo trong `target/`; không commit thư mục này.
+Ứng dụng mặc định chạy tại `http://localhost:8081`. File JAR được tạo trong `target/`; không commit thư mục này.
 
 ## 6. Database migration
 
@@ -134,7 +134,7 @@ src/main/resources/db/migration
 ```
 
 Quy tắc đặt tên, review và dữ liệu mẫu xem [DATABASE.md](DATABASE.md). Không chỉnh trực tiếp schema dùng chung mà không có migration tương ứng.
-Mặc định repository dùng migration H2 để chạy local/test. Khi kết nối PostgreSQL hoặc Supabase, đặt `SPRING_FLYWAY_LOCATIONS=classpath:db/migration/postgresql` để Flyway chạy đúng bộ migration PostgreSQL.
+Mặc định repository dùng H2 và migration H2 để chạy local/test; dữ liệu H2 trong bộ nhớ sẽ mất khi ứng dụng khởi động lại. Khi kết nối PostgreSQL hoặc Supabase, đặt `SPRING_FLYWAY_LOCATIONS=classpath:db/migration/postgresql` để Flyway chạy đúng bộ migration PostgreSQL.
 
 Chủ module tạo migration cho các bảng thuộc module mình. `identity` tạo `users` trước; các module có khóa ngoại tới `users` cần được review và chạy sau khi bảng này tồn tại. Khi repository chưa có công cụ migration tự động, người quản lý môi trường chạy từng file SQL trên Supabase SQL Editor theo thứ tự tên phiên bản, sau khi đã review.
 
@@ -154,10 +154,10 @@ Kiểm tra `JAVA_HOME` và kết quả `.\mvnw.cmd -version`.
 
 Các test tải Spring context cần datasource/test database phù hợp. Không xóa test hoặc vô hiệu auto-configuration chỉ để build xanh.
 
-### Cổng 8080 bị chiếm
+### Cổng 8081 bị chiếm
 
 ```powershell
-.\mvnw.cmd spring-boot:run "-Dspring-boot.run.arguments=--server.port=8081"
+.\mvnw.cmd spring-boot:run "-Dspring-boot.run.arguments=--server.port=8082"
 ```
 
 ## 8. Bước tiếp theo
