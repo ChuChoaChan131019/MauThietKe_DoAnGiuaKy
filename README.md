@@ -55,7 +55,7 @@ Yêu cầu JDK 21 và PostgreSQL/Supabase đã cấu hình.
 .\mvnw.cmd test
 ```
 
-Ứng dụng mặc định chạy tại `http://localhost:8080`. Hướng dẫn biến môi trường, Cloudinary, đóng gói và xử lý lỗi nằm tại [SETUP.md](Docs/SETUP.md).
+Ứng dụng mặc định chạy tại `http://localhost:8081`. Hướng dẫn biến môi trường, Cloudinary, đóng gói và xử lý lỗi nằm tại [SETUP.md](Docs/SETUP.md).
 
 ## Nhóm thực hiện
 
