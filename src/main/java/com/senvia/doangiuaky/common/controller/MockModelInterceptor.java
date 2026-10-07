@@ -1,5 +1,8 @@
 package com.senvia.doangiuaky.common.controller;
 
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
@@ -10,18 +13,21 @@ import jakarta.servlet.http.HttpServletResponse;
 public class MockModelInterceptor implements HandlerInterceptor {
     @Override
     public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView modelAndView) throws Exception {
-        if (modelAndView != null && !modelAndView.getViewName().startsWith("redirect:")) {
-            // Role: USER or ADMIN
-            String role = request.getParameter("role");
-            if (role == null) role = "USER";
+        if (modelAndView != null && modelAndView.getViewName() != null
+                && !modelAndView.getViewName().startsWith("redirect:")) {
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            String role = authentication == null ? null : authentication.getAuthorities().stream()
+                    .map(GrantedAuthority::getAuthority)
+                    .filter(authority -> authority.equals("ROLE_USER") || authority.equals("ROLE_ADMIN"))
+                    .map(authority -> authority.substring("ROLE_".length()))
+                    .findFirst()
+                    .orElse(null);
             modelAndView.addObject("role", role);
 
-            // Shop status: null, PENDING, REJECTED, APPROVED, LOCKED
+            // Shop status remains owned by merchant; this value is only used by the current UI mock.
             String shopStatus = request.getParameter("shopStatus");
-            if (shopStatus == null) shopStatus = "PENDING";
             modelAndView.addObject("shopStatus", shopStatus);
 
-            // Notifications
             modelAndView.addObject("unreadNotifications", 3);
         }
     }

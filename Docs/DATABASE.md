@@ -74,6 +74,7 @@ Khóa ngoại giao dịch không được xóa tùy tiện; ưu tiên trạng th
 - `payments` là nguồn chuẩn duy nhất cho payment method/status.
 - `products.stock_quantity = 0` biểu diễn hết hàng; không tạo trạng thái OUT_OF_STOCK.
 - Shop bị khóa lưu lý do, người khóa và thời điểm.
+- Tài khoản USER bị khóa lưu lý do, Admin thực hiện và thời điểm; mở khóa xóa toàn bộ metadata khóa.
 - Notification lưu `event_id` để chống xử lý lặp.
 
 ## 6. Index đề xuất
@@ -103,7 +104,7 @@ Chỉ thêm index khi có query cụ thể và xác minh kế hoạch truy vấn
 
 ## 8. Migration
 
-- Đặt tại `src/main/resources/db/migration`.
+- Đặt tại `src/main/resources/db/migration`; migration dùng cú pháp riêng theo cơ sở dữ liệu có thể đặt trong thư mục vendor (`h2`, `postgresql`).
 - Tạo migration mới; không sửa migration đã dùng ở môi trường chung.
 - Tên: `VyyyyMMddHHmm__module_description.sql`.
 - Chủ bảng tạo migration; khóa ngoại chéo module cần hai chủ module review.

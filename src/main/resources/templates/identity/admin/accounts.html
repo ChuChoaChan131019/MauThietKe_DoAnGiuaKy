@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head :: head('Senvia - Quản lý tài khoản')}"></head>
+<body>
+<div th:replace="~{fragments/header :: header}"></div>
+<main class="container-fluid max-w-1440 px-3 px-md-4 py-5">
+    <h1 class="text-serif text-plum mb-4">Quản lý tài khoản</h1>
+    <div th:if="${success}" th:text="${success}" class="alert alert-success" role="status"></div>
+    <div th:if="${error}" th:text="${error}" class="alert alert-danger" role="alert"></div>
+
+    <form th:action="@{/identity/admin/accounts}" method="get" class="row g-3 mb-4">
+        <div class="col-md-6">
+            <label for="query" class="form-label">Tìm theo tên hoặc email</label>
+            <input id="query" type="search" name="query" th:value="${query}" class="form-control">
+        </div>
+        <div class="col-md-3">
+            <label for="status" class="form-label">Trạng thái</label>
+            <select id="status" name="status" class="form-select">
+                <option value="">Tất cả</option>
+                <option th:each="accountStatus : ${statuses}"
+                        th:value="${accountStatus}"
+                        th:text="${accountStatus}"
+                        th:selected="${selectedStatus == accountStatus}"></option>
+            </select>
+        </div>
+        <div class="col-md-3 d-flex align-items-end">
+            <button type="submit" class="btn bg-plum text-white rounded-0">Lọc tài khoản</button>
+        </div>
+    </form>
+
+    <div class="table-responsive mb-5">
+        <table class="table table-hover align-middle">
+            <thead>
+            <tr>
+                <th>Họ tên</th>
+                <th>Email</th>
+                <th>Vai trò</th>
+                <th>Trạng thái</th>
+                <th></th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="account : ${accounts}">
+                <td th:text="${account.fullName}"></td>
+                <td th:text="${account.email}"></td>
+                <td th:text="${account.role}"></td>
+                <td th:text="${account.accountStatus}"></td>
+                <td>
+                    <a th:href="@{/identity/admin/accounts/{id}(id=${account.id})}" class="btn btn-sm btn-outline-secondary">Chi tiết</a>
+                </td>
+            </tr>
+            <tr th:if="${#lists.isEmpty(accounts)}">
+                <td colspan="5" class="text-center text-muted py-4">Không tìm thấy tài khoản phù hợp.</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <section th:if="${selectedAccount}" class="card border-clay rounded-0 p-4">
+        <h2 class="h4 text-plum mb-3">Chi tiết tài khoản</h2>
+        <dl class="row">
+            <dt class="col-sm-3">Họ tên</dt>
+            <dd class="col-sm-9" th:text="${selectedAccount.fullName}"></dd>
+            <dt class="col-sm-3">Email</dt>
+            <dd class="col-sm-9" th:text="${selectedAccount.email}"></dd>
+            <dt class="col-sm-3">Vai trò</dt>
+            <dd class="col-sm-9" th:text="${selectedAccount.role}"></dd>
+            <dt class="col-sm-3">Trạng thái</dt>
+            <dd class="col-sm-9" th:text="${selectedAccount.accountStatus}"></dd>
+            <th:block th:if="${selectedAccount.accountStatus == T(com.senvia.doangiuaky.identity.api.AccountStatus).LOCKED}">
+                <dt class="col-sm-3">Lý do khóa</dt>
+                <dd class="col-sm-9" th:text="${selectedAccount.lockReason}"></dd>
+                <dt class="col-sm-3">Người khóa</dt>
+                <dd class="col-sm-9" th:text="${selectedAccount.lockedByName}"></dd>
+                <dt class="col-sm-3">Thời điểm khóa</dt>
+                <dd class="col-sm-9" th:text="${selectedAccount.lockedAt}"></dd>
+            </th:block>
+        </dl>
+
+        <form th:if="${selectedAccount.role == T(com.senvia.doangiuaky.identity.api.UserRole).USER && selectedAccount.accountStatus == T(com.senvia.doangiuaky.identity.api.AccountStatus).ACTIVE && selectedAccount.id != currentAdminId}"
+              th:action="@{/identity/admin/accounts/{id}/lock(id=${selectedAccount.id})}" method="post" class="mt-3">
+            <label for="reason" class="form-label">Lý do khóa (bắt buộc, tối đa 500 ký tự)</label>
+            <textarea id="reason" name="reason" maxlength="500" required class="form-control mb-3" rows="3"></textarea>
+            <button type="submit" class="btn btn-danger rounded-0">Khóa tài khoản USER</button>
+        </form>
+        <form th:if="${selectedAccount.role == T(com.senvia.doangiuaky.identity.api.UserRole).USER && selectedAccount.accountStatus == T(com.senvia.doangiuaky.identity.api.AccountStatus).LOCKED}"
+              th:action="@{/identity/admin/accounts/{id}/unlock(id=${selectedAccount.id})}" method="post" class="mt-3">
+            <button type="submit" class="btn btn-outline-success rounded-0">Mở khóa tài khoản USER</button>
+        </form>
+        <p th:if="${selectedAccount.role == T(com.senvia.doangiuaky.identity.api.UserRole).ADMIN}" class="text-muted mb-0">
+            Tài khoản ADMIN không thể bị khóa từ màn hình này.
+        </p>
+        <p th:if="${selectedAccount.id == currentAdminId}" class="text-muted mb-0">
+            Bạn không thể tự khóa tài khoản của mình.
+        </p>
+    </section>
+</main>
+<div th:replace="~{fragments/footer :: footer}"></div>
+</body>
+</html>

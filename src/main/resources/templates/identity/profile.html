@@ -25,31 +25,38 @@
             <div class="col-12 col-md-9">
                 <h2 class="text-serif text-plum mb-5">Hồ Sơ Của Bạn</h2>
                 
-                <form class="bg-white p-4 p-md-5 border border-clay shadow-sm" style="max-width: 600px;">
+                <div th:if="${success}" th:text="${success}" class="alert alert-success" role="status"></div>
+                <div th:if="${avatarError}" th:text="${avatarError}" class="alert alert-danger" role="alert"></div>
+                <form th:action="@{/account/profile}" th:object="${profileForm}" method="post" enctype="multipart/form-data" class="bg-white p-4 p-md-5 border border-clay shadow-sm" style="max-width: 600px;">
                     <!-- Avatar section -->
                     <div class="d-flex align-items-center gap-4 mb-5">
                         <div class="rounded-circle bg-ivory overflow-hidden border border-clay d-flex align-items-center justify-content-center" style="width: 100px; height: 100px;">
-                            <i class="bi bi-person text-muted" style="font-size: 3rem;"></i>
+                            <img th:if="${avatarUrl}" th:src="${avatarUrl}" alt="Ảnh đại diện" class="w-100 h-100 object-fit-cover">
+                            <i th:unless="${avatarUrl}" class="bi bi-person text-muted" style="font-size: 3rem;"></i>
                         </div>
-                        <div>
-                            <button type="button" class="btn border border-plum text-plum rounded-0 fw-medium px-4 py-2 hover-bg-plum hover-text-white transition-colors mb-2 d-block">Đổi ảnh đại diện</button>
-                            <span class="text-muted small">Định dạng JPEG hoặc PNG. Tối đa 2MB.</span>
+                        <div class="flex-grow-1">
+                            <label for="avatar" class="form-label text-plum fw-medium">Ảnh đại diện</label>
+                            <input id="avatar" name="avatar" type="file" accept="image/jpeg,image/png" class="form-control rounded-0">
+                            <span class="text-muted small">JPEG hoặc PNG; tối đa 2 MB.</span>
                         </div>
                     </div>
 
                     <div class="mb-4">
                         <label class="form-label text-uppercase fw-medium text-plum small mb-2">Họ và tên</label>
-                        <input type="text" class="form-control bg-ivory border-0 rounded-0 px-4 py-3 shadow-none" value="Nguyễn Văn A" required>
+                        <input type="text" th:field="*{fullName}" class="form-control bg-ivory border-0 rounded-0 px-4 py-3 shadow-none" required>
+                        <div th:if="${#fields.hasErrors('fullName')}" th:errors="*{fullName}" class="text-danger mt-1 small"></div>
                     </div>
 
                     <div class="mb-4">
                         <label class="form-label text-uppercase fw-medium text-plum small mb-2">Số điện thoại</label>
-                        <input type="tel" class="form-control bg-ivory border-0 rounded-0 px-4 py-3 shadow-none" value="0901234567" required>
+                        <input type="tel" th:field="*{phone}" class="form-control bg-ivory border-0 rounded-0 px-4 py-3 shadow-none">
+                        <div th:if="${#fields.hasErrors('phone')}" th:errors="*{phone}" class="text-danger mt-1 small"></div>
                     </div>
 
                     <div class="mb-4">
                         <label class="form-label text-uppercase fw-medium text-plum small mb-2">Địa chỉ giao hàng mặc định</label>
-                        <textarea class="form-control bg-ivory border-0 rounded-0 px-4 py-3 shadow-none" rows="3" required>123 Đường Lê Lợi, Phường Bến Thành, Quận 1, TP. Hồ Chí Minh</textarea>
+                        <textarea th:field="*{address}" class="form-control bg-ivory border-0 rounded-0 px-4 py-3 shadow-none" rows="3"></textarea>
+                        <div th:if="${#fields.hasErrors('address')}" th:errors="*{address}" class="text-danger mt-1 small"></div>
                     </div>
 
                     <div class="mt-5">
