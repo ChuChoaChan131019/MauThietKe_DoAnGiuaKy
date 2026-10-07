@@ -2,13 +2,13 @@
 
 ## 1. Yêu cầu môi trường
 
-| Thành phần | Yêu cầu |
-| --- | --- |
-| JDK | Java 21 |
-| Build | Maven Wrapper đi kèm repository |
-| Database | PostgreSQL hoặc Supabase PostgreSQL |
-| Lưu ảnh | Cloudinary khi triển khai upload |
-| Công cụ | Git và IDE hỗ trợ Java 21 |
+| Thành phần | Yêu cầu                            |
+| ------------ | ------------------------------------ |
+| JDK          | Java 21                              |
+| Build        | Maven Wrapper đi kèm repository    |
+| Database     | PostgreSQL hoặc Supabase PostgreSQL |
+| Lưu ảnh    | Cloudinary khi triển khai upload    |
+| Công cụ    | Git và IDE hỗ trợ Java 21         |
 
 Kiểm tra:
 
@@ -31,14 +31,14 @@ cd doangiuaky
 
 Không ghi thông tin đăng nhập thật vào source code hoặc Git.
 
-| Biến môi trường | Ý nghĩa | Ví dụ |
-| --- | --- | --- |
-| `SPRING_DATASOURCE_URL` | JDBC URL | `jdbc:postgresql://localhost:5432/ecommerce` |
-| `SPRING_DATASOURCE_USERNAME` | Database user | `postgres` |
-| `SPRING_DATASOURCE_PASSWORD` | Database password | `your_password` |
-| `SPRING_JPA_HIBERNATE_DDL_AUTO` | Chính sách schema | `validate` |
-| `INITIAL_ADMIN_EMAIL` | Email khởi tạo Admin (tùy chọn) | `admin@example.test` |
-| `INITIAL_ADMIN_PASSWORD` | Mật khẩu Admin khởi tạo (tùy chọn) | Chỉ cung cấp qua môi trường |
+| Biến môi trường               | Ý nghĩa                                | Ví dụ                                        |
+| --------------------------------- | ---------------------------------------- | ---------------------------------------------- |
+| `SPRING_DATASOURCE_URL`         | JDBC URL                                 | `jdbc:postgresql://localhost:5432/ecommerce` |
+| `SPRING_DATASOURCE_USERNAME`    | Database user                            | `postgres`                                   |
+| `SPRING_DATASOURCE_PASSWORD`    | Database password                        | `your_password`                              |
+| `SPRING_JPA_HIBERNATE_DDL_AUTO` | Chính sách schema                      | `validate`                                   |
+| `INITIAL_ADMIN_EMAIL`           | Email khởi tạo Admin (tùy chọn)      | `admin@example.test`                         |
+| `INITIAL_ADMIN_PASSWORD`        | Mật khẩu Admin khởi tạo (tùy chọn) | Chỉ cung cấp qua môi trường               |
 
 PowerShell:
 
@@ -72,11 +72,12 @@ Nhóm sử dụng PostgreSQL của Supabase cho môi trường tích hợp. Ngư
 4. Mỗi thành viên cấu hình biến môi trường trên máy của mình. Ví dụ PowerShell:
 
 ```powershell
-$env:SPRING_DATASOURCE_URL="jdbc:postgresql://<POOLER_HOST>:5432/postgres?sslmode=require"
-$env:SPRING_DATASOURCE_USERNAME="postgres.<PROJECT_REF>"
+$env:SPRING_DATASOURCE_URL="jdbc:postgresql://aws-0-ap-southeast-1.pooler.supabase.com:5432/postgres?sslmode=require"
+$env:SPRING_DATASOURCE_USERNAME="postgres.odazeignupnklcxgomrq"
 $env:SPRING_DATASOURCE_PASSWORD="<DATABASE_PASSWORD>"
 $env:SPRING_JPA_HIBERNATE_DDL_AUTO="validate"
 $env:SPRING_FLYWAY_LOCATIONS="classpath:db/migration/postgresql"
+$env:SPRING_DATASOURCE_DRIVER_CLASS_NAME="org.postgresql.Driver"
 ```
 
 Thay các giá trị trong dấu `<...>` bằng thông tin thật của project. Các lệnh `$env:` chỉ có hiệu lực trong cửa sổ PowerShell hiện tại; cần chạy lại khi mở terminal mới. Không đưa password hoặc connection string có password vào source code, issue, ảnh chụp hay Git.
