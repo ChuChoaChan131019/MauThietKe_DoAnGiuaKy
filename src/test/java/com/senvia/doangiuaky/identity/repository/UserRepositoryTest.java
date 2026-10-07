@@ -4,14 +4,12 @@ import com.senvia.doangiuaky.identity.api.AccountStatus;
 import com.senvia.doangiuaky.identity.api.UserRole;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.data.jpa.test.autoconfigure.DataJpaTest;
-import org.springframework.boot.jdbc.test.autoconfigure.AutoConfigureTestDatabase;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-@DataJpaTest
-@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
+@SpringBootTest
 class UserRepositoryTest {
 
     @Autowired
@@ -27,8 +25,8 @@ class UserRepositoryTest {
 
     private void insertUser(String email) {
         jdbcTemplate.update("""
-                insert into users (full_name, email, password_hash, role, account_status)
-                values (?, ?, ?, ?, ?)
+                insert into users (full_name, email, password_hash, role, account_status, created_at, updated_at)
+                values (?, ?, ?, ?, ?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
                 """,
                 "Test User",
                 email,

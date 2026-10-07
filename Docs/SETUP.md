@@ -47,6 +47,7 @@ $env:SPRING_DATASOURCE_URL="jdbc:postgresql://localhost:5432/ecommerce"
 $env:SPRING_DATASOURCE_USERNAME="postgres"
 $env:SPRING_DATASOURCE_PASSWORD="your_password"
 $env:SPRING_JPA_HIBERNATE_DDL_AUTO="validate"
+$env:SPRING_FLYWAY_LOCATIONS="classpath:db/migration/postgresql"
 ```
 
 Bash:
@@ -56,6 +57,7 @@ export SPRING_DATASOURCE_URL="jdbc:postgresql://localhost:5432/ecommerce"
 export SPRING_DATASOURCE_USERNAME="postgres"
 export SPRING_DATASOURCE_PASSWORD="your_password"
 export SPRING_JPA_HIBERNATE_DDL_AUTO="validate"
+export SPRING_FLYWAY_LOCATIONS="classpath:db/migration/postgresql"
 ```
 
 Để khởi tạo Admin đầu tiên sau khi migration tạo bảng `users`, đặt `INITIAL_ADMIN_EMAIL` và `INITIAL_ADMIN_PASSWORD` trong môi trường chạy. Có thể đặt `INITIAL_ADMIN_FULL_NAME`; mặc định là `Platform Administrator`. Tài khoản chỉ được tạo khi email chưa tồn tại; nếu email đã thuộc USER, ứng dụng dừng khởi động và không tự nâng quyền.
@@ -74,6 +76,7 @@ $env:SPRING_DATASOURCE_URL="jdbc:postgresql://<POOLER_HOST>:5432/postgres?sslmod
 $env:SPRING_DATASOURCE_USERNAME="postgres.<PROJECT_REF>"
 $env:SPRING_DATASOURCE_PASSWORD="<DATABASE_PASSWORD>"
 $env:SPRING_JPA_HIBERNATE_DDL_AUTO="validate"
+$env:SPRING_FLYWAY_LOCATIONS="classpath:db/migration/postgresql"
 ```
 
 Thay các giá trị trong dấu `<...>` bằng thông tin thật của project. Các lệnh `$env:` chỉ có hiệu lực trong cửa sổ PowerShell hiện tại; cần chạy lại khi mở terminal mới. Không đưa password hoặc connection string có password vào source code, issue, ảnh chụp hay Git.
@@ -122,7 +125,7 @@ src/main/resources/db/migration
 ```
 
 Quy tắc đặt tên, review và dữ liệu mẫu xem [DATABASE.md](DATABASE.md). Không chỉnh trực tiếp schema dùng chung mà không có migration tương ứng.
-Flyway tự chạy migration trong thư mục vendor của database (`h2` hoặc `postgresql`) và `classpath:db/migration` khi ứng dụng khởi động.
+Mặc định repository dùng migration H2 để chạy local/test. Khi kết nối PostgreSQL hoặc Supabase, đặt `SPRING_FLYWAY_LOCATIONS=classpath:db/migration/postgresql` để Flyway chạy đúng bộ migration PostgreSQL.
 
 Chủ module tạo migration cho các bảng thuộc module mình. `identity` tạo `users` trước; các module có khóa ngoại tới `users` cần được review và chạy sau khi bảng này tồn tại. Khi repository chưa có công cụ migration tự động, người quản lý môi trường chạy từng file SQL trên Supabase SQL Editor theo thứ tự tên phiên bản, sau khi đã review.
 
