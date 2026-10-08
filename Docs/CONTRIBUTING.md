@@ -69,7 +69,7 @@ Một task hoàn thành khi:
 - Có validation, xử lý lỗi và bảo mật phù hợp.
 - Contract và tài liệu liên quan được cập nhật.
 - Hoàn tất checklist module.
-- Pull request được review và merge vào `develop`.
+- Pull request được review và merge vào `main`.
 
 ## 7. Issue
 

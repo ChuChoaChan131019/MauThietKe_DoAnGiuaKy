@@ -6,40 +6,38 @@ Tài liệu này là nguồn chuẩn cho branch, commit, pull request, review v�
 
 ```text
 main
-  └── develop
-       ├── feature/<module>/<issue>-<slug>
-       ├── fix/<module>/<issue>-<slug>
-       └── docs/<issue>-<slug>
+├── feature/<module>/<issue>-<slug>
+├── fix/<module>/<issue>-<slug>
+└── docs/<issue>-<slug>
 ```
 
 | Nhánh | Mục đích |
 | --- | --- |
-| `main` | Phiên bản ổn định, có thể trình diễn |
-| `develop` | Tích hợp thay đổi đã review |
+| `main` | Nhánh tích hợp và phiên bản có thể trình diễn |
 | `feature/<module>/*` | Feature mới |
 | `fix/<module>/*` | Sửa lỗi |
 | `docs/*` | Chỉ thay đổi tài liệu |
 | `hotfix/*` | Sửa khẩn cấp từ `main` khi nhóm thống nhất |
 
-Không push trực tiếp lên `main` hoặc `develop`.
+Không push trực tiếp lên `main`; mọi thay đổi phải đi qua pull request từ nhánh feature, fix hoặc docs.
 
 ## 2. Tạo và đồng bộ branch
 
 ```bash
-git checkout develop
-git pull origin develop
+git checkout main
+git pull origin main
 git checkout -b feature/merchant/12-create-product
 ```
 
 Tên branch dùng chữ thường, có module, issue và slug ngăn bằng dấu gạch ngang.
 
-Trước khi mở PR, đồng bộ `develop` trên chính feature branch:
+Trước khi mở PR, đồng bộ `main` trên chính feature branch:
 
 ```bash
-git checkout develop
-git pull origin develop
+git checkout main
+git pull origin main
 git checkout feature/merchant/12-create-product
-git merge develop
+git merge main
 ```
 
 Giải quyết conflict, chạy lại test rồi mới push. Không force-push nhánh dùng chung.
@@ -91,7 +89,7 @@ Trước khi mở PR:
 ```powershell
 .\mvnw.cmd test
 git status
-git diff develop...HEAD
+git diff main...HEAD
 ```
 
 ## 5. Review và merge
