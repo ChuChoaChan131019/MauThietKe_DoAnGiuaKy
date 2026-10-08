@@ -2,13 +2,13 @@
 
 ## 1. Yêu cầu môi trường
 
-| Thành phần | Yêu cầu |
-| --- | --- |
-| JDK | Java 21 |
-| Build | Maven Wrapper đi kèm repository |
-| Database | H2 local/test hoặc PostgreSQL/Supabase |
-| Lưu ảnh | Cloudinary khi triển khai upload |
-| Công cụ | Git và IDE hỗ trợ Java 21 |
+| Thành phần | Yêu cầu                               |
+| ------------ | --------------------------------------- |
+| JDK          | Java 21                                 |
+| Build        | Maven Wrapper đi kèm repository       |
+| Database     | H2 local/test hoặc PostgreSQL/Supabase |
+| Lưu ảnh    | Cloudinary khi triển khai upload       |
+| Công cụ    | Git và IDE hỗ trợ Java 21            |
 
 Kiểm tra:
 
@@ -24,43 +24,24 @@ Maven phải sử dụng JDK 21.
 
 ```bash
 git clone <repository-url>
-cd doangiuaky
+cd MauThietKe_DoAnGiuaKy
 ```
 
 ## 3. Cấu hình PostgreSQL
 
 Không ghi thông tin đăng nhập thật vào source code hoặc Git.
 
-| Biến môi trường | Ý nghĩa | Ví dụ |
-| --- | --- | --- |
-| `SPRING_DATASOURCE_URL` | JDBC URL | `jdbc:postgresql://localhost:5432/ecommerce` |
-| `SPRING_DATASOURCE_USERNAME` | Database user | `postgres` |
-| `SPRING_DATASOURCE_PASSWORD` | Database password | `your_password` |
-| `SPRING_JPA_HIBERNATE_DDL_AUTO` | Chính sách schema | `validate` |
-| `INITIAL_ADMIN_EMAIL` | Email khởi tạo Admin (tùy chọn) | `admin@example.test` |
-| `INITIAL_ADMIN_PASSWORD` | Mật khẩu Admin khởi tạo (tùy chọn) | Chỉ cung cấp qua môi trường |
-
-PowerShell:
-
-```powershell
-$env:SPRING_DATASOURCE_URL="jdbc:postgresql://localhost:5432/ecommerce"
-$env:SPRING_DATASOURCE_USERNAME="postgres"
-$env:SPRING_DATASOURCE_PASSWORD="your_password"
-$env:SPRING_JPA_HIBERNATE_DDL_AUTO="validate"
-$env:SPRING_FLYWAY_LOCATIONS="classpath:db/migration/postgresql"
-```
-
-Bash:
-
-```bash
-export SPRING_DATASOURCE_URL="jdbc:postgresql://localhost:5432/ecommerce"
-export SPRING_DATASOURCE_USERNAME="postgres"
-export SPRING_DATASOURCE_PASSWORD="your_password"
-export SPRING_JPA_HIBERNATE_DDL_AUTO="validate"
-export SPRING_FLYWAY_LOCATIONS="classpath:db/migration/postgresql"
-```
+| Biến môi trường               | Ý nghĩa                                | Ví dụ                                        |
+| --------------------------------- | ---------------------------------------- | ---------------------------------------------- |
+| `SPRING_DATASOURCE_URL`         | JDBC URL                                 | `jdbc:postgresql://localhost:5432/ecommerce` |
+| `SPRING_DATASOURCE_USERNAME`    | Database user                            | `postgres`                                   |
+| `SPRING_DATASOURCE_PASSWORD`    | Database password                        | `your_password`                              |
+| `SPRING_JPA_HIBERNATE_DDL_AUTO` | Chính sách schema                      | `validate`                                   |
+| `INITIAL_ADMIN_EMAIL`           | Email khởi tạo Admin (tùy chọn)      | `admin@example.test`                         |
+| `INITIAL_ADMIN_PASSWORD`        | Mật khẩu Admin khởi tạo (tùy chọn) | Chỉ cung cấp qua môi trường               |
 
 Để khởi tạo Admin đầu tiên sau khi migration tạo bảng `users`, đặt `INITIAL_ADMIN_EMAIL` và `INITIAL_ADMIN_PASSWORD` trong môi trường chạy. Có thể đặt `INITIAL_ADMIN_FULL_NAME`; mặc định là `Platform Administrator`. Tài khoản chỉ được tạo khi email chưa tồn tại; nếu email đã thuộc USER, ứng dụng dừng khởi động và không tự nâng quyền.
+
 
 ### 3.1. Kết nối Supabase dùng chung
 
