@@ -34,6 +34,19 @@ class ShopRepositoryTest {
     }
 
     @Test
+    void schemaDefaultsStatusToPendingWhenStatusIsOmitted() {
+        Long ownerId = insertUser("database-default-status-owner@example.com");
+
+        jdbcTemplate.update("""
+                insert into shops (owner_id, shop_name, phone, address, submitted_at, created_at, updated_at)
+                values (?, ?, ?, ?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+                """, ownerId, "Database default shop", "0900000000", "Test address");
+
+        assertEquals("PENDING", jdbcTemplate.queryForObject(
+                "select status from shops where owner_id = ?", String.class, ownerId));
+    }
+
+    @Test
     void schemaRejectsDuplicateOwnerAndInvalidStatus() {
         Long ownerId = insertUser("unique-shop-owner@example.com");
         insertShop(ownerId, "First shop", "PENDING");
