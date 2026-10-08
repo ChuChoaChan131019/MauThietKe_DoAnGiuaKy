@@ -68,7 +68,7 @@ Checklist chất lượng đầy đủ nằm tại [CONTRIBUTING.md](CONTRIBUTIN
 
 ## 6. Bàn giao pull request
 
-1. Đồng bộ branch với `develop`.
+1. Đồng bộ branch với `main`.
 2. Ghi tóm tắt, requirement, cách test và ảnh UI nếu có.
 3. Mời đúng chủ module/người review.
 4. Xử lý toàn bộ comment và chạy lại test.
