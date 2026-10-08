@@ -84,4 +84,13 @@ class AdminAccountServiceTest {
         synchronizations.forEach(TransactionSynchronization::afterCommit);
         verify(sessionInvalidator).invalidate(5L);
     }
+
+    @Test
+    void searchWithoutFiltersUsesTheDedicatedQueryWithoutNullParameters() {
+        when(userRepository.findAllByOrderByCreatedAtDesc()).thenReturn(List.of());
+
+        assertEquals(List.of(), service.search(null, null));
+
+        verify(userRepository).findAllByOrderByCreatedAtDesc();
+    }
 }
