@@ -113,7 +113,14 @@ public class Shop {
     public Long getId() { return id; }
     public Long getOwnerId() { return ownerId; }
     public String getShopName() { return shopName; }
+    public String getDescription() { return description; }
+    public String getLogoUrl() { return logoUrl; }
+    public String getLogoPublicId() { return logoPublicId; }
+    public String getPhone() { return phone; }
+    public String getAddress() { return address; }
     public ShopStatus getStatus() { return status; }
+    public String getRejectionReason() { return rejectionReason; }
+    public String getLockReason() { return lockReason; }
     public boolean canAddProduct() { return state().canAddProduct(); }
     public boolean canReceiveOrder() { return state().canReceiveOrder(); }
     public boolean canResubmit() { return state().canResubmit(); }
