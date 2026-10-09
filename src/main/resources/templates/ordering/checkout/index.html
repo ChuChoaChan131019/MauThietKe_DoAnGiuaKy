@@ -9,7 +9,7 @@
             
             <h1 class="fw-bold text-plum mb-5 border-bottom pb-4">Thanh toán</h1>
             
-            <form th:action="@{/checkout/success}" method="get" class="row gx-lg-5 gy-5">
+            <form th:action="@{/checkout}" th:object="${checkoutPaymentForm}" method="post" class="row gx-lg-5 gy-5">
                 <!-- Delivery & Payment Info -->
                 <div class="col-12 col-lg-7">
                     
@@ -39,22 +39,74 @@
                         </div>
                     </div>
 
-                    <h4 class="fw-bold text-plum mb-4 pb-2 border-bottom">Phương thức thanh toán</h4>
-                    <div class="d-flex flex-column gap-3 mb-5">
-                        <label class="border border-clay p-3 d-flex align-items-center gap-3 cursor-pointer hover-bg-ivory transition-colors">
-                            <input type="radio" name="paymentMethod" value="COD" class="form-check-input mt-0 rounded-circle" checked required>
+                    <h4 class="fw-bold text-plum mb-4 pb-2 border-bottom">
+                        Phương thức thanh toán
+                    </h4>
+
+                    <div class="d-flex flex-column gap-3 mb-4">
+                        <!-- COD -->
+                        <label class="border border-clay p-3 d-flex align-items-center gap-3">
+                            <input type="radio"
+                                    th:field="*{paymentMethod}"
+                                    value="COD"
+                                    class="form-check-input mt-0"
+                                    required>
+
                             <div>
-                                <div class="fw-bold text-plum">Thanh toán khi nhận hàng (COD)</div>
-                                <div class="text-muted small">Thanh toán bằng tiền mặt khi giao hàng</div>
+                                <div class="fw-bold text-plum">
+                                    Thanh toán khi nhận hàng (COD)
+                                </div>
+                                <div class="text-muted small">
+                                    Thanh toán bằng tiền mặt khi giao hàng
+                                </div>
                             </div>
                         </label>
-                        <label class="border border-clay p-3 d-flex align-items-center gap-3 cursor-pointer hover-bg-ivory transition-colors">
-                            <input type="radio" name="paymentMethod" value="TRANSFER" class="form-check-input mt-0 rounded-circle" required>
+
+                        <!-- BANK TRANSFER -->
+                        <label class="border border-clay p-3 d-flex align-items-center gap-3">
+                            <input type="radio"
+                                    th:field="*{paymentMethod}"
+                                    value="BANK_TRANSFER"
+                                    class="form-check-input mt-0"
+                                    required>
                             <div>
-                                <div class="fw-bold text-plum">Chuyển khoản ngân hàng</div>
-                                <div class="text-muted small">Chuyển khoản trực tiếp vào tài khoản ngân hàng của cửa hàng</div>
+                                <div class="fw-bold text-plum">
+                                    Chuyển khoản ngân hàng
+                                </div>
+                                <div class="text-muted small">
+                                    Thanh toán bằng chuyển khoản ngân hàng.
+                                </div>
                             </div>
                         </label>
+                    </div>
+
+                    <!-- Thông báo lỗi backend -->
+                    <div th:if="${#fields.hasErrors('paymentMethod')}"
+                        class="alert alert-danger"
+                        role="alert">
+                        Vui lòng chọn COD hoặc chuyển khoản ngân hàng.
+                    </div>
+
+                    <!-- Hướng dẫn cho chuyển khoản -->
+                    <div id="bank-transfer-note"
+                        class="alert alert-info"
+                        hidden>
+                        <strong>Chuyển khoản ngân hàng</strong>
+                        <p class="mb-0 mt-2">
+                            Sau khi đặt hàng thành công, hệ thống sẽ
+                            hiển thị thông tin hướng dẫn và mã tham
+                            chiếu riêng cho từng đơn hàng.
+                            Không cần thực hiện chuyển tiền thật.
+                        </p>
+                    </div>
+
+                    <!-- Thông báo sau khi backend kiểm tra -->
+                    <div th:if="${paymentValidated}"
+                        class="alert alert-success"
+                        role="status">
+                        Phương thức thanh toán hợp lệ.
+                        Đây là bước kiểm tra PAY 03,
+                        chưa tạo đơn hàng thực tế.
                     </div>
                 </div>
 
@@ -110,7 +162,7 @@
                         </div>
 
                         <button type="submit" class="btn bg-burgundy text-white w-100 text-decoration-none border-0 rounded-0 py-3 fw-bold hover-bg-plum transition-colors">
-                            Xác nhận đặt hàng
+                            Kiểm tra phương thức thanh toán <!-- Khi triển khai checkout thật, đổi lại thành Xác nhận đặt hàng. -->
                         </button>
                     </div>
                 </div>
@@ -121,5 +173,6 @@
     
     <div th:replace="~{fragments/footer :: footer}"></div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script th:src="@{/js/modules/ordering/checkout-payment.js}"></script>
 </body>
 </html>
