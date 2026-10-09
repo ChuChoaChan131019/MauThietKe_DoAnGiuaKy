@@ -75,23 +75,23 @@ CLOUDINARY_API_KEY
 CLOUDINARY_API_SECRET
 ```
 
-Thông tin dùng chung hiện tại:
+Lấy đúng ba giá trị thuộc cùng một Product Environment tại **Cloudinary → Settings → API Keys**:
 
 ```text
-CLOUDINARY_CLOUD_NAME=cewdqekr
-CLOUDINARY_API_KEY=mauthietke
+CLOUDINARY_CLOUD_NAME=<CLOUDINARY_CLOUD_NAME>
+CLOUDINARY_API_KEY=<CLOUDINARY_API_KEY>
 CLOUDINARY_API_SECRET=<cấu hình riêng trên máy/server, không commit>
 ```
 
 PowerShell:
 
 ```powershell
-$env:CLOUDINARY_CLOUD_NAME="cewdqekr"
-$env:CLOUDINARY_API_KEY="mauthietke"
+$env:CLOUDINARY_CLOUD_NAME="<CLOUDINARY_CLOUD_NAME>"
+$env:CLOUDINARY_API_KEY="<CLOUDINARY_API_KEY>"
 $env:CLOUDINARY_API_SECRET="<CLOUDINARY_API_SECRET>"
 ```
 
-Thay `<CLOUDINARY_API_SECRET>` bằng API Secret lấy tại **Cloudinary → Settings → API Keys**.
+Thay cả ba placeholder bằng Cloud name, API Key và API Secret lấy từ cùng một dòng credential tại **Cloudinary → Settings → API Keys**.
 
 Các biến trên được ánh xạ vào `app.cloudinary.*`. Nếu khai báo bằng lệnh `$env:` thì biến chỉ tồn tại trong cửa sổ PowerShell hiện tại; mở terminal mới cần khai báo lại. Nếu lưu trong Windows Environment Variables hoặc Environment Variables của server thì chỉ cần cấu hình một lần, không cần nhập lại mỗi lần chạy ứng dụng. Thiếu cấu hình không ngăn ứng dụng khởi động, nhưng thao tác upload sẽ báo lỗi cấu hình rõ ràng. Không đưa API secret vào log, issue, ảnh chụp hoặc dữ liệu demo.
 
