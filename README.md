@@ -1,5 +1,3 @@
-ình
-
 # E-commerce Marketplace
 
 ![Java](https://img.shields.io/badge/Java-21-orange)
