@@ -1,0 +1,17 @@
+package com.senvia.doangiuaky.merchant.state;
+
+import com.senvia.doangiuaky.merchant.entity.ShopStatus;
+
+/** Capabilities granted to a shop at a particular point in its lifecycle. */
+public interface ShopState {
+
+    ShopStatus status();
+
+    boolean canAddProduct();
+
+    boolean canReceiveOrder();
+
+    boolean canResubmit();
+
+    boolean canHandleExistingOrders();
+}

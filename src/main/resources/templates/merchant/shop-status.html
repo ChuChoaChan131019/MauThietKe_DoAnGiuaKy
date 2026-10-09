@@ -7,7 +7,7 @@
     <main class="w-100 mx-auto px-3 px-md-4 py-5 max-w-1440 text-center">
         <div style="max-width: 600px; margin: 0 auto;">
             <!-- Pending State -->
-            <div class="mb-5" th:if="${shopStatus == 'PENDING'}">
+            <div class="mb-5" th:if="${ownedShop.status.name() == 'PENDING'}">
                 <div class="rounded-circle bg-warning text-dark d-inline-flex align-items-center justify-content-center mx-auto mb-4" style="width: 80px; height: 80px;">
                     <i class="bi bi-hourglass-split" style="font-size: 2.5rem;"></i>
                 </div>
@@ -17,7 +17,7 @@
             </div>
 
             <!-- Approved State -->
-            <div class="mb-5" th:if="${shopStatus == 'APPROVED'}">
+            <div class="mb-5" th:if="${ownedShop.status.name() == 'APPROVED'}">
                 <div class="rounded-circle bg-success text-white d-inline-flex align-items-center justify-content-center mx-auto mb-4" style="width: 80px; height: 80px;">
                     <i class="bi bi-check-lg" style="font-size: 2.5rem;"></i>
                 </div>
@@ -27,27 +27,27 @@
             </div>
 
             <!-- Rejected State -->
-            <div class="mb-5" th:if="${shopStatus == 'REJECTED'}">
+            <div class="mb-5" th:if="${ownedShop.status.name() == 'REJECTED'}">
                 <div class="rounded-circle bg-danger text-white d-inline-flex align-items-center justify-content-center mx-auto mb-4" style="width: 80px; height: 80px;">
                     <i class="bi bi-x-lg" style="font-size: 2.5rem;"></i>
                 </div>
                 <h2 class="text-serif text-plum mb-3">Yêu cầu bị từ chối</h2>
                 <div class="alert alert-danger border-0 rounded-0 text-start p-4">
                     <h6 class="fw-bold mb-2">Lý do từ chối:</h6>
-                    <p class="mb-0">Thông tin địa chỉ không rõ ràng và số điện thoại liên hệ không hợp lệ. Vui lòng kiểm tra và cung cấp thông tin chính xác.</p>
+                    <p class="mb-0" th:text="${ownedShop.rejectionReason}">Yêu cầu cần được cập nhật.</p>
                 </div>
                 <a th:href="@{/merchant/register}" class="btn bg-burgundy text-white rounded-0 fw-medium px-4 py-2 mt-3 hover-bg-plum transition-colors">Cập nhật và Gửi lại</a>
             </div>
 
             <!-- Locked State -->
-            <div class="mb-5" th:if="${shopStatus == 'LOCKED'}">
+            <div class="mb-5" th:if="${ownedShop.status.name() == 'LOCKED'}">
                 <div class="rounded-circle bg-dark text-white d-inline-flex align-items-center justify-content-center mx-auto mb-4" style="width: 80px; height: 80px;">
                     <i class="bi bi-lock-fill" style="font-size: 2.5rem;"></i>
                 </div>
                 <h2 class="text-serif text-plum mb-3">Gian hàng bị khóa</h2>
                 <div class="alert alert-dark border-0 rounded-0 text-start p-4 bg-ivory text-plum">
                     <h6 class="fw-bold mb-2">Lý do khóa:</h6>
-                    <p class="mb-0">Vi phạm chính sách bán hàng của nền tảng (bán hàng giả/nhái). Vui lòng liên hệ bộ phận hỗ trợ để biết thêm chi tiết.</p>
+                    <p class="mb-0" th:text="${ownedShop.lockReason}">Vui lòng liên hệ bộ phận hỗ trợ để biết thêm chi tiết.</p>
                 </div>
                 <a href="#" class="btn border border-plum text-plum rounded-0 fw-medium px-4 py-2 mt-3 hover-bg-plum hover-text-white transition-colors">Liên hệ hỗ trợ</a>
             </div>

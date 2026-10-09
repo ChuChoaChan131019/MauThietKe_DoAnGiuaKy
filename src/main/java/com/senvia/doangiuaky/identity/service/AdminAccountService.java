@@ -29,7 +29,21 @@ public class AdminAccountService {
     @Transactional(readOnly = true)
     public List<AdminAccountView> search(String query, AccountStatus status) {
         String normalizedQuery = StringUtils.hasText(query) ? query.trim() : null;
-        return userRepository.searchAccounts(normalizedQuery, status).stream()
+        List<User> accounts;
+        if (normalizedQuery == null && status == null) {
+            accounts = userRepository.findAllByOrderByCreatedAtDesc();
+        } else if (normalizedQuery == null) {
+            accounts = userRepository.findAllByAccountStatusOrderByCreatedAtDesc(status);
+        } else if (status == null) {
+            accounts = userRepository
+                    .findByFullNameContainingIgnoreCaseOrEmailContainingIgnoreCaseOrderByCreatedAtDesc(
+                            normalizedQuery, normalizedQuery);
+        } else {
+            accounts = userRepository
+                    .findByAccountStatusAndFullNameContainingIgnoreCaseOrAccountStatusAndEmailContainingIgnoreCaseOrderByCreatedAtDesc(
+                            status, normalizedQuery, status, normalizedQuery);
+        }
+        return accounts.stream()
                 .map(AdminAccountService::toView)
                 .toList();
     }
