@@ -28,23 +28,28 @@
                     </div>
                 </div> -->
 
-                <form class="bg-white p-4 p-md-5 border border-clay shadow-sm">
+                <form th:action="@{/merchant/register}" th:object="${shopRegistrationForm}" method="post"
+                      enctype="multipart/form-data" class="bg-white p-4 p-md-5 border border-clay shadow-sm">
+                    <div th:if="${registrationError}" class="alert alert-danger border-0 rounded-0" role="alert" th:text="${registrationError}"></div>
                     <h4 class="fw-bold text-plum mb-4 pb-2 border-bottom">Thông tin cơ bản</h4>
                     
                     <div class="mb-4">
                         <label class="form-label text-uppercase fw-medium text-plum small mb-2">Tên gian hàng *</label>
-                        <input type="text" class="form-control bg-ivory border-0 rounded-0 px-4 py-3 shadow-none text-plum" placeholder="Ví dụ: NOLA Official" required>
+                        <input th:field="*{shopName}" type="text" class="form-control bg-ivory border-0 rounded-0 px-4 py-3 shadow-none text-plum" placeholder="Ví dụ: NOLA Official" required>
+                        <div class="text-danger small mt-1" th:errors="*{shopName}"></div>
                     </div>
 
                     <div class="mb-4">
                         <label class="form-label text-uppercase fw-medium text-plum small mb-2">Logo gian hàng *</label>
-                        <input type="file" class="form-control bg-ivory border-0 rounded-0 px-4 py-3 shadow-none text-plum" accept="image/*" required>
+                        <input th:field="*{logo}" type="file" class="form-control bg-ivory border-0 rounded-0 px-4 py-3 shadow-none text-plum" accept="image/jpeg,image/png" required>
                         <div class="text-muted small mt-1">Dung lượng tối đa 2MB, định dạng JPEG/PNG.</div>
+                        <div class="text-danger small mt-1" th:errors="*{logo}"></div>
                     </div>
 
                     <div class="mb-4">
                         <label class="form-label text-uppercase fw-medium text-plum small mb-2">Mô tả gian hàng *</label>
-                        <textarea class="form-control bg-ivory border-0 rounded-0 px-4 py-3 shadow-none text-plum" rows="4" placeholder="Giới thiệu về thương hiệu, sản phẩm và câu chuyện của bạn..." required></textarea>
+                        <textarea th:field="*{description}" class="form-control bg-ivory border-0 rounded-0 px-4 py-3 shadow-none text-plum" rows="4" maxlength="2000" placeholder="Giới thiệu về thương hiệu, sản phẩm và câu chuyện của bạn..." required></textarea>
+                        <div class="text-danger small mt-1" th:errors="*{description}"></div>
                     </div>
 
                     <h4 class="fw-bold text-plum mb-4 pb-2 border-bottom mt-5">Thông tin liên hệ</h4>
@@ -52,26 +57,15 @@
                     <div class="row">
                         <div class="col-md-6 mb-4">
                             <label class="form-label text-uppercase fw-medium text-plum small mb-2">Số điện thoại hỗ trợ *</label>
-                            <input type="tel" class="form-control bg-ivory border-0 rounded-0 px-4 py-3 shadow-none text-plum" required>
-                        </div>
-                        <div class="col-md-6 mb-4">
-                            <label class="form-label text-uppercase fw-medium text-plum small mb-2">Email liên hệ *</label>
-                            <input type="email" class="form-control bg-ivory border-0 rounded-0 px-4 py-3 shadow-none text-plum" required>
+                            <input th:field="*{phone}" type="tel" class="form-control bg-ivory border-0 rounded-0 px-4 py-3 shadow-none text-plum" required>
+                            <div class="text-danger small mt-1" th:errors="*{phone}"></div>
                         </div>
                     </div>
 
                     <div class="mb-4">
                         <label class="form-label text-uppercase fw-medium text-plum small mb-2">Địa chỉ kho hàng / Cửa hàng *</label>
-                        <textarea class="form-control bg-ivory border-0 rounded-0 px-4 py-3 shadow-none text-plum" rows="3" required></textarea>
-                    </div>
-
-                    <div class="mb-5">
-                        <div class="form-check">
-                            <input class="form-check-input bg-ivory border-clay shadow-none rounded-0 mt-1" type="checkbox" id="terms" required>
-                            <label class="form-check-label text-muted small" for="terms">
-                                Tôi đồng ý với <a href="#" class="text-burgundy fw-medium text-decoration-none">Điều khoản và Chính sách bán hàng</a> của Senvia. Tôi cam kết các thông tin cung cấp là chính xác và hợp pháp.
-                            </label>
-                        </div>
+                        <textarea th:field="*{address}" class="form-control bg-ivory border-0 rounded-0 px-4 py-3 shadow-none text-plum" rows="3" maxlength="2000" required></textarea>
+                        <div class="text-danger small mt-1" th:errors="*{address}"></div>
                     </div>
 
                     <button type="submit" class="btn bg-burgundy text-white rounded-0 fw-medium text-uppercase px-5 py-3 border-0 w-100 hover-bg-plum transition-colors">Gửi Yêu Cầu Đăng Ký</button>

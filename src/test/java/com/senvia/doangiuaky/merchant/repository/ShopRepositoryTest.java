@@ -10,6 +10,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @SpringBootTest
@@ -57,6 +58,17 @@ class ShopRepositoryTest {
         Long anotherOwnerId = insertUser("invalid-status-owner@example.com");
         assertThrows(DataIntegrityViolationException.class,
                 () -> insertShop(anotherOwnerId, "Invalid status shop", "INVALID"));
+    }
+
+    @Test
+    void findsShopAndChecksExistenceByOwner() {
+        Long ownerId = insertUser("find-shop-owner@example.com");
+        Shop persisted = shopRepository.saveAndFlush(Shop.createPending(
+                ownerId, "Findable shop", "Description", "https://images.example/logo.png",
+                "senvia/logo-find", "0900000000", "Test address"));
+
+        assertTrue(shopRepository.existsByOwnerId(ownerId));
+        assertEquals(persisted.getId(), shopRepository.findByOwnerId(ownerId).orElseThrow().getId());
     }
 
     private Long insertUser(String email) {
