@@ -18,4 +18,8 @@ public interface ShopState {
     default ShopStatus approve() {
         throw new InvalidShopStateTransitionException(status(), ShopStatus.APPROVED);
     }
+
+    default ShopStatus reject() {
+        throw new InvalidShopStateTransitionException(status(), ShopStatus.REJECTED);
+    }
 }

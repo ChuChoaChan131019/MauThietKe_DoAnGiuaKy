@@ -135,6 +135,16 @@ public class Shop {
         rejectionReason = null;
     }
 
+    public void reject(Long adminId, String reason) {
+        Objects.requireNonNull(adminId, "Rejecting admin must not be null");
+        String normalizedReason = normalizeRejectionReason(reason);
+
+        status = state().reject();
+        approvedById = adminId;
+        approvedAt = null;
+        rejectionReason = normalizedReason;
+    }
+
     public boolean canAddProduct() { return state().canAddProduct(); }
     public boolean canReceiveOrder() { return state().canReceiveOrder(); }
     public boolean canResubmit() { return state().canResubmit(); }
@@ -142,5 +152,12 @@ public class Shop {
 
     private ShopState state() {
         return ShopStateFactory.resolve(status);
+    }
+
+    private static String normalizeRejectionReason(String reason) {
+        if (reason == null || reason.trim().isBlank()) {
+            throw new IllegalArgumentException("Shop rejection reason must not be blank");
+        }
+        return reason.trim();
     }
 }

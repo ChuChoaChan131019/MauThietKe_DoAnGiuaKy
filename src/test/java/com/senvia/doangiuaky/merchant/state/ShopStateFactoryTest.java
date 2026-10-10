@@ -34,6 +34,17 @@ class ShopStateFactoryTest {
                 () -> ShopStateFactory.resolve(ShopStatus.LOCKED).approve());
     }
 
+    @Test
+    void onlyPendingStateCanReject() {
+        assertEquals(ShopStatus.REJECTED, ShopStateFactory.resolve(ShopStatus.PENDING).reject());
+        assertThrows(InvalidShopStateTransitionException.class,
+                () -> ShopStateFactory.resolve(ShopStatus.APPROVED).reject());
+        assertThrows(InvalidShopStateTransitionException.class,
+                () -> ShopStateFactory.resolve(ShopStatus.REJECTED).reject());
+        assertThrows(InvalidShopStateTransitionException.class,
+                () -> ShopStateFactory.resolve(ShopStatus.LOCKED).reject());
+    }
+
     private void assertState(ShopStatus status, Class<? extends ShopState> stateType,
                              boolean canAddProduct, boolean canReceiveOrder,
                              boolean canResubmit, boolean canHandleExistingOrders) {

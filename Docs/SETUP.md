@@ -42,7 +42,6 @@ Không ghi thông tin đăng nhập thật vào source code hoặc Git.
 
 Để khởi tạo Admin đầu tiên sau khi migration tạo bảng `users`, đặt `INITIAL_ADMIN_EMAIL` và `INITIAL_ADMIN_PASSWORD` trong môi trường chạy. Có thể đặt `INITIAL_ADMIN_FULL_NAME`; mặc định là `Platform Administrator`. Tài khoản chỉ được tạo khi email chưa tồn tại; nếu email đã thuộc USER, ứng dụng dừng khởi động và không tự nâng quyền.
 
-
 ### 3.1. Kết nối Supabase dùng chung
 
 Nhóm sử dụng PostgreSQL của Supabase cho môi trường tích hợp. Người tạo project thực hiện:
@@ -83,13 +82,18 @@ CLOUDINARY_API_KEY=<CLOUDINARY_API_KEY>
 CLOUDINARY_API_SECRET=<cấu hình riêng trên máy/server, không commit>
 ```
 
+có thể tự tạo API để sử dụng
+
 PowerShell:
 
+Hỏi Trang để lấy lại  API_SECRET vì đã thay đổi
+
 ```powershell
-$env:CLOUDINARY_CLOUD_NAME="<CLOUDINARY_CLOUD_NAME>"
-$env:CLOUDINARY_API_KEY="399451429325753"
+$env:CLOUDINARY_CLOUD_NAME="cewdqekr"
+$env:CLOUDINARY_API_KEY="872851394575392"
 $env:CLOUDINARY_API_SECRET="<CLOUDINARY_API_SECRET>"
 ```
+
 
 Thay cả ba placeholder bằng Cloud name, API Key và API Secret lấy từ cùng một dòng credential tại **Cloudinary → Settings → API Keys**.
 
