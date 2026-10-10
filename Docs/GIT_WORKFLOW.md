@@ -6,9 +6,9 @@ Tài liệu này là nguồn chuẩn cho branch, commit, pull request, review v�
 
 ```text
 main
-├── feature/<module>/<issue>-<slug>
-├── fix/<module>/<issue>-<slug>
-└── docs/<issue>-<slug>
+├── feature/<module>/<ten-nguoi-lam>-[<issue>-]<slug>
+├── fix/<module>/<ten-nguoi-lam>-[<issue>-]<slug>
+└── docs/<ten-nguoi-lam>-[<issue>-]<slug>
 ```
 
 | Nhánh | Mục đích |
@@ -26,17 +26,19 @@ Không push trực tiếp lên `main`; mọi thay đổi phải đi qua pull req
 ```bash
 git checkout main
 git pull origin main
-git checkout -b feature/merchant/12-create-product
+git checkout -b feature/merchant/Trang-create-product
 ```
 
-Tên branch dùng chữ thường, có module, issue và slug ngăn bằng dấu gạch ngang.
+Tên branch mới gồm type, module (nếu có), tên người làm, issue (tùy chọn) và slug; các phần được ngăn bằng dấu gạch ngang. `<ten-nguoi-lam>` dùng tên thành viên, không dấu, không khoảng trắng và viết hoa chữ cái đầu, ví dụ `Trang`, `Khoa`, `Linh`, `Khang`, `Phuc`. Ví dụ không có issue: `feature/merchant/Trang-product-saleability`; có issue: `feature/merchant/Trang-33-product-saleability`.
+
+Branch đã tồn tại trước khi áp dụng quy định này không bắt buộc đổi tên.
 
 Trước khi mở PR, đồng bộ `main` trên chính feature branch:
 
 ```bash
 git checkout main
 git pull origin main
-git checkout feature/merchant/12-create-product
+git checkout feature/merchant/Trang-create-product
 git merge main
 ```
 

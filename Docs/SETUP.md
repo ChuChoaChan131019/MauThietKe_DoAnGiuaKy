@@ -84,13 +84,11 @@ CLOUDINARY_API_SECRET=<cấu hình riêng trên máy/server, không commit>
 
 có thể tự tạo API để sử dụng
 
-PowerShell:
-
-Hỏi Trang để lấy lại  API_SECRET vì đã thay đổi
+PowerShell: 
 
 ```powershell
 $env:CLOUDINARY_CLOUD_NAME="cewdqekr"
-$env:CLOUDINARY_API_KEY="872851394575392"
+$env:CLOUDINARY_API_KEY="<CLOUDINARY_API_KEY>"
 $env:CLOUDINARY_API_SECRET="<CLOUDINARY_API_SECRET>"
 ```
 
