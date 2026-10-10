@@ -7,6 +7,7 @@ import com.senvia.doangiuaky.merchant.dto.PendingShopRequestSummary;
 import com.senvia.doangiuaky.merchant.entity.ShopStatus;
 import com.senvia.doangiuaky.merchant.service.AdminShopRequestService;
 import com.senvia.doangiuaky.merchant.service.ShopApprovalService;
+import com.senvia.doangiuaky.merchant.service.ShopRejectionService;
 import com.senvia.doangiuaky.merchant.service.ShopRequestNotFoundException;
 import com.senvia.doangiuaky.merchant.state.InvalidShopStateTransitionException;
 import org.junit.jupiter.api.BeforeEach;
@@ -48,6 +49,9 @@ class AdminShopRequestControllerTest {
 
     @MockitoBean
     private ShopApprovalService shopApprovalService;
+
+    @MockitoBean
+    private ShopRejectionService shopRejectionService;
 
     private IdentityPrincipal adminPrincipal;
     private IdentityPrincipal userPrincipal;
@@ -111,7 +115,8 @@ class AdminShopRequestControllerTest {
         mockMvc.perform(get("/admin/shop-requests/10").with(user(adminPrincipal)))
                 .andExpect(status().isOk())
                 .andExpect(view().name("merchant/admin/shop-request-detail"))
-                .andExpect(model().attribute("request", request));
+                .andExpect(model().attribute("request", request))
+                .andExpect(model().attributeExists("rejectionForm"));
     }
 
     @Test
@@ -183,6 +188,86 @@ class AdminShopRequestControllerTest {
         mockMvc.perform(post("/admin/shop-requests/99/approve")
                         .with(user(adminPrincipal))
                         .with(csrf()))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    void userCannotRejectPendingRequest() throws Exception {
+        mockMvc.perform(post("/admin/shop-requests/10/reject")
+                        .with(user(userPrincipal))
+                        .with(csrf())
+                        .param("reason", "Missing information"))
+                .andExpect(status().isForbidden());
+
+        verify(shopRejectionService, never()).reject(10L, 2L, "Missing information");
+    }
+
+    @Test
+    void adminCanRejectPendingRequest() throws Exception {
+        mockMvc.perform(post("/admin/shop-requests/10/reject")
+                        .with(user(adminPrincipal))
+                        .with(csrf())
+                        .param("reason", "  Missing information  "))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/admin/shop-requests"))
+                .andExpect(flash().attribute("successMessage", "Đã từ chối yêu cầu mở gian hàng."));
+
+        verify(shopRejectionService).reject(10L, 1L, "  Missing information  ");
+    }
+
+    @Test
+    void adminCannotRejectWithoutCsrfToken() throws Exception {
+        mockMvc.perform(post("/admin/shop-requests/10/reject")
+                        .with(user(adminPrincipal))
+                        .param("reason", "Missing information"))
+                .andExpect(status().isForbidden());
+
+        verify(shopRejectionService, never()).reject(10L, 1L, "Missing information");
+    }
+
+    @Test
+    void blankRejectionReasonRendersDetailWithValidationError() throws Exception {
+        PendingShopRequestDetail request = new PendingShopRequestDetail(
+                10L, "Pending shop", "Description", null,
+                "0900000000", "Test address", "Nguyễn Văn A",
+                Instant.parse("2026-10-08T10:00:00Z"), ShopStatus.PENDING);
+        when(shopRequestService.getPendingRequest(10L)).thenReturn(request);
+
+        mockMvc.perform(post("/admin/shop-requests/10/reject")
+                        .with(user(adminPrincipal))
+                        .with(csrf())
+                        .param("reason", "   "))
+                .andExpect(status().isOk())
+                .andExpect(view().name("merchant/admin/shop-request-detail"))
+                .andExpect(model().attribute("request", request))
+                .andExpect(model().attributeHasFieldErrors("rejectionForm", "reason"));
+
+        verify(shopRejectionService, never()).reject(10L, 1L, "   ");
+    }
+
+    @Test
+    void repeatedRejectionRedirectsWithErrorMessage() throws Exception {
+        doThrow(new InvalidShopStateTransitionException(ShopStatus.REJECTED, ShopStatus.REJECTED))
+                .when(shopRejectionService).reject(10L, 1L, "New reason");
+
+        mockMvc.perform(post("/admin/shop-requests/10/reject")
+                        .with(user(adminPrincipal))
+                        .with(csrf())
+                        .param("reason", "New reason"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/admin/shop-requests"))
+                .andExpect(flash().attribute("errorMessage", "Yêu cầu này không còn ở trạng thái chờ duyệt."));
+    }
+
+    @Test
+    void rejectingMissingRequestReturnsNotFound() throws Exception {
+        doThrow(new ShopRequestNotFoundException("Shop not found"))
+                .when(shopRejectionService).reject(99L, 1L, "Missing information");
+
+        mockMvc.perform(post("/admin/shop-requests/99/reject")
+                        .with(user(adminPrincipal))
+                        .with(csrf())
+                        .param("reason", "Missing information"))
                 .andExpect(status().isNotFound());
     }
 
