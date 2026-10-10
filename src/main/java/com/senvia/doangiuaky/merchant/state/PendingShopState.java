@@ -9,4 +9,5 @@ public final class PendingShopState implements ShopState {
     @Override public boolean canReceiveOrder() { return false; }
     @Override public boolean canResubmit() { return false; }
     @Override public boolean canHandleExistingOrders() { return false; }
+    @Override public ShopStatus approve() { return ShopStatus.APPROVED; }
 }

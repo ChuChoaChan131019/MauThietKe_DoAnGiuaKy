@@ -34,6 +34,9 @@
             <div class="col-12 col-md-9">
                 <h2 class="text-serif text-plum mb-4">Yêu Cầu Mở Gian Hàng Đang Chờ</h2>
 
+                <div th:if="${successMessage}" class="alert alert-success rounded-0" role="alert" th:text="${successMessage}"></div>
+                <div th:if="${errorMessage}" class="alert alert-danger rounded-0" role="alert" th:text="${errorMessage}"></div>
+
                 <div th:if="${#lists.isEmpty(requests)}" class="bg-white border border-clay p-5 text-center">
                     <i class="bi bi-inbox text-muted d-block mb-3" style="font-size: 3rem;"></i>
                     <h5 class="text-plum">Chưa có yêu cầu đang chờ duyệt</h5>
