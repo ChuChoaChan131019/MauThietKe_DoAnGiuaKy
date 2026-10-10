@@ -119,8 +119,22 @@ public class Shop {
     public String getPhone() { return phone; }
     public String getAddress() { return address; }
     public ShopStatus getStatus() { return status; }
+    public Instant getSubmittedAt() { return submittedAt; }
     public String getRejectionReason() { return rejectionReason; }
     public String getLockReason() { return lockReason; }
+    public Long getApprovedById() { return approvedById; }
+    public Instant getApprovedAt() { return approvedAt; }
+
+    public void approve(Long adminId, Instant approvedAt) {
+        Objects.requireNonNull(adminId, "Approving admin must not be null");
+        Objects.requireNonNull(approvedAt, "Approval time must not be null");
+
+        status = state().approve();
+        approvedById = adminId;
+        this.approvedAt = approvedAt;
+        rejectionReason = null;
+    }
+
     public boolean canAddProduct() { return state().canAddProduct(); }
     public boolean canReceiveOrder() { return state().canReceiveOrder(); }
     public boolean canResubmit() { return state().canResubmit(); }
