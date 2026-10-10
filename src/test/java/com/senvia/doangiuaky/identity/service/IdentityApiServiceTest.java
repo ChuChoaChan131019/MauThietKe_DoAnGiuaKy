@@ -50,4 +50,18 @@ class IdentityApiServiceTest {
         assertEquals(1, api.findActiveAdmins().size());
         assertEquals(UserRole.ADMIN, api.findActiveAdmins().getFirst().role());
     }
+
+    @Test
+    void findUserByEmailNormalizesBeforeLookup() {
+        UserRepository repository = mock(UserRepository.class);
+        User user = mock(User.class);
+        when(user.getId()).thenReturn(11L);
+        when(user.getFullName()).thenReturn("Buyer User");
+        when(user.getRole()).thenReturn(UserRole.USER);
+        when(user.getAccountStatus()).thenReturn(AccountStatus.ACTIVE);
+        when(repository.findByEmailIgnoreCase("buyer@example.com")).thenReturn(Optional.of(user));
+        IdentityApiService api = new IdentityApiService(repository);
+
+        assertEquals(11L, api.findUserByEmail("  BUYER@example.com ").orElseThrow().userId());
+    }
 }

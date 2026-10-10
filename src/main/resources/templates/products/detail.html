@@ -72,9 +72,16 @@
                     
                     <div class="d-flex gap-3 mt-auto">
                         <button class="senvia-btn senvia-btn-outline flex-shrink-0 d-flex align-items-center justify-content-center" style="width: 50px;" onclick="alert('Đã thêm vào danh sách yêu thích')"><i class="bi bi-heart"></i></button>
-                        <button class="senvia-btn senvia-btn-primary flex-grow-1 d-flex justify-content-center align-items-center border-0" onclick="alert('Mockup: Đã thêm vào giỏ hàng')">
-                            Thêm vào giỏ hàng
-                        </button>
+                        <form th:if="${role == 'USER'}" th:action="@{/cart/items}" method="post" class="flex-grow-1">
+                            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                            <input type="hidden" name="productId" th:value="${product.id}">
+                            <input type="hidden" name="quantity" value="1">
+                            <button type="submit"
+                                    class="senvia-btn senvia-btn-primary w-100 d-flex justify-content-center align-items-center border-0"
+                                    th:disabled="${product.stock == 0}">
+                                Thêm vào giỏ hàng
+                            </button>
+                        </form>
                     </div>
                 </div>
             </div>

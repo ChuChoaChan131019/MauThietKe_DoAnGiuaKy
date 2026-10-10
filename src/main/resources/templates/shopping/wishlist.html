@@ -34,7 +34,12 @@
                                 <button class="btn position-absolute top-0 end-0 m-2 bg-white text-burgundy rounded-circle p-2 shadow-sm border-0 d-flex align-items-center justify-content-center hover-bg-plum hover-text-white transition-colors" style="width: 36px; height: 36px;">
                                     <i class="bi bi-heart-fill"></i>
                                 </button>
-                                <button class="btn position-absolute bottom-0 start-0 w-100 bg-burgundy text-white rounded-0 py-2 border-0 fw-medium opacity-0 group-hover-opacity-100 transition-opacity">Thêm vào giỏ</button>
+                                <form th:action="@{/cart/items}" method="post" class="position-absolute bottom-0 start-0 w-100 opacity-0 group-hover-opacity-100 transition-opacity">
+                                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                                    <input type="hidden" name="productId" value="4">
+                                    <input type="hidden" name="quantity" value="1">
+                                    <button type="submit" class="btn w-100 bg-burgundy text-white rounded-0 py-2 border-0 fw-medium">Thêm vào giỏ</button>
+                                </form>
                             </div>
                             <div class="card-body p-0">
                                 <a th:href="@{/products/4}" class="text-decoration-none">
@@ -53,7 +58,12 @@
                                 <button class="btn position-absolute top-0 end-0 m-2 bg-white text-burgundy rounded-circle p-2 shadow-sm border-0 d-flex align-items-center justify-content-center hover-bg-plum hover-text-white transition-colors" style="width: 36px; height: 36px;">
                                     <i class="bi bi-heart-fill"></i>
                                 </button>
-                                <button class="btn position-absolute bottom-0 start-0 w-100 bg-burgundy text-white rounded-0 py-2 border-0 fw-medium opacity-0 group-hover-opacity-100 transition-opacity">Thêm vào giỏ</button>
+                                <form th:action="@{/cart/items}" method="post" class="position-absolute bottom-0 start-0 w-100 opacity-0 group-hover-opacity-100 transition-opacity">
+                                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                                    <input type="hidden" name="productId" value="1">
+                                    <input type="hidden" name="quantity" value="1">
+                                    <button type="submit" class="btn w-100 bg-burgundy text-white rounded-0 py-2 border-0 fw-medium">Thêm vào giỏ</button>
+                                </form>
                             </div>
                             <div class="card-body p-0">
                                 <a th:href="@{/products/1}" class="text-decoration-none">

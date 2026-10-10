@@ -28,6 +28,15 @@ public class IdentityApiService implements IdentityApi {
     }
 
     @Override
+    public Optional<UserSummary> findUserByEmail(String email) {
+        if (email == null || email.isBlank()) {
+            return Optional.empty();
+        }
+        return userRepository.findByEmailIgnoreCase(User.normalizeEmail(email))
+                .map(IdentityApiService::toSummary);
+    }
+
+    @Override
     public boolean userExists(Long userId) {
         return userRepository.existsById(userId);
     }
