@@ -1,17 +1,27 @@
 package com.senvia.doangiuaky.merchant.service;
 
+import com.senvia.doangiuaky.merchant.repository.ProductRepository;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@SpringBootTest
 class DemoMerchantApiTest {
 
-    private final DemoMerchantApi merchantApi = new DemoMerchantApi();
+    @Autowired
+    private DemoMerchantApi merchantApi;
+
+    @Autowired
+    private ProductRepository productRepository;
 
     @Test
-    void returnsSaleableDemoProductThroughPublicContract() {
-        var product = merchantApi.findProductForCart(1L);
+    void returnsSaleableDatabaseProductThroughPublicContract() {
+        Long productId = productRepository.findByName("Canvas Tote Bag").orElseThrow().getId();
+
+        var product = merchantApi.findProductForCart(productId);
 
         assertTrue(product.isPresent());
         assertEquals("Canvas Tote Bag", product.orElseThrow().productName());
@@ -20,7 +30,9 @@ class DemoMerchantApiTest {
 
     @Test
     void returnsExistingOutOfStockProductAsUnavailableSummary() {
-        var product = merchantApi.findProductForCart(2L);
+        Long productId = productRepository.findByName("Linen Shirt").orElseThrow().getId();
+
+        var product = merchantApi.findProductForCart(productId);
 
         assertTrue(product.isPresent());
         assertEquals(0, product.orElseThrow().stockQuantity());
@@ -29,6 +41,6 @@ class DemoMerchantApiTest {
 
     @Test
     void returnsEmptyForUnknownProduct() {
-        assertTrue(merchantApi.findProductForCart(999L).isEmpty());
+        assertTrue(merchantApi.findProductForCart(Long.MAX_VALUE).isEmpty());
     }
 }

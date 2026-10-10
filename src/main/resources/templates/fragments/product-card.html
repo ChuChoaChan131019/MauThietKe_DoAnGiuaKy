@@ -13,6 +13,7 @@
     <!-- Hover Action -->
     <div class="position-absolute start-0 end-0 mx-2 text-center shadow-sm product-card-action pc-action-container">
         <form th:if="${role == 'USER'}" th:action="@{/cart/items}" method="post">
+            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
             <input type="hidden" name="productId" th:value="${product.id}">
             <input type="hidden" name="quantity" value="1">
             <button type="submit" class="btn w-100 text-burgundy fw-bold text-uppercase hover-burgundy transition-colors py-2 border-0 shadow-none pc-action-btn">
@@ -35,7 +36,7 @@
         </a>
         <div class="d-flex align-items-center gap-2">
             <span class="fw-bold text-burgundy pc-price" th:text="${#numbers.formatDecimal(product.price, 0, 'COMMA', 0, 'POINT')} + '₫'"></span>
-            <span th:if="${product.containsKey('oldPrice')}" class="text-muted text-decoration-line-through pc-old-price" th:text="${#numbers.formatDecimal(product.oldPrice, 0, 'COMMA', 0, 'POINT')} + '₫'"></span>
+            <span th:if="${product.oldPrice != null}" class="text-muted text-decoration-line-through pc-old-price" th:text="${#numbers.formatDecimal(product.oldPrice, 0, 'COMMA', 0, 'POINT')} + '₫'"></span>
         </div>
     </div>
 </div>

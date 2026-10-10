@@ -84,13 +84,21 @@ public class CartService {
                 return transactionTemplate.execute(status ->
                         addItemInTransaction(currentUserId, productId, requestedQuantity));
             } catch (DataIntegrityViolationException exception) {
-                if (!isCartUserUniqueConflict(exception) || attempt >= MAX_CART_CREATE_RETRIES) {
-                    throw exception;
+                if (isCartUserUniqueConflict(exception) && attempt < MAX_CART_CREATE_RETRIES) {
+                    continue;
                 }
+                if (isProductForeignKeyConflict(exception)) {
+                    throw new CartOperationException("Sản phẩm không còn tồn tại.");
+                }
+                throw exception;
             } catch (UnexpectedRollbackException exception) {
-                if (!isCartUserUniqueConflict(exception) || attempt >= MAX_CART_CREATE_RETRIES) {
-                    throw exception;
+                if (isCartUserUniqueConflict(exception) && attempt < MAX_CART_CREATE_RETRIES) {
+                    continue;
                 }
+                if (isProductForeignKeyConflict(exception)) {
+                    throw new CartOperationException("Sản phẩm không còn tồn tại.");
+                }
+                throw exception;
             }
         }
     }
@@ -210,6 +218,27 @@ public class CartService {
             if (current instanceof org.hibernate.exception.ConstraintViolationException violation) {
                 String constraintName = violation.getConstraintName();
                 if (constraintName != null && "uk_carts_user_id".equalsIgnoreCase(constraintName)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    private static boolean isProductForeignKeyConflict(Throwable exception) {
+        for (Throwable current = exception; current != null; current = current.getCause()) {
+            if (current instanceof org.hibernate.exception.ConstraintViolationException violation) {
+                String constraintName = violation.getConstraintName();
+                if (constraintName != null && "fk_cart_items_product".equalsIgnoreCase(constraintName)) {
+                    return true;
+                }
+            }
+            String message = current.getMessage();
+            if (message != null) {
+                String normalized = message.toLowerCase(java.util.Locale.ROOT);
+                if (normalized.contains("fk_cart_items_product")
+                        || (normalized.contains("cart_items") && normalized.contains("product_id")
+                        && normalized.contains("referential"))) {
                     return true;
                 }
             }

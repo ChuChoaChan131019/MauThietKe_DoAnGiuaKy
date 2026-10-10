@@ -1,64 +1,175 @@
 package com.senvia.doangiuaky.merchant.service;
 
+import com.senvia.doangiuaky.identity.api.AccountStatus;
+import com.senvia.doangiuaky.identity.api.IdentityApi;
+import com.senvia.doangiuaky.identity.api.UserSummary;
 import com.senvia.doangiuaky.merchant.api.CartProductView;
 import com.senvia.doangiuaky.merchant.api.MerchantApi;
+import com.senvia.doangiuaky.merchant.dto.CatalogProductView;
+import com.senvia.doangiuaky.merchant.entity.Category;
+import com.senvia.doangiuaky.merchant.entity.Product;
+import com.senvia.doangiuaky.merchant.entity.ProductStatus;
+import com.senvia.doangiuaky.merchant.entity.Shop;
+import com.senvia.doangiuaky.merchant.entity.ShopStatus;
+import com.senvia.doangiuaky.merchant.repository.CategoryRepository;
+import com.senvia.doangiuaky.merchant.repository.ProductRepository;
+import com.senvia.doangiuaky.merchant.repository.ShopRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
 /**
- * Merchant adapter for the demo catalog currently rendered by ProductsController.
- * Shopping consumes the catalog through the public MerchantApi contract.
+ * Database-backed Merchant adapter used by Shopping and the current catalog UI.
+ * The metadata map only supplies presentation assets that are not yet stored in
+ * the catalog schema; identity, price, stock and saleability come from the database.
  */
 @Service
 public class DemoMerchantApi implements MerchantApi {
 
-    private static final Map<Long, CartProductView> PRODUCTS = Map.of(
-            1L, product(1L, 101L, 1001L, "NOLA Store", "Canvas Tote Bag",
-                    "https://images.unsplash.com/photo-1544816155-12df9643f363?w=600&q=80", "1190000", 45),
-            2L, product(2L, 102L, 1002L, "MORI Store", "Linen Shirt",
-                    "https://images.unsplash.com/photo-1598033129183-c4f50c736f10?w=600&q=80", "890000", 0),
-            3L, product(3L, 103L, 1003L, "KANSO Store", "Brass Table Lamp",
-                    "https://images.unsplash.com/photo-1513506003901-1e6a35d10d3f?w=600&q=80", "1290000", 5),
-            4L, product(4L, 104L, 1004L, "MAISON 28 Store", "Signature Parfum",
-                    "https://images.unsplash.com/photo-1541643600914-78b084683702?w=600&q=80", "2490000", 12),
-            5L, product(5L, 105L, 1005L, "FORM Store", "Ceramic Vase",
-                    "https://images.unsplash.com/photo-1612196808214-b8e1d6145a8c?w=600&q=80", "690000", 20),
-            6L, product(6L, 106L, 1006L, "ASTER Store", "Wall Frame",
-                    "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=600&q=80", "790000", 15),
-            7L, product(7L, 101L, 1001L, "NOLA Store", "Leather Wallet",
-                    "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=600&q=80", "950000", 30),
-            8L, product(8L, 102L, 1002L, "MORI Store", "Desk Organizer",
-                    "https://images.unsplash.com/photo-1588345921523-c2dcdb7f1dcd?w=600&q=80", "550000", 50));
+    private static final String FALLBACK_IMAGE =
+            "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=600&q=80";
 
-    @Override
-    public Optional<CartProductView> findProductForCart(Long productId) {
-        return Optional.ofNullable(PRODUCTS.get(productId));
+    private static final Map<String, PresentationMetadata> PRESENTATION = Map.of(
+            "Canvas Tote Bag", new PresentationMetadata(
+                    "https://images.unsplash.com/photo-1544816155-12df9643f363?w=600&q=80", true, 0, null, 4.5, 24),
+            "Linen Shirt", new PresentationMetadata(
+                    "https://images.unsplash.com/photo-1598033129183-c4f50c736f10?w=600&q=80", false, 15,
+                    new BigDecimal("1050000"), 0.0, 0),
+            "Brass Table Lamp", new PresentationMetadata(
+                    "https://images.unsplash.com/photo-1513506003901-1e6a35d10d3f?w=600&q=80", false, 0, null, 5.0, 2),
+            "Signature Parfum", new PresentationMetadata(
+                    "https://images.unsplash.com/photo-1541643600914-78b084683702?w=600&q=80", true, 0, null, 4.8, 120),
+            "Ceramic Vase", new PresentationMetadata(
+                    "https://images.unsplash.com/photo-1612196808214-b8e1d6145a8c?w=600&q=80", false, 0, null, 4.0, 5),
+            "Wall Frame", new PresentationMetadata(
+                    "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=600&q=80", false, 0, null, 4.5, 10),
+            "Leather Wallet", new PresentationMetadata(
+                    "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=600&q=80", false, 0, null, 4.9, 50),
+            "Desk Organizer", new PresentationMetadata(
+                    "https://images.unsplash.com/photo-1588345921523-c2dcdb7f1dcd?w=600&q=80", false, 0, null, 4.7, 18));
+
+    private final ProductRepository productRepository;
+    private final CategoryRepository categoryRepository;
+    private final ShopRepository shopRepository;
+    private final IdentityApi identityApi;
+
+    public DemoMerchantApi(
+            ProductRepository productRepository,
+            CategoryRepository categoryRepository,
+            ShopRepository shopRepository,
+            IdentityApi identityApi) {
+        this.productRepository = productRepository;
+        this.categoryRepository = categoryRepository;
+        this.shopRepository = shopRepository;
+        this.identityApi = identityApi;
     }
 
-    private static CartProductView product(
-            Long productId,
-            Long shopId,
-            Long shopOwnerId,
-            String shopName,
-            String productName,
-            String imageUrl,
-            String price,
-            int stockQuantity) {
-        return new CartProductView(
-                productId,
-                shopId,
-                shopOwnerId,
-                shopName,
-                productName,
-                imageUrl,
-                new BigDecimal(price),
-                stockQuantity,
-                true,
-                true,
-                true,
-                true);
+    @Override
+    @Transactional(readOnly = true)
+    public Optional<CartProductView> findProductForCart(Long productId) {
+        if (productId == null || productId <= 0) {
+            return Optional.empty();
+        }
+        return productRepository.findById(productId).flatMap(this::toCartProductView);
+    }
+
+    @Transactional(readOnly = true)
+    public List<CatalogProductView> findSaleableCatalogProducts() {
+        return productRepository.findAllByOrderByIdAsc().stream()
+                .map(product -> toCartProductView(product)
+                        .filter(CartProductView::isSaleable)
+                        .flatMap(ignored -> toCatalogProductView(product)))
+                .flatMap(Optional::stream)
+                .toList();
+    }
+
+    @Transactional(readOnly = true)
+    public Optional<CatalogProductView> findSaleableCatalogProduct(Long productId) {
+        if (productId == null || productId <= 0) {
+            return Optional.empty();
+        }
+        return productRepository.findById(productId)
+                .filter(product -> toCartProductView(product)
+                        .map(CartProductView::isSaleable)
+                        .orElse(false))
+                .flatMap(this::toCatalogProductView);
+    }
+
+    private Optional<CartProductView> toCartProductView(Product product) {
+        Optional<Shop> shop = shopRepository.findById(product.getShopId());
+        Optional<Category> category = categoryRepository.findById(product.getCategoryId());
+        if (shop.isEmpty() || category.isEmpty()) {
+            return Optional.empty();
+        }
+
+        Shop productShop = shop.get();
+        Optional<UserSummary> owner = identityApi.findUser(productShop.getOwnerId());
+        if (owner.isEmpty()) {
+            return Optional.empty();
+        }
+
+        PresentationMetadata metadata = metadataFor(product.getName());
+        return Optional.of(new CartProductView(
+                product.getId(),
+                productShop.getId(),
+                productShop.getOwnerId(),
+                productShop.getShopName(),
+                product.getName(),
+                metadata.image(),
+                product.getPrice(),
+                product.getStockQuantity(),
+                owner.get().accountStatus() == AccountStatus.ACTIVE,
+                productShop.getStatus() == ShopStatus.APPROVED,
+                category.get().isActive(),
+                product.getStatus() == ProductStatus.ACTIVE));
+    }
+
+    private Optional<CatalogProductView> toCatalogProductView(Product product) {
+        Optional<Shop> shop = shopRepository.findById(product.getShopId());
+        Optional<Category> category = categoryRepository.findById(product.getCategoryId());
+        if (shop.isEmpty() || category.isEmpty()) {
+            return Optional.empty();
+        }
+
+        PresentationMetadata metadata = metadataFor(product.getName());
+        return Optional.of(new CatalogProductView(
+                product.getId(),
+                product.getName(),
+                brandName(shop.get().getShopName()),
+                product.getPrice(),
+                metadata.isNew(),
+                metadata.discount(),
+                metadata.oldPrice(),
+                metadata.image(),
+                product.getDescription(),
+                product.getStockQuantity(),
+                metadata.rating(),
+                metadata.reviewCount(),
+                category.get().getName(),
+                List.of()));
+    }
+
+    private static PresentationMetadata metadataFor(String productName) {
+        return PRESENTATION.getOrDefault(productName,
+                new PresentationMetadata(FALLBACK_IMAGE, false, 0, null, 0.0, 0));
+    }
+
+    private static String brandName(String shopName) {
+        return shopName != null && shopName.endsWith(" Store")
+                ? shopName.substring(0, shopName.length() - " Store".length())
+                : shopName;
+    }
+
+    private record PresentationMetadata(
+            String image,
+            boolean isNew,
+            int discount,
+            BigDecimal oldPrice,
+            double rating,
+            int reviewCount) {
     }
 }
