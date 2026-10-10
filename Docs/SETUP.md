@@ -84,14 +84,13 @@ CLOUDINARY_API_SECRET=<cấu hình riêng trên máy/server, không commit>
 
 có thể tự tạo API để sử dụng
 
-PowerShell: 
+PowerShell:
 
 ```powershell
 $env:CLOUDINARY_CLOUD_NAME="cewdqekr"
 $env:CLOUDINARY_API_KEY="<CLOUDINARY_API_KEY>"
 $env:CLOUDINARY_API_SECRET="<CLOUDINARY_API_SECRET>"
 ```
-
 
 Thay cả ba placeholder bằng Cloud name, API Key và API Secret lấy từ cùng một dòng credential tại **Cloudinary → Settings → API Keys**.
 
