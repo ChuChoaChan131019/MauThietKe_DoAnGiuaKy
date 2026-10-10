@@ -71,6 +71,21 @@ class ShopRepositoryTest {
         assertEquals(persisted.getId(), shopRepository.findByOwnerId(ownerId).orElseThrow().getId());
     }
 
+    @Test
+    void findsPendingShopByStatusAndDoesNotReturnOtherStates() {
+        Long pendingOwnerId = insertUser("pending-query-owner@example.com");
+        Long approvedOwnerId = insertUser("approved-query-owner@example.com");
+        Long pendingShopId = insertShop(pendingOwnerId, "Pending query shop", "PENDING");
+        Long approvedShopId = insertShop(approvedOwnerId, "Approved query shop", "APPROVED");
+
+        assertTrue(shopRepository.findByIdAndStatus(pendingShopId, ShopStatus.PENDING).isPresent());
+        assertTrue(shopRepository.findByIdAndStatus(approvedShopId, ShopStatus.PENDING).isEmpty());
+        assertTrue(shopRepository.findAllByStatusOrderBySubmittedAtAsc(ShopStatus.PENDING).stream()
+                .anyMatch(shop -> shop.getId().equals(pendingShopId)));
+        assertFalse(shopRepository.findAllByStatusOrderBySubmittedAtAsc(ShopStatus.PENDING).stream()
+                .anyMatch(shop -> shop.getId().equals(approvedShopId)));
+    }
+
     private Long insertUser(String email) {
         jdbcTemplate.update("""
                 insert into users (full_name, email, password_hash, role, account_status, created_at, updated_at)
@@ -79,10 +94,11 @@ class ShopRepositoryTest {
         return jdbcTemplate.queryForObject("select id from users where email = ?", Long.class, email);
     }
 
-    private void insertShop(Long ownerId, String shopName, String status) {
+    private Long insertShop(Long ownerId, String shopName, String status) {
         jdbcTemplate.update("""
                 insert into shops (owner_id, shop_name, phone, address, status, submitted_at, created_at, updated_at)
                 values (?, ?, ?, ?, ?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
                 """, ownerId, shopName, "0900000000", "Test address", status);
+        return jdbcTemplate.queryForObject("select id from shops where owner_id = ?", Long.class, ownerId);
     }
 }
