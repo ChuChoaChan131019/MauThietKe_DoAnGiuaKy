@@ -119,6 +119,7 @@ public class Shop {
     public String getPhone() { return phone; }
     public String getAddress() { return address; }
     public ShopStatus getStatus() { return status; }
+    public Instant getSubmittedAt() { return submittedAt; }
     public String getRejectionReason() { return rejectionReason; }
     public String getLockReason() { return lockReason; }
     public boolean canAddProduct() { return state().canAddProduct(); }
