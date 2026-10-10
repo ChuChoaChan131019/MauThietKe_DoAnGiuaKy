@@ -12,7 +12,15 @@ public record CartView(
         return new CartView(List.of(), 0, BigDecimal.ZERO);
     }
 
+    public boolean hasItems() {
+        return shops.stream().anyMatch(shop -> !shop.items().isEmpty());
+    }
+
+    public boolean hasCheckoutableItems() {
+        return totalQuantity > 0;
+    }
+
     public boolean isEmpty() {
-        return totalQuantity == 0;
+        return !hasItems();
     }
 }

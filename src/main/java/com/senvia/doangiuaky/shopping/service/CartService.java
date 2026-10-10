@@ -16,15 +16,18 @@ import com.senvia.doangiuaky.shopping.repository.CartItemRepository;
 import com.senvia.doangiuaky.shopping.repository.CartRepository;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.UnexpectedRollbackException;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionTemplate;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Supplier;
 
 @Service
@@ -34,16 +37,20 @@ public class CartService {
     private final CartItemRepository cartItemRepository;
     private final IdentityApi identityApi;
     private final Supplier<MerchantApi> merchantApiSupplier;
-    private final Map<Long, Object> cartLocks = new ConcurrentHashMap<>();
+    private final TransactionTemplate transactionTemplate;
+
+    private static final int MAX_CART_CREATE_RETRIES = 3;
 
     @Autowired
     public CartService(
             CartRepository cartRepository,
             CartItemRepository cartItemRepository,
             IdentityApi identityApi,
-            ObjectProvider<MerchantApi> merchantApiProvider) {
+            ObjectProvider<MerchantApi> merchantApiProvider,
+            PlatformTransactionManager transactionManager) {
         this(cartRepository, cartItemRepository, identityApi,
-                () -> merchantApiProvider.getIfAvailable(() -> productId -> java.util.Optional.empty()));
+                () -> merchantApiProvider.getIfAvailable(() -> productId -> java.util.Optional.empty()),
+                new TransactionTemplate(transactionManager));
     }
 
     public CartService(
@@ -51,22 +58,44 @@ public class CartService {
             CartItemRepository cartItemRepository,
             IdentityApi identityApi,
             MerchantApi merchantApi) {
-        this(cartRepository, cartItemRepository, identityApi, () -> merchantApi);
+        this(cartRepository, cartItemRepository, identityApi, () -> merchantApi, null);
     }
 
     private CartService(
             CartRepository cartRepository,
             CartItemRepository cartItemRepository,
             IdentityApi identityApi,
-            Supplier<MerchantApi> merchantApiSupplier) {
+            Supplier<MerchantApi> merchantApiSupplier,
+            TransactionTemplate transactionTemplate) {
         this.cartRepository = cartRepository;
         this.cartItemRepository = cartItemRepository;
         this.identityApi = identityApi;
         this.merchantApiSupplier = merchantApiSupplier;
+        this.transactionTemplate = transactionTemplate;
     }
 
-    @Transactional
     public AddCartItemResult addItem(Long currentUserId, Long productId, int requestedQuantity) {
+        if (transactionTemplate == null) {
+            return addItemInTransaction(currentUserId, productId, requestedQuantity);
+        }
+
+        for (int attempt = 1; ; attempt++) {
+            try {
+                return transactionTemplate.execute(status ->
+                        addItemInTransaction(currentUserId, productId, requestedQuantity));
+            } catch (DataIntegrityViolationException exception) {
+                if (!isCartUserUniqueConflict(exception) || attempt >= MAX_CART_CREATE_RETRIES) {
+                    throw exception;
+                }
+            } catch (UnexpectedRollbackException exception) {
+                if (!isCartUserUniqueConflict(exception) || attempt >= MAX_CART_CREATE_RETRIES) {
+                    throw exception;
+                }
+            }
+        }
+    }
+
+    private AddCartItemResult addItemInTransaction(Long currentUserId, Long productId, int requestedQuantity) {
         validatePositiveId(currentUserId, "Không xác định được người dùng.");
         validatePositiveId(productId, "Sản phẩm không hợp lệ.");
         if (requestedQuantity <= 0) {
@@ -84,28 +113,25 @@ public class CartService {
             throw new CartOperationException("Bạn không thể mua sản phẩm của chính shop mình.");
         }
 
-        Object lock = cartLocks.computeIfAbsent(currentUserId, ignored -> new Object());
-        synchronized (lock) {
-            Cart cart = cartRepository.findByUserIdForUpdate(currentUserId)
-                    .orElseGet(() -> cartRepository.save(new Cart(currentUserId)));
-            CartItem item = cartItemRepository.findByCartIdAndProductId(cart.getId(), productId)
-                    .orElseGet(() -> new CartItem(cart.getId(), productId, 0));
+        Cart cart = cartRepository.findByUserIdForUpdate(currentUserId)
+                .orElseGet(() -> cartRepository.save(new Cart(currentUserId)));
+        CartItem item = cartItemRepository.findByCartIdAndProductId(cart.getId(), productId)
+                .orElseGet(() -> new CartItem(cart.getId(), productId, 0));
 
-            long requestedTotal = (long) item.getQuantity() + requestedQuantity;
-            int finalQuantity = (int) Math.min(requestedTotal, product.stockQuantity());
-            if (finalQuantity <= 0) {
-                throw new CartOperationException("Sản phẩm đã hết hàng.");
-            }
-
-            item.setQuantity(finalQuantity);
-            cartItemRepository.save(item);
-
-            boolean clamped = requestedTotal > product.stockQuantity();
-            String message = clamped
-                    ? "Số lượng đã được điều chỉnh theo tồn kho hiện tại."
-                    : "Đã thêm sản phẩm vào giỏ hàng.";
-            return new AddCartItemResult(CartItemView.from(item, product), clamped, message);
+        long requestedTotal = (long) item.getQuantity() + requestedQuantity;
+        int finalQuantity = (int) Math.min(requestedTotal, product.stockQuantity());
+        if (finalQuantity <= 0) {
+            throw new CartOperationException("Sản phẩm đã hết hàng.");
         }
+
+        item.setQuantity(finalQuantity);
+        cartItemRepository.save(item);
+
+        boolean clamped = requestedTotal > product.stockQuantity();
+        String message = clamped
+                ? "Số lượng đã được điều chỉnh theo tồn kho hiện tại."
+                : "Đã thêm sản phẩm vào giỏ hàng.";
+        return new AddCartItemResult(CartItemView.from(item, product), clamped, message);
     }
 
     @Transactional(readOnly = true)
@@ -168,6 +194,27 @@ public class CartService {
                 .map(CartShopView::subtotal)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
         return new CartView(shops, totalQuantity, subtotal);
+    }
+
+    private static boolean isCartUserUniqueConflict(Throwable exception) {
+        for (Throwable current = exception; current != null; current = current.getCause()) {
+            String message = current.getMessage();
+            if (message != null) {
+                String normalized = message.toLowerCase(java.util.Locale.ROOT);
+                if (normalized.contains("uk_carts_user_id")
+                        || (normalized.contains("carts") && normalized.contains("user_id")
+                        && (normalized.contains("unique") || normalized.contains("duplicate")))) {
+                    return true;
+                }
+            }
+            if (current instanceof org.hibernate.exception.ConstraintViolationException violation) {
+                String constraintName = violation.getConstraintName();
+                if (constraintName != null && "uk_carts_user_id".equalsIgnoreCase(constraintName)) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     private static void validatePositiveId(Long value, String message) {

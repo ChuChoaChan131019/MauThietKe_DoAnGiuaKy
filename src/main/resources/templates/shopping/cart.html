@@ -13,13 +13,16 @@
 
         <div th:if="${cartSuccess}" class="alert alert-success rounded-0" th:text="${cartSuccess}"></div>
         <div th:if="${cartError}" class="alert alert-danger rounded-0" th:text="${cartError}"></div>
+        <div th:if="${!cart.empty && cart.totalQuantity == 0}" class="alert alert-warning rounded-0">
+            Một hoặc nhiều sản phẩm trong giỏ hiện không còn khả dụng. Vui lòng kiểm tra cảnh báo trước khi thanh toán.
+        </div>
 
         <div th:if="${cart.empty}" class="text-center py-5 bg-ivory border border-clay">
             <i class="bi bi-cart-x text-clay d-block mb-3" style="font-size: 3rem;"></i>
             <p class="text-muted mb-0">Giỏ hàng đang trống.</p>
         </div>
 
-        <div th:unless="${cart.empty}" class="row g-4">
+        <div th:if="${!cart.empty}" class="row g-4">
             <div class="col-lg-8">
                 <section th:each="shop : ${cart.shops}" class="mb-4 border border-clay">
                     <div class="bg-ivory px-3 py-2 fw-bold text-plum" th:text="${shop.shopName}">Shop</div>

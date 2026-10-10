@@ -18,6 +18,7 @@ import java.math.BigDecimal;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
@@ -142,6 +143,27 @@ class CartServiceTest {
 
         assertEquals(new BigDecimal("270000"), view.subtotal());
         assertEquals(new BigDecimal("135000"), view.shops().getFirst().items().getFirst().currentPrice());
+    }
+
+    @Test
+    void cartWithOnlyUnavailableItemsIsNotEmptyButHasNoCheckoutableItems() {
+        CartRepository carts = mock(CartRepository.class);
+        CartItemRepository items = mock(CartItemRepository.class);
+        IdentityApi identity = mock(IdentityApi.class);
+        MerchantApi merchant = mock(MerchantApi.class);
+        Cart cart = mockCart(99L);
+        when(identity.findUser(BUYER_ID)).thenReturn(Optional.of(user(BUYER_ID, UserRole.USER, AccountStatus.ACTIVE)));
+        when(carts.findByUserId(BUYER_ID)).thenReturn(Optional.of(cart));
+        when(items.findAllByCartIdOrderByIdAsc(99L))
+                .thenReturn(java.util.List.of(new CartItem(99L, PRODUCT_ID, 2)));
+        when(merchant.findProductForCart(PRODUCT_ID)).thenReturn(Optional.of(product(0, 135000)));
+
+        CartView view = new CartService(carts, items, identity, merchant).getCart(BUYER_ID);
+
+        assertFalse(view.isEmpty());
+        assertFalse(view.hasCheckoutableItems());
+        assertEquals(0, view.totalQuantity());
+        assertFalse(view.shops().getFirst().items().getFirst().available());
     }
 
     private static UserSummary user(Long id, UserRole role, AccountStatus status) {
