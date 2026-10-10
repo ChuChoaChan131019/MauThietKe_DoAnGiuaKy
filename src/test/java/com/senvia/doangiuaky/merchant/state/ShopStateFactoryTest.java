@@ -23,6 +23,17 @@ class ShopStateFactoryTest {
         assertThrows(NullPointerException.class, () -> ShopStateFactory.resolve(null));
     }
 
+    @Test
+    void onlyPendingStateCanApprove() {
+        assertEquals(ShopStatus.APPROVED, ShopStateFactory.resolve(ShopStatus.PENDING).approve());
+        assertThrows(InvalidShopStateTransitionException.class,
+                () -> ShopStateFactory.resolve(ShopStatus.APPROVED).approve());
+        assertThrows(InvalidShopStateTransitionException.class,
+                () -> ShopStateFactory.resolve(ShopStatus.REJECTED).approve());
+        assertThrows(InvalidShopStateTransitionException.class,
+                () -> ShopStateFactory.resolve(ShopStatus.LOCKED).approve());
+    }
+
     private void assertState(ShopStatus status, Class<? extends ShopState> stateType,
                              boolean canAddProduct, boolean canReceiveOrder,
                              boolean canResubmit, boolean canHandleExistingOrders) {

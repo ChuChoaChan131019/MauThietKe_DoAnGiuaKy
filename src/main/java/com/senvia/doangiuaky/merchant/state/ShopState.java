@@ -14,4 +14,8 @@ public interface ShopState {
     boolean canResubmit();
 
     boolean canHandleExistingOrders();
+
+    default ShopStatus approve() {
+        throw new InvalidShopStateTransitionException(status(), ShopStatus.APPROVED);
+    }
 }

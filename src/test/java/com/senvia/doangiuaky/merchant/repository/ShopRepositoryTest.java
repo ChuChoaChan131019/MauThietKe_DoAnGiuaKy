@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.transaction.annotation.Transactional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -84,6 +85,15 @@ class ShopRepositoryTest {
                 .anyMatch(shop -> shop.getId().equals(pendingShopId)));
         assertFalse(shopRepository.findAllByStatusOrderBySubmittedAtAsc(ShopStatus.PENDING).stream()
                 .anyMatch(shop -> shop.getId().equals(approvedShopId)));
+    }
+
+    @Test
+    @Transactional
+    void locksShopWhenLoadingItForApproval() {
+        Long ownerId = insertUser("approval-lock-owner@example.com");
+        Long shopId = insertShop(ownerId, "Approval lock shop", "PENDING");
+
+        assertEquals(shopId, shopRepository.findByIdForUpdate(shopId).orElseThrow().getId());
     }
 
     private Long insertUser(String email) {
