@@ -11,6 +11,12 @@ import java.util.Map;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.senvia.doangiuaky.ordering.dto.CheckoutPaymentForm;
+import jakarta.validation.Valid;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
+
 @Controller
 public class OrderingController {
 
@@ -42,7 +48,7 @@ public class OrderingController {
         order2.put("customer", "Trần Thị B");
         order2.put("phone", "0912345678");
         order2.put("address", "456 Đường Nguyễn Huệ, Quận 1, TP. Hồ Chí Minh");
-        order2.put("payment", "TRANSFER");
+        order2.put("payment", "BANK_TRANSFER");
         order2.put("status", "CONFIRMED");
         order2.put("total", "1.280.000₫");
         order2.put("productName", "Túi Xách Da Minimalist");
@@ -57,7 +63,25 @@ public class OrderingController {
     }
 
     @GetMapping("/checkout")
-    public String checkout() {
+    public String checkout(Model model) {
+        model.addAttribute(
+                "checkoutPaymentForm",
+                new CheckoutPaymentForm());
+
+        return "ordering/checkout/index";
+    }
+
+    @PostMapping("/checkout")
+    public String validatePaymentMethod(@Valid @ModelAttribute("checkoutPaymentForm") CheckoutPaymentForm form, BindingResult bindingResult, Model model) {
+        // PAY 03: Kiểm tra phương thức thanh toán
+        if (bindingResult.hasErrors()) {
+            return "ordering/checkout/index";
+        }
+
+        // Tạm thời chỉ xác nhận dữ liệu hợp lệ.
+        // PAY 02 và PAY 04 sẽ nối vào checkout thật.
+        model.addAttribute("paymentValidated", true);
+
         return "ordering/checkout/index";
     }
 
