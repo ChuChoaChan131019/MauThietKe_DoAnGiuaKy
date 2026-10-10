@@ -2,6 +2,8 @@ package com.senvia.doangiuaky.merchant.service;
 
 import com.senvia.doangiuaky.identity.api.IdentityApi;
 import com.senvia.doangiuaky.identity.api.UserSummary;
+import com.senvia.doangiuaky.merchant.api.MerchantShopRequestApi;
+import com.senvia.doangiuaky.merchant.api.PendingShopRequestCard;
 import com.senvia.doangiuaky.merchant.dto.PendingShopRequestDetail;
 import com.senvia.doangiuaky.merchant.dto.PendingShopRequestSummary;
 import com.senvia.doangiuaky.merchant.entity.Shop;
@@ -14,7 +16,7 @@ import java.util.List;
 
 @Service
 @Transactional(readOnly = true)
-public class AdminShopRequestService {
+public class AdminShopRequestService implements MerchantShopRequestApi {
 
     private final ShopRepository shopRepository;
     private final IdentityApi identityApi;
@@ -25,9 +27,21 @@ public class AdminShopRequestService {
     }
 
     public List<PendingShopRequestSummary> listPendingRequests() {
-        return shopRepository.findAllByStatusOrderBySubmittedAtAsc(ShopStatus.PENDING)
+        return pendingShops()
                 .stream()
                 .map(this::toSummary)
+                .toList();
+    }
+
+    @Override
+    public List<PendingShopRequestCard> findPendingShopRequests() {
+        return pendingShops()
+                .stream()
+                .map(shop -> new PendingShopRequestCard(
+                        shop.getId(),
+                        shop.getShopName(),
+                        ownerName(shop),
+                        shop.getSubmittedAt()))
                 .toList();
     }
 
@@ -65,5 +79,9 @@ public class AdminShopRequestService {
                 .orElseThrow(() -> new ShopRequestNotFoundException(
                         "Không tìm thấy thông tin người gửi yêu cầu."));
         return owner.fullName();
+    }
+
+    private List<Shop> pendingShops() {
+        return shopRepository.findAllByStatusOrderBySubmittedAtAsc(ShopStatus.PENDING);
     }
 }

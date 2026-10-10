@@ -4,6 +4,7 @@ import com.senvia.doangiuaky.identity.api.AccountStatus;
 import com.senvia.doangiuaky.identity.api.IdentityApi;
 import com.senvia.doangiuaky.identity.api.UserRole;
 import com.senvia.doangiuaky.identity.api.UserSummary;
+import com.senvia.doangiuaky.merchant.api.PendingShopRequestCard;
 import com.senvia.doangiuaky.merchant.dto.PendingShopRequestDetail;
 import com.senvia.doangiuaky.merchant.dto.PendingShopRequestSummary;
 import com.senvia.doangiuaky.merchant.entity.Shop;
@@ -49,6 +50,24 @@ class AdminShopRequestServiceTest {
         assertEquals("Pending shop", result.get(0).shopName());
         assertEquals("Nguyễn Văn A", result.get(0).ownerName());
         assertEquals(ShopStatus.PENDING, result.get(0).status());
+        verify(shopRepository).findAllByStatusOrderBySubmittedAtAsc(ShopStatus.PENDING);
+    }
+
+    @Test
+    void exposesPendingRequestsThroughPublicApiForAdminDashboard() {
+        Shop shop = shop(10L, 7L, "Pending shop");
+        when(shopRepository.findAllByStatusOrderBySubmittedAtAsc(ShopStatus.PENDING))
+                .thenReturn(List.of(shop));
+        when(identityApi.findUser(7L))
+                .thenReturn(Optional.of(new UserSummary(7L, "Nguyễn Văn A", UserRole.USER, AccountStatus.ACTIVE)));
+
+        List<PendingShopRequestCard> result = service.findPendingShopRequests();
+
+        assertEquals(List.of(new PendingShopRequestCard(
+                10L,
+                "Pending shop",
+                "Nguyễn Văn A",
+                Instant.parse("2026-10-08T10:00:00Z"))), result);
         verify(shopRepository).findAllByStatusOrderBySubmittedAtAsc(ShopStatus.PENDING);
     }
 
