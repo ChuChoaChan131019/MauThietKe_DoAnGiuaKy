@@ -48,7 +48,7 @@ public class OrderingController {
         order2.put("customer", "Trần Thị B");
         order2.put("phone", "0912345678");
         order2.put("address", "456 Đường Nguyễn Huệ, Quận 1, TP. Hồ Chí Minh");
-        order2.put("payment", "TRANSFER");
+        order2.put("payment", "BANK_TRANSFER");
         order2.put("status", "CONFIRMED");
         order2.put("total", "1.280.000₫");
         order2.put("productName", "Túi Xách Da Minimalist");

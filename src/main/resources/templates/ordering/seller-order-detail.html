@@ -70,7 +70,7 @@
 
                                                 <!-- Actions for Seller -->
                 <div class="bg-ivory p-4 border border-clay d-flex gap-3 mb-4" th:if="${status != 'CANCELLED'}">
-                    <form th:action="@{/merchant/orders/status}" method="get" th:if="${payment == 'TRANSFER' and status == 'PENDING'}" class="flex-grow-1 m-0">
+                    <form th:action="@{/merchant/orders/status}" method="get" th:if="${payment == 'BANK_TRANSFER' and status == 'PENDING'}" class="flex-grow-1 m-0">
                         <input type="hidden" name="id" th:value="${orderId}">
                         <input type="hidden" name="payment" th:value="${payment}">
                         <input type="hidden" name="action" value="CONFIRM_PAYMENT">
@@ -86,7 +86,7 @@
                         <button type="submit" class="btn bg-burgundy text-white rounded-0 fw-medium px-4 py-3 w-100 border-0 hover-bg-plum transition-colors">Chuẩn bị hàng (Xác nhận đơn)</button>
                     </form>
                     
-                    <form th:action="@{/merchant/orders/status}" method="get" th:if="${payment == 'TRANSFER' and status == 'CONFIRMED'}" class="flex-grow-1 m-0">
+                    <form th:action="@{/merchant/orders/status}" method="get" th:if="${payment == 'BANK_TRANSFER' and status == 'CONFIRMED'}" class="flex-grow-1 m-0">
                         <input type="hidden" name="id" th:value="${orderId}">
                         <input type="hidden" name="payment" th:value="${payment}">
                         <input type="hidden" name="action" value="PREPARE">
@@ -128,8 +128,8 @@
 
                 <div class="bg-white border border-clay p-4 mb-4">
                     <h5 class="fw-bold text-plum border-bottom pb-3 mb-3">Thanh toán & Vận chuyển</h5>
-                    <div class="text-plum mb-1 fw-bold" th:text="${payment == 'TRANSFER' ? 'Chuyển khoản ngân hàng' : 'Thanh toán khi nhận hàng (COD)'}">Thanh toán khi nhận hàng (COD)</div>
-                    <div class="text-muted small mb-3" th:text="${payment == 'TRANSFER' ? 'Chờ xác nhận thanh toán' : 'Chưa thanh toán'}">Chưa thanh toán</div>
+                    <div class="text-plum mb-1 fw-bold" th:text="${payment == 'BANK_TRANSFER' ? 'Chuyển khoản ngân hàng' : 'Thanh toán khi nhận hàng (COD)'}">Thanh toán khi nhận hàng (COD)</div>
+                    <div class="text-muted small mb-3" th:text="${payment == 'BANK_TRANSFER' ? 'Chờ xác nhận thanh toán' : 'Chưa thanh toán'}">Chưa thanh toán</div>
                     
                     <div class="text-plum mb-1 fw-bold">Vận chuyển: Giao hàng tiêu chuẩn</div>
                     <div class="text-muted small">Dự kiến giao: 27/10 - 29/10</div>
